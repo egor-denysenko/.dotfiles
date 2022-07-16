@@ -1,5 +1,5 @@
 -- Lua configuration that follows standart vim options
--- :h options in order to find all available options
+-- :h options || :h option-list in order to find all available options
 
 local options = {
     backup = false,                          -- creates a backup file
