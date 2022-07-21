@@ -7,3 +7,4 @@ in order to see before applying the changes with stow you can use ```stow -nv```
 Quick reference:
 - Transfer config to local machine  ```stow -Svt ~ *``` Instead of * the single folders can be linked
 - Unlink stow config ```stow -Dvt ~ *```
+
