@@ -42,12 +42,13 @@ packer.init {
 }
 
 -- Install your plugins here
+-- Plugins Are installed in the following path ~/.local/share/nvim/site/pack/packer/start
 return packer.startup(function(use)
   -- My plugins here
   use "wbthomason/packer.nvim" -- Have packer manage itself
   use "nvim-lua/popup.nvim" -- An implementation of the Popup API from vim in Neovim
   use "nvim-lua/plenary.nvim" -- Useful lua functions used ny lots of plugins
-  use "savq/melange" -- Melange color scheme
+  use "folke/tokyonight.nvim" -- Tokio color scheme
   -- Automatically set up your configuration after cloning packer.nvim
   -- Put this at the end after all plugins
   if PACKER_BOOTSTRAP then
