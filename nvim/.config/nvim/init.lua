@@ -2,3 +2,4 @@
 
 require("options") --Requires lua/options.lua file
 require("plugins") --Requires lua/plugins.lua file
+require("completion") -- Requires lua/completion lua file
