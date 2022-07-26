@@ -3,3 +3,5 @@
 [user]
 	email = 75579636+egor-denysenko@users.noreply.github.com
 	name = egor-denysenko
+[core]
+	editor = nvim
