@@ -66,14 +66,25 @@ return packer.startup(function(use)
   use "L3MON4D3/LuaSnip"
 
   -- Golang Snippets
-  --use "ray-x/go.nvim"
-  --use "ray-x/guihua.lua"
+  use "ray-x/go.nvim"
+  use "ray-x/guihua.lua"
 
   -- LSP
   use "neovim/nvim-lspconfig" -- enable LSP
   use "williamboman/nvim-lsp-installer" -- simple to use language server installer
 
-    -- Telescope
+  -- LSP Error Checking
+  use ({"folke/trouble.nvim",
+  requires = "kyazdani42/nvim-web-devicons",
+    config = function()
+      require("trouble").setup {
+        -- your configuration comes here
+        -- or leave it empty to use the default settings
+      }
+    end
+  });
+
+  -- Telescope
   use "nvim-telescope/telescope.nvim"
   use 'nvim-telescope/telescope-media-files.nvim'
 
