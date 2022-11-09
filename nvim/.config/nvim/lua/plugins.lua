@@ -52,6 +52,9 @@ return packer.startup(function(use)
   -- Colorschemes
   use "folke/tokyonight.nvim" -- Tokio color scheme
 
+  -- Init Dashboard
+  use "glepnir/dashboard-nvim"
+
   -- Autocompletion
   use "hrsh7th/nvim-cmp" -- Installing nvim-cmp completion
   use ({"hrsh7th/cmp-buffer", requires = {"hrsh7th/nvim-cmp"}})
