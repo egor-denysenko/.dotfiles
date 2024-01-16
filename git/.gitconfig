@@ -3,5 +3,8 @@
 [user]
 	email = 75579636+egor-denysenko@users.noreply.github.com
 	name = egor-denysenko
+	signingkey = 9FDBB6F153497936
 [core]
 	editor = vim
+[commit]
+	gpgsign = true
