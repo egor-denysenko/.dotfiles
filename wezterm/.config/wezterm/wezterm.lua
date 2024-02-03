@@ -15,6 +15,12 @@ end
 -- For example, changing the color scheme:
 config.color_scheme = 'Liquid Carbon Transparent (Gogh)'
 
+-- Remove tab bar in order to gain more space
+config.enable_tab_bar = false
+
+-- Spawn a zsh on wezterm start
+config.default_prog = { '/usr/bin/zsh'}
+
 -- and finally, return the configuration to wezterm
 return config
 
