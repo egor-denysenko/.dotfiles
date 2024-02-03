@@ -4,24 +4,7 @@
 # Path to your oh-my-zsh installation.
 export ZSH="$HOME/.oh-my-zsh"
 
-# Set name of the theme to load --- if set to "random", it will
-# load a random theme each time oh-my-zsh is loaded, in which case,
-# to know which specific one was loaded, run: echo $RANDOM_THEME
-# See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
-ZSH_THEME="robbyrussell"
-
-# Set list of themes to pick from when loading at random
-# Setting this variable when ZSH_THEME=random will cause zsh to load
-# a theme from this variable instead of looking in $ZSH/themes/
-# If set to an empty array, this variable will have no effect.
-# ZSH_THEME_RANDOM_CANDIDATES=( "robbyrussell" "agnoster" )
-
-# Uncomment the following line to use case-sensitive completion.
-# CASE_SENSITIVE="true"
-
-# Uncomment the following line to use hyphen-insensitive completion.
-# Case-sensitive completion must be off. _ and - will be interchangeable.
-# HYPHEN_INSENSITIVE="true"
+ZSH_THEME="mikeh"
 
 # Uncomment the following line to change how often to auto-update (in days).
 zstyle ':omz:update' frequency 7
@@ -44,6 +27,12 @@ zstyle ':omz:update' frequency 7
 # Caution: this setting can cause issues with multiline prompts in zsh < 5.7.1 (see #5765)
 # COMPLETION_WAITING_DOTS="true"
 
+# Disable npm terminal ads
+export ADBLOCK=true
+export DISABLE_OPENCOLLECTIVE=true
+export OPEN_SOURCE_CONTRIBUTOR=true
+export OPENCOLLECTIVE_HIDE=true
+
 # Uncomment the following line if you want to disable marking untracked files
 # under VCS as dirty. This makes repository status check for large repositories
 # much, much faster.
@@ -65,40 +54,14 @@ zstyle ':omz:update' frequency 7
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git zsh-autosuggestions zsh-syntax-highlighting fast-syntax-highlighting)
+plugins=(
+	git
+	zsh-autosuggestions
+	zsh-syntax-highlighting
+	fast-syntax-highlighting
+)
 
 source $ZSH/oh-my-zsh.sh
-
-# User configuration
-
-# export MANPATH="/usr/local/man:$MANPATH"
-
-# You may need to manually set your language environment
-# export LANG=en_US.UTF-8
-
-# Preferred editor for local and remote sessions
-# if [[ -n $SSH_CONNECTION ]]; then
-#   export EDITOR='vim'
-# else
-#   export EDITOR='mvim'
-# fi
-
-# Compilation flags
-# export ARCHFLAGS="-arch x86_64"
-
-# Set personal aliases, overriding those provided by oh-my-zsh libs,
-# plugins, and themes. Aliases can be placed here, though oh-my-zsh
-# users are encouraged to define aliases within the ZSH_CUSTOM folder.
-# For a full list of active aliases, run `alias`.
-#
-# Example aliases
-# alias zshconfig="mate ~/.zshrc"
-# alias ohmyzsh="mate ~/.oh-my-zsh"
-eval "$(starship init zsh)"
-
-export SHELL="/bin/zsh"
-
-export SSH_AUTH_SOCK="$XDG_RUNTIME_DIR/ssh-agent.socket"
 
 . /usr/share/fzf/shell/key-bindings.zsh
 
@@ -106,5 +69,27 @@ export SSH_AUTH_SOCK="$XDG_RUNTIME_DIR/ssh-agent.socket"
 alias l="ls -lah"
 alias vim="nvim"
 alias mux="zellij"
+alias air='/home/bronco/go/bin/air'
+alias pd='podman-compose'
+alias pdup='podman-compose up'
+
+# Env variables export
+export SHELL="/bin/zsh"
+
+export SSH_AUTH_SOCK="$XDG_RUNTIME_DIR/ssh-agent.socket"
 
 export GPG_TTY=$(tty)
+export FLYCTL_INSTALL="/home/bronco/.fly"
+
+export GOROOT=""
+export GOPATH=$HOME/go
+export GOPROXY="https://proxy.golang.org/"
+export MAGEFILE_ENABLE_COLOR=true
+
+# PATH related exports
+export PATH="$FLYCTL_INSTALL/bin:$PATH"
+export PATH=$PATH:/usr/local/go/bin
+export PATH=$PATH:$GOPATH/bin
+
+# Should be at EOF
+eval "$(starship init zsh)"
