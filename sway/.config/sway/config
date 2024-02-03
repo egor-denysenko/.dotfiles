@@ -231,4 +231,18 @@ input "1:1:AT_Translated_Set_2_keyboard" {
   xkb_layout it
 }
 
+#
+#No titlebars
+#
+
+default_border none
+default_floating_border none
+font pango:monospace 0
+titlebar_padding 1
+titlebar_border_thickness 0
+gaps outer 0
+gaps inner 0
+hide_edge_borders --i3 smart
+workspace_layout tabbed
+
 include '$(/usr/libexec/sway/layered-include "/usr/share/sway/config.d/*.conf" "/etc/sway/config.d/*.conf" "${XDG_CONFIG_HOME:-$HOME/.config}/sway/config.d/*.conf")'
