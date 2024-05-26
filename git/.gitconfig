@@ -1,0 +1,27 @@
+[init]
+	defaultBranch = main
+[user]
+	email = 75579636+egor-denysenko@users.noreply.github.com
+	name = egor-denysenko
+	signingkey = 9FDBB6F153497936
+[core]
+	editor = nvim
+[commit]
+	gpgsign = true
+[alias]
+	staash = stash --all
+	bb = !~/scripts/betterGitBranch.sh
+	wdif = diff --word-diff
+	# Usage: git resign HASH
+	resign = rebase --exec 'GIT_COMMITTER_DATE=\"$(git log -n 1 --format=%aD)\" git commit --amend --no-edit -n -S' -i
+	resign-log = !git rebase --exec 'GIT_COMMITTER_DATE=\"$(git log -n 1 --format=%aD)\" git commit --amend --no-edit -n -S' -i $1 && git log --pretty=\"fuller\" $1..HEAD
+[rerere]
+	enable = true
+[column]
+	ui = auto
+[branch]
+	sort = -committerdate
+[maintenance]
+	repo = ~/.dotfiles
+[include]
+	path = $HOME/.gitconfig
