@@ -52,6 +52,7 @@ require('lazy').setup({
         config = true,
         ensure_installed = {
           "gopls",
+          "gofumpt"
         }
       },
       'williamboman/mason-lspconfig.nvim',
@@ -305,6 +306,15 @@ require('lazy').setup({
       },
       config = function()
         require("go").setup()
+        -- Run gofmt + goimports on save
+        local format_sync_grp = vim.api.nvim_create_augroup("goimports", {})
+        vim.api.nvim_create_autocmd("BufWritePre", {
+          pattern = "*.go",
+          callback = function()
+            require('go.format').goimports()
+          end,
+          group = format_sync_grp,
+        })
       end,
       event = { "CmdlineEnter" },
       ft = { "go", 'gomod' },
@@ -785,23 +795,12 @@ vim.keymap.set('n', '<Leader>ds', function()
   widgets.centered_float(widgets.scopes)
 end)
 
--- Run gofmt + goimport on save
-local format_sync_grp = vim.api.nvim_create_augroup("GoFormat", {})
-vim.api.nvim_create_autocmd("BufWritePre", {
-  pattern = "*.go",
-  callback = function()
-    require('go.format').goimports()
-  end,
-  group = format_sync_grp,
-})
-
 require('go').setup({
-  disable_defaults = true, -- true|false when true set false to all boolean settings and replace all table
+  disable_defaults = false, -- true|false when true set false to all boolean settings and replace all table
   -- settings with {}
   go = 'go', -- go command, can be go[default] or go1.18beta1
   fillstruct = 'gopls', -- default, can also use fillstruct
   gofmt = 'gofumpt', --gofmt cmd,
-  max_line_len = 128, -- max line length in golines format, Target maximum line length for golines
   tag_transform = false, -- can be transform option("snakecase", "camelcase", etc) check gomodifytags for details and more options
   tag_options = 'json=omitempty', -- sets options sent to gomodifytags, i.e., json=omitempty
   gotests_template = "", -- sets gotests -template parameter (check gotests for details)
@@ -906,6 +905,17 @@ require('go').setup({
   on_exit = function(code, signal, output) _, _, _ = code, signal, output end, -- callback for jobexit, output : string
   iferr_vertical_shift = 4                                                     -- defines where the cursor will end up vertically from the begining of if err statement
 })
+
+-- Run gofmt + goimports on save
+--
+--local format_sync_grp = vim.api.nvim_create_augroup("goimports", {})
+--vim.api.nvim_create_autocmd("BufWritePre", {
+--  pattern = "*.go",
+--  callback = function()
+--   require('go.format').goimports()
+--  end,
+--  group = format_sync_grp,
+--})
 
 -- nvim-cmp supports additional completion capabilities, so broadcast that to servers
 local capabilities = vim.lsp.protocol.make_client_capabilities()
