@@ -44,14 +44,13 @@ require('lazy').setup({
 
   require 'kickstart.plugins.autopairs',
 
-  require 'kickstart.plugins.neo-tree',
-
   -- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
-  --    This is the easiest way to modularize your config.
   --
-  --  Uncomment the following line and add your plugins to `lua/custom/plugins/*.lua` to get going.
   --    For additional information, see `:help lazy.nvim-lazy.nvim-structuring-your-plugins`
+  -- import all plugins and their configs
   { import = 'custom.plugins' },
+  -- import language configs
+  { import = 'lang' },
 }, {
   ui = {
     -- If you are using a Nerd Font: set icons to an empty table which will use the

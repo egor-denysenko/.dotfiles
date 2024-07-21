@@ -91,6 +91,9 @@ exec swayidle -w \
 
     # Exit sway (logs you out of your Wayland session)
     bindsym $mod+Shift+e exec swaynag -t warning -m 'You pressed the exit shortcut. Do you really want to exit sway? This will end your Wayland session.' -B 'Yes, exit sway' 'swaymsg exit'
+
+    # Exits sway and hibernates the laptop
+    bindsym $mod+Shift+i exec swaynag -t warning -m 'You pressed the hibernation shortcut. Do you really want to hibernate? This will end your Wayland session.' -B 'Yes, hibernate me' 'exec swaylock & systemctl suspend'
 #
 # Moving around:
 #
