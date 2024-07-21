@@ -6,6 +6,7 @@
 	signingkey = 9FDBB6F153497936
 [core]
 	editor = nvim
+	sparseCheckout = true
 [commit]
 	gpgsign = true
 [alias]
