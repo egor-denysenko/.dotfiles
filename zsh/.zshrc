@@ -73,29 +73,20 @@ alias air='/home/bronco/go/bin/air'
 alias pd='podman-compose'
 alias pdup='podman-compose up'
 
-alias update-goenv='cd $HOME/.goenv/plugins/go-build/../.. && git pull && cd $HOME'
-
 # Env variables export
 export SHELL="/bin/zsh"
 
 export SSH_AUTH_SOCK="$XDG_RUNTIME_DIR/ssh-agent.socket"
 
 export GPG_TTY=$(tty)
-export FLYCTL_INSTALL="/home/bronco/.fly"
 
 export GOROOT=""
 export GOPATH=$HOME/go
 export GOPROXY="https://proxy.golang.org/"
-export MAGEFILE_ENABLE_COLOR=true
 
 # PATH related exports
-export PATH="$FLYCTL_INSTALL/bin:$PATH"
 export PATH=$PATH:/usr/local/go/bin
 export PATH=$PATH:$GOPATH/bin
-
-# Should be at EOF
-eval "$(starship init zsh)"
-eval "$(goenv init -)"
 export PATH="$GOROOT/bin:$PATH"
 export PATH="$PATH:$GOPATH/bin"
 
@@ -103,11 +94,8 @@ export PATH="$PATH:$GOPATH/bin"
 export PATH="/home/bronco/.local/share/fnm:$PATH"
 eval "`fnm env`"
 
-# bun completions
-[ -s "/home/bronco/.bun/_bun" ] && source "/home/bronco/.bun/_bun"
-
 # bun
-export BUN_INSTALL="$HOME/.bun"
-export PATH="$BUN_INSTALL/bin:$PATH"
-export PATH="${PATH}:${HOME}/.slim/bin"
 autoload -U compinit; compinit
+
+# Should be at EOF
+eval "$(starship init zsh)"
