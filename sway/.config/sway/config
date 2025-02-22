@@ -33,7 +33,7 @@ set $math_menu rofi -show calc -modi calc -no-show-match -no-sort
 #
 # Default wallpaper (more resolutions are available in /usr/share/backgrounds/sway/)
 # Requires: desktop-backgrounds-compat, swaybg
-output * bg /usr/share/backgrounds/default.png fill
+output * bg $HOME/Pictures/Memento_Mori_WallPaper.png fill
 #
 # Example configuration:
 #
