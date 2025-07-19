@@ -5,7 +5,7 @@ vim.api.nvim_create_autocmd('FileType', {
     vim.opt_local.tabstop = 2
     vim.opt_local.shiftwidth = 2
     vim.opt_local.shiftwidth = 2
-    --vim.opt_local.colorcolumn = '120'
+    vim.opt_local.colorcolumn = '120'
   end,
 })
 
@@ -19,6 +19,15 @@ return {
     },
     config = function()
       require('go').setup()
+
+      local format_sync_grp = vim.api.nvim_create_augroup('goimports', {})
+      vim.api.nvim_create_autocmd('BufWritePre', {
+        pattern = '*.go',
+        callback = function()
+          require('go.format').goimports()
+        end,
+        group = format_sync_grp,
+      })
     end,
     event = { 'CmdlineEnter' },
     ft = { 'go', 'gomod' },
