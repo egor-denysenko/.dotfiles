@@ -10,8 +10,7 @@ zmodule archive        # Extract any file type with one command: 'extract <file>
 zmodule duration-info  # Measures how long a command took (e.g., '3s')
 
 # --- Prompt ---
-# Investigate why it doesn't work
-# zmodule starship # Minimalist, fast prompt
+zmodule prompt-pwd     # Formats the current working directory to be used by prompts.
 
 # --- Completion System ---
 zmodule zsh-users/zsh-completions --fpath src  # Extra completion definitions

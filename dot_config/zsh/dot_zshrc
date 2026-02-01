@@ -14,11 +14,8 @@ setopt SHARE_HISTORY        # Share history between different sessions
 # Wordchars: Treat / as a separator (useful for deleting path segments)
 WORDCHARS=${WORDCHARS//[\/]}
 
-# Keybindings (Emacs mode)
-bindkey -e
-
-# Try the vim one o.0
-# bindkey -v 
+# Keybindings (The right mode) joking just trying it out.
+bindkey -v 
 
 # -----------------
 # 3. Third-Party Tool Init
@@ -37,29 +34,6 @@ ZSH_AUTOSUGGEST_MANUAL_REBIND=1
 
 # zsh-syntax-highlighting (Only needed if NOT using fast-syntax-highlighting)
 ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets)
-
-# -----------------
-# Prompt Config (Asciiship/Spaceship)
-# -----------------
-# Show Go version if go.mod is present
-zstyle ':zim:asciiship' show-golang yes
-
-# Define what sections appear in your prompt
-SPACESHIP_PROMPT_ORDER=(
-  time          # Time stamps (optional)
-  user          # Username
-  dir           # Current directory
-  host          # Hostname
-  git           # Git status
-  golang        # <--- Added this
-  python        # <--- Added this
-  node          # <--- Added this
-  exec_time     # <--- This is your (11). Remove this line to hide it.
-  line_sep      # Line break
-  jobs          # Background jobs indicator
-  exit_code     # Exit code of last command
-  char          # The prompt character (e.g., %)
-)
 
 # -----------------
 # 5. Zim Framework Initialization
