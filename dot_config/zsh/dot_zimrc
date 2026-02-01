@@ -1,0 +1,25 @@
+# --- Core Environment ---
+zmodule environment    # Sane Zsh defaults (history size, options)
+zmodule input          # Handles backspace, delete, and home/end keys correctly
+zmodule utility        # Colorizes ls/grep and adds 'mkcd', etc.
+
+# --- Development & Tools ---
+zmodule git            # Handful of shorthand aliases (gst, gco, etc.)
+zmodule git-info       # Pulls git status data for your prompt
+zmodule archive        # Extract any file type with one command: 'extract <file>'
+zmodule duration-info  # Measures how long a command took (e.g., '3s')
+
+# --- Prompt ---
+# Investigate why it doesn't work
+# zmodule starship # Minimalist, fast prompt
+
+# --- Completion System ---
+zmodule zsh-users/zsh-completions --fpath src  # Extra completion definitions
+zmodule completion                             # Zim's smart completion engine (calls compinit)
+zmodule Aloxaf/fzf-tab                         # REPLACES the clunky tab menu with fzf!
+zmodule djui/alias-tips                        # Nudges into using aliases
+
+# --- Plugins  ---
+zmodule zsh-users/zsh-autosuggestions          # Suggests commands based on history (ghost text)
+zmodule zdharma-continuum/fast-syntax-highlighting # Highlighting (Superior to zsh-users version)
+zmodule zsh-users/zsh-history-substring-search # Type 'git', hit 'Up' to find only git commands

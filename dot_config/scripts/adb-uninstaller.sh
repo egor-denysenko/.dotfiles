@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+DEVICECOUNT=$(("$(adb devices | wc -l)" - 2))
+
+function prompt_yn() {
+    read -r -p "$1 [Y/n]" response
+    [[ ${response,,} =~ ^(yes|y| ) || -z $response ]] && return 0 || return 1
+}
+
+if [[ "$DEVICECOUNT" -eq 0 ]]; then
+    echo "No ADB devices connected."
+    exit 1
+fi
+
+if [[ "$DEVICECOUNT" -gt 1 ]]; then
+    SERIAL=$(
+        adb devices -l | sed '1d' | sed '/^ *$/d' |
+            fzf --reverse --prompt "Select device: " --height=5 |
+            cut -f 1 -d ' '
+    )
+else
+    SERIAL=$(adb devices -l | sed '1d' | sed '/^ *$/d' | cut -f 1 -d ' ')
+fi
+
+mapfile -t PACKAGES < <(
+    adb -s "$SERIAL" shell pm list packages -3 | cut -d ':' -f 2 | sort |
+        fzf --reverse --multi \
+            --preview-window right:40% \
+            --preview "echo {} | xargs -I % curl -s -o- \"https://play.google.com/store/apps/details?id=%\" |  grep -oh '<title id=\"main-title\">.*</title>'  | cut -d '>' -f 2 | cut -d '<' -f 1 | rev | cut -d '-' -f2- | rev"
+)
+
+if [[ ${#PACKAGES[@]} -gt 0 ]]; then
+    echo "Selected packages (${#PACKAGES[@]}):"
+    printf '%s\n' "${PACKAGES[@]}"
+    if prompt_yn "Confirm uninstall?"; then
+        for package in "${PACKAGES[@]}"; do
+            echo -n "$package - "
+            if ! adb -s "$SERIAL" shell pm uninstall "$package"; then
+                if prompt_yn "Uninstallation failed. Try to uninstall as the android user?"; then
+                    adb -s "$SERIAL" shell pm uninstall --user 0 "$package"
+                fi
+            fi
+        done
+    fi
+else
+    echo "No packages selected"
+fi

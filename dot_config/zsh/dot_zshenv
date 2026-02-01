@@ -1,0 +1,17 @@
+export ZDOTDIR=$HOME/.config/zsh
+export EDITOR="nvim"
+
+export SHELL="/bin/zsh"
+
+export SSH_AUTH_SOCK="$XDG_RUNTIME_DIR/ssh-agent.socket"
+
+export GPG_TTY=$(tty)
+
+export GOROOT=""
+export GOPATH=$HOME/go
+export GOPROXY="https://proxy.golang.org/"
+
+export PATH=$PATH:/usr/local/go/bin
+export PATH=$PATH:$GOPATH/bin
+export PATH="$GOROOT/bin:$PATH"
+export PATH="/home/bronco/.local/share/fnm:$PATH"

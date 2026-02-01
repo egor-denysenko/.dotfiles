@@ -1,0 +1,198 @@
+"$schema" = 'https://starship.rs/config-schema.json'
+
+# ------------------------------------------------------------------------------
+# GLOBAL SETTINGS
+# ------------------------------------------------------------------------------
+
+# Drop a blank line between shell prompts for readability
+add_newline = true
+
+# Timeout for commands (in ms). If git takes >1s, it will show a timeout symbol
+# instead of hanging your shell.
+command_timeout = 1000
+
+# ------------------------------------------------------------------------------
+# LAYOUT / FORMAT
+# ------------------------------------------------------------------------------
+
+# This defines EXACTLY what appears and in what order.
+# I've set this up to mimic your minimal style but with the language versions you wanted.
+format = """
+$directory\
+$git_branch\
+$git_status\
+$golang\
+$nodejs\
+$python\
+$rust\
+$docker_context\
+$gcloud\
+$line_break\
+$character"""
+
+# ------------------------------------------------------------------------------
+# MODULE CONFIGURATION
+# ------------------------------------------------------------------------------
+
+[directory]
+style = "blue bold"
+read_only = " 󰌾"
+# Shorten long paths (e.g., ~/.config/zsh/completions -> ~/..z/completions)
+truncation_length = 3
+truncation_symbol = "../"
+
+[character]
+success_symbol = '[➜](bold green)'
+error_symbol = '[➜](bold red)'
+vimcmd_symbol = '[❮](bold green)' 
+
+[git_branch]
+symbol = " "
+style = "purple bold"
+
+[git_status]
+style = "red bold"
+# Only show status symbols, don't show the count (less noise)
+format = '[$all_status$ahead_behind]($style) '
+
+# --- Languages (The versions you wanted!) ---
+
+[golang]
+symbol = " "
+style = "cyan bold"
+format = "[$symbol($version )]($style)"
+
+[nodejs]
+symbol = " "
+style = "green bold"
+format = "[$symbol($version )]($style)"
+
+[python]
+symbol = " "
+style = "yellow bold"
+# "via" shows the venv name if active. remove '$virtualenv' if you don't want it.
+format = '[${symbol}${pyenv_prefix}(${version} )(\($virtualenv\) )]($style)'
+
+[rust]
+symbol = " "
+style = "red bold"
+
+[docker_context]
+symbol = " "
+style = "blue dimmed"
+format = "[$symbol$context]($style) "
+
+[gcloud]
+symbol = "󱇶 "
+style = "blue bold"
+format = 'on [$symbol$active]($style) '
+disabled = true # Enable this if you work with GCloud often
+
+# ------------------------------------------------------------------------------
+# SYMBOLS (Nerd Fonts)
+# ------------------------------------------------------------------------------
+# Kept your requested symbols, but moved to bottom to keep config readable.
+
+[aws]
+symbol = "󰸏 "
+
+[azure]
+symbol = "󰠅 "
+
+[buf]
+symbol = " "
+
+[c]
+symbol = " "
+
+[conda]
+symbol = " "
+
+[dart]
+symbol = " "
+
+[elixir]
+symbol = " "
+
+[haxe]
+symbol = " "
+
+[hg_branch]
+symbol = " "
+
+[hostname]
+ssh_symbol = " "
+
+[java]
+symbol = " "
+
+[julia]
+symbol = " "
+
+[lua]
+symbol = " "
+
+[memory_usage]
+symbol = "󰍛 "
+
+[meson]
+symbol = "󰔷 "
+
+[nim]
+symbol = "󰆥 "
+
+[nix_shell]
+symbol = " "
+
+[os.symbols]
+Alpaquita = " "
+Alpine = " "
+Amazon = " "
+Android = " "
+Arch = " "
+Artix = " "
+CentOS = " "
+Debian = " "
+DragonFly = " "
+Emscripten = " "
+EndeavourOS = " "
+Fedora = " "
+FreeBSD = " "
+Garuda = "󰛓 "
+Gentoo = " "
+HardenedBSD = "󰞌 "
+Illumos = "󰈸 "
+Linux = " "
+Mabox = " "
+Macos = " "
+Manjaro = " "
+Mariner = " "
+MidnightBSD = " "
+Mint = " "
+NetBSD = " "
+NixOS = " "
+OpenBSD = "󰈺 "
+openSUSE = " "
+OracleLinux = "󰌷 "
+Pop = " "
+Raspbian = " "
+Redhat = " "
+RedHatEnterprise = " "
+Redox = "󰀘 "
+Solus = "󰠳 "
+SUSE = " "
+Ubuntu = " "
+Unknown = " "
+Windows = "󰍲 "
+
+[package]
+symbol = "󰏗 "
+
+[rlang]
+symbol = "󰟔 "
+
+[ruby]
+symbol = " "
+
+[scala]
+symbol = " "
