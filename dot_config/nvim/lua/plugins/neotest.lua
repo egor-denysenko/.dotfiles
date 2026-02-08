@@ -1,4 +1,7 @@
-return {
+return {}
+
+--[[
+	return {
   {
     'nvim-neotest/neotest',
     event = 'VeryLazy',
@@ -10,14 +13,14 @@ return {
 
       'nvim-neotest/neotest-plenary',
       'nvim-neotest/neotest-vim-test',
+      'fredrikaverpil/neotest-golang',
 
       {
         'echasnovski/mini.indentscope',
         opts = function()
           -- disable indentation scope for the neotest-summary buffer
-          vim.cmd [[
-        autocmd Filetype neotest-summary lua vim.b.miniindentscope_disable = true
-      ]]
+          vim.cmd [[autocmd Filetype neotest-summary lua vim.b.miniindentscope_disable = true ]]
+--[[
         end,
       },
     },
@@ -36,7 +39,11 @@ return {
         -- Enable/disable animation of icons
         animated = false,
       },
+      adapters = {
+        require 'neotest-golang',
+      },
     },
-    keys = require('config.keymaps.neotest').setup_neotest_keymaps(),
+    keys = require('keymaps.neotest').setup_neotest_keymaps(),
   },
-}
+} 
+	]]

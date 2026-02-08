@@ -34,39 +34,6 @@ return {
     build = ':lua require("go.install").update_all_sync()', -- if you need to install/update all binaries
   },
   {
-    'nvim-neotest/neotest',
-    ft = { 'go' },
-    dependencies = {
-      'nvim-neotest/nvim-nio',
-      'nvim-lua/plenary.nvim',
-      'antoinemadec/FixCursorHold.nvim',
-      'nvim-treesitter/nvim-treesitter',
-      'fredrikaverpil/neotest-golang',
-    },
-    config = function()
-      require('neotest').setup {
-        adapters = {
-          require 'neotest-golang', -- Registration
-        },
-      }
-    end,
-    opts = function(_, opts)
-      opts.adapters = opts.adapters or {}
-      opts.adapters['neotest-golang'] = {
-        dev_notifications = true,
-        go_test_args = {
-          '-v',
-          '-count=1',
-          '-race',
-          '-parallel=1',
-          '-p=2',
-          '-coverprofile=' .. vim.fn.getcwd() .. '/coverage.out',
-        },
-        dap_go_enabled = true,
-      }
-    end,
-  },
-  {
     'andythigpen/nvim-coverage',
     ft = { 'go' },
     dependencies = { 'nvim-lua/plenary.nvim' },

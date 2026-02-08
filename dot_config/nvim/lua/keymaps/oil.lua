@@ -1,4 +1,4 @@
-M = {}
+local M = {}
 
 function M.setup_oil_keymaps()
   -- Keymaps in oil buffer. Can be any value that `vim.keymap.set` accepts OR a table of keymap
@@ -25,6 +25,10 @@ function M.setup_oil_keymaps()
     ['g.'] = { 'actions.toggle_hidden', mode = 'n' },
     ['g\\'] = { 'actions.toggle_trash', mode = 'n' },
   }
+end
+
+function M.toggle_float()
+  require('oil').toggle_float()
 end
 
 return M

@@ -1,4 +1,6 @@
-M = {}
+return {}
+
+local M = {}
 
 function M.setup_neotest_keymaps()
   return {
