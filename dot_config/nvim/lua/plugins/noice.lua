@@ -39,7 +39,7 @@ return {
               col = '50%',
             },
             size = {
-              width = 60,
+              width = 50,
               height = 'auto',
             },
             border = {

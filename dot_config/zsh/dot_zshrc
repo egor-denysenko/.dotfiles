@@ -58,3 +58,6 @@ source ${ZIM_HOME}/init.zsh
 if command -v starship &> /dev/null; then
   eval "$(starship init zsh)"
 fi
+
+# opencode
+export PATH=/home/bronco/.opencode/bin:$PATH

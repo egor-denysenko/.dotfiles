@@ -28,5 +28,15 @@ config.default_prog = { "/usr/bin/zsh" }
 -- })
 -- config.font_size = 11.0
 
+-- Work with it later cause i want the image to be slightly visible and text as the mostimportant thing in there as a terminal should be.
+-- config.background = {
+-- 	{
+-- 		source = {
+-- 			File = "/home/bronco/Downloads/test.png",
+-- 		},
+-- 		opacity = 1.0,
+-- 	},
+-- }
+
 -- and finally, return the configuration to wezterm
 return config
