@@ -1,0 +1,33 @@
+# Chezmoi Exclude Patterns
+# Files that should NOT be tracked in the dotfiles repo
+
+# Neovim
+**/lazy-lock.json
+**/lazyvim.json
+**/*.png
+**/*.jpg
+**/*.jpeg
+**/test.*
+
+# Zsh
+**/dot_zcompdump*
+**/.zcompdump*
+**/*.zwc
+**/private_dot_zhistory
+**/private_dot_zsh_history
+
+# Zim framework (let it install itself)
+**/dot_zim/
+
+# Build artifacts
+**/*.o
+**/*.so
+**/*.a
+
+# IDE
+**/.idea/
+**/.vscode/
+
+# OS-specific
+**/.DS_Store
+**/Thumbs.db

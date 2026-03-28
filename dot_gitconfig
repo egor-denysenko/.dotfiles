@@ -3,7 +3,7 @@
 [user]
 	email = 75579636+egor-denysenko@users.noreply.github.com
 	name = egor-denysenko
-	signingkey = 489905A49A740D0F
+	signingkey = 2A132DB1C8C3D189
 [core]
 	editor = nvim
 	sparseCheckout = true

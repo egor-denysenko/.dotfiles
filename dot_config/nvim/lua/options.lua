@@ -1,6 +1,9 @@
 -- [[ Setting options ]]
 -- See `:help vim.opt` || `:help option-list`
 
+-- Enable the new Lua module loader (Neovim 0.9+) - significantly speeds up require()
+vim.loader.enable()
+
 vim.opt.number = true
 
 vim.opt.relativenumber = true
