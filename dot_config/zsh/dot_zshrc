@@ -59,5 +59,8 @@ if command -v starship &> /dev/null; then
   eval "$(starship init zsh)"
 fi
 
+# local bin
+export PATH="$HOME/.local/bin:$PATH"
+
 # opencode
 export PATH=/home/bronco/.opencode/bin:$PATH
