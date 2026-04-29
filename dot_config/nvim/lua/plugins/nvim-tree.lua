@@ -49,11 +49,6 @@ return {
           update_root = true,
           ignore_list = {},
         },
-        -- System integration
-        system_open = {
-          cmd = nil,
-          args = {},
-        },
         -- Diagnostics
         diagnostics = {
           enable = false, -- Disable diagnostics to prevent sign errors
@@ -87,10 +82,29 @@ return {
       -- Auto-open on VimEnter
       vim.api.nvim_create_autocmd('VimEnter', { callback = open_nvim_tree })
 
-      -- Auto-close on quit
+      -- Auto-close NvimTree when it's the last remaining window.
+      -- NOTE: We cannot call NvimTreeClose or nvim_win_close on the tree window
+      -- inside QuitPre because NvimTree's internal WinClosed/BufUnload handlers
+      -- cause a hang in that context. Instead, we bypass all autocmds with
+      -- `noautocmd qall!` to cleanly exit.
       vim.api.nvim_create_autocmd('QuitPre', {
         callback = function()
-          vim.cmd 'NvimTreeClose'
+          local wins = vim.api.nvim_list_wins()
+          local tree_wins = 0
+          local floating_wins = 0
+          for _, w in ipairs(wins) do
+            local bufname = vim.api.nvim_buf_get_name(vim.api.nvim_win_get_buf(w))
+            if bufname:match 'NvimTree_' then
+              tree_wins = tree_wins + 1
+            end
+            if vim.api.nvim_win_get_config(w).relative ~= '' then
+              floating_wins = floating_wins + 1
+            end
+          end
+          -- If tree is open and only 0-1 real windows remain, quit everything
+          if tree_wins > 0 and (#wins - floating_wins - tree_wins) <= 1 then
+            pcall(vim.cmd, 'noautocmd qall!')
+          end
         end,
       })
     end,

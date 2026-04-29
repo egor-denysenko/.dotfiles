@@ -1,9 +1,15 @@
 [init]
 	defaultBranch = main
+{{ if eq .machine "personal" -}}
 [user]
 	email = 75579636+egor-denysenko@users.noreply.github.com
 	name = egor-denysenko
 	signingkey = 2A132DB1C8C3D189
+{{ else }}
+	email = 
+	name = 
+	signingkey = 
+{{ end }}
 [core]
 	editor = nvim
 	sparseCheckout = true

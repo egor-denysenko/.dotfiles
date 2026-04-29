@@ -24,16 +24,11 @@ return {
         -- },
       }
 
-      local capabilities = nil
-      if pcall(require, 'cmp_nvim_lsp') then
-        capabilities = require('cmp_nvim_lsp').default_capabilities()
-      end
-
-      local lspconfig = require 'lspconfig'
-
       vim.api.nvim_create_autocmd('LspAttach', {
         group = vim.api.nvim_create_augroup('kickstart-lsp-attach', { clear = true }),
         callback = function(event)
+          local client = vim.lsp.get_client_by_id(event.data.client_id)
+
           -- NOTE: Remember that Lua is a real programming language, and as such it is possible
           -- to define small helper and utility functions so you don't have to repeat yourself.
           --
@@ -89,7 +84,6 @@ return {
           --    See `:help CursorHold` for information about when this is executed
           --
           -- When you move your cursor, the highlights will be cleared (the second autocommand).
-          --local client = vim.lsp.get_client_by_id(event.data.client_id)
           --if client and client.server_capabilities.documentHighlightProvider then
           --  local highlight_augroup = vim.api.nvim_create_augroup('kickstart-lsp-highlight', { clear = false })
           --  vim.api.nvim_create_autocmd({ 'CursorHold', 'CursorHoldI' }, {
@@ -118,8 +112,13 @@ return {
           --
           -- This may be unwanted, since they displace some of your code
           if client and client.server_capabilities.inlayHintProvider and vim.lsp.inlay_hint then
+            if vim.bo[event.buf].filetype == 'python' then
+              vim.lsp.inlay_hint.enable(true, { bufnr = event.buf })
+            end
+
             map('<leader>th', function()
-              vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled())
+              local bufnr = event.buf
+              vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled { bufnr = bufnr }, { bufnr = bufnr })
             end, '[T]oggle Inlay [H]ints')
           end
         end,
@@ -174,6 +173,21 @@ return {
       -- See `:help lspconfig-all` for a list of all the pre-configured LSPs
       local servers = {
         bashls = true,
+        pyrefly = {
+          settings = {
+            python = {
+              pyrefly = {
+                displayTypeErrors = 'force-on',
+              },
+              analysis = {
+                inlayHints = {
+                  variableTypes = true,
+                  functionReturnTypes = true,
+                },
+              },
+            },
+          },
+        },
         gopls = {
           settings = {
             gopls = {

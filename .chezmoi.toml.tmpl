@@ -1,0 +1,9 @@
+{{- $machine := "" -}}
+{{- if hasKey . "machine" -}}
+{{-   $machine = .machine -}}
+{{- else -}}
+{{-   $machine = promptString "machine type (personal/work)" -}}
+{{- end -}}
+
+[data]
+machine = {{ $machine | quote }}
