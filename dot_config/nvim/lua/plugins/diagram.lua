@@ -1,3 +1,7 @@
+local uv = vim.uv or vim.loop
+local system_name = uv.os_uname().sysname
+local in_zellij = vim.env.ZELLIJ ~= nil or vim.env.ZELLIJ_SESSION_NAME ~= nil
+
 return {
   {
     '3rd/image.nvim',
@@ -6,12 +10,16 @@ return {
     opts = function()
       return {
         backend = 'kitty',
+        -- Zellij is more reliable with kitty unicode placeholders than normal placements.
+        kitty_method = in_zellij and 'unicode-placeholders' or 'normal',
         processor = 'magick_cli',
         -- Support all image formats
         content_types = { 'png', 'jpg', 'jpeg', 'gif', 'webp' },
-        -- Smaller images for WezTerm
+        -- Keep images responsive to the current window size.
         max_width = 500,
         max_height = 250,
+        max_width_window_percentage = 100,
+        max_height_window_percentage = 80,
         -- Render images automatically (not just at cursor)
         integrations = {
           markdown = {
@@ -42,6 +50,7 @@ return {
       renderer_options = {
         mermaid = {
           theme = 'dark',
+          width_pct = 90,
         },
       },
       image_options = {
@@ -52,11 +61,82 @@ return {
     config = function(_, opts)
       local mermaid = require('diagram.renderers').mermaid
       local cache_dir = vim.fn.resolve(vim.fn.stdpath('cache') .. '/diagram-cache/' .. mermaid.id)
+      local open_cmd = system_name == 'Darwin' and 'open' or 'xdg-open'
+      local mmdc_install_hint = 'Install with: npm install -g @mermaid-js/mermaid-cli or bun install -g @mermaid-js/mermaid-cli'
+      local resolved_mmdc_command = nil
       vim.fn.mkdir(cache_dir, 'p')
 
-      if vim.fn.executable('mmdc') ~= 1 then
+      local get_responsive_mermaid_width = function(options)
+        if options.width then
+          return options.width
+        end
+
+        local width_pct = options.width_pct
+        if type(width_pct) ~= 'number' then
+          return nil
+        end
+
+        local ok, term_size = pcall(function()
+          return require('image/utils').term.get_size()
+        end)
+        if not ok or not term_size or not term_size.cell_width then
+          return nil
+        end
+
+        local win = vim.api.nvim_get_current_win()
+        if not vim.api.nvim_win_is_valid(win) then
+          return nil
+        end
+
+        return math.max(1, math.floor(vim.api.nvim_win_get_width(win) * term_size.cell_width * width_pct / 100))
+      end
+
+      local open_externally = function(path)
+        if vim.fn.executable(open_cmd) ~= 1 then
+          vim.notify('External opener not found: ' .. open_cmd, vim.log.levels.ERROR, { title = 'diagram.nvim' })
+          return false
+        end
+
+        local job_id = vim.fn.jobstart({ open_cmd, path }, { detach = true })
+        if job_id <= 0 then
+          vim.notify('Failed to start external opener: ' .. open_cmd, vim.log.levels.ERROR, { title = 'diagram.nvim' })
+          return false
+        end
+
+        return true
+      end
+
+      local resolve_mmdc_command = function()
+        if resolved_mmdc_command and vim.fn.executable(resolved_mmdc_command) == 1 then
+          return resolved_mmdc_command
+        end
+
+        local path_mmdc = vim.fn.exepath('mmdc')
+        if path_mmdc ~= '' then
+          resolved_mmdc_command = path_mmdc
+          return resolved_mmdc_command
+        end
+
+        if vim.fn.executable('npm') == 1 then
+          local prefix_lines = vim.fn.systemlist({ 'npm', 'prefix', '-g' })
+          if vim.v.shell_error == 0 and prefix_lines[1] then
+            local prefix = vim.trim(prefix_lines[1])
+            if prefix ~= '' then
+              local candidate = vim.fn.resolve(prefix .. '/bin/mmdc')
+              if vim.fn.executable(candidate) == 1 then
+                resolved_mmdc_command = candidate
+                return resolved_mmdc_command
+              end
+            end
+          end
+        end
+
+        return nil
+      end
+
+      if not resolve_mmdc_command() then
         vim.notify_once(
-          'mmdc not found. Install with: bun install -g @mermaid-js/mermaid-cli',
+          'mmdc not found. ' .. mmdc_install_hint,
           vim.log.levels.WARN,
           { title = 'diagram.nvim' }
         )
@@ -64,18 +144,30 @@ return {
 
       mermaid.render = function(source, options)
         options = options or {}
+        local resolved_width = get_responsive_mermaid_width(options)
+        local cache_key = table.concat({
+          mermaid.id,
+          source,
+          options.background or '',
+          options.theme or '',
+          tostring(options.scale or ''),
+          tostring(resolved_width or ''),
+          tostring(options.height or ''),
+          options.cli_args and table.concat(options.cli_args, '\n') or '',
+        }, '\n')
 
-        local hash = vim.fn.sha256(mermaid.id .. ':' .. source)
+        local hash = vim.fn.sha256(cache_key)
         local path = vim.fn.resolve(cache_dir .. '/' .. hash .. '.png')
         if vim.fn.filereadable(path) == 1 then
           return { file_path = path }
         end
 
-        if vim.fn.executable('mmdc') ~= 1 then
-          vim.notify('mmdc not found. Install with: bun install -g @mermaid-js/mermaid-cli', vim.log.levels.ERROR, { title = 'diagram.nvim' })
+        local mmdc_command = resolve_mmdc_command()
+        if not mmdc_command then
+          vim.notify('mmdc not found. ' .. mmdc_install_hint, vim.log.levels.ERROR, { title = 'diagram.nvim' })
           return nil
         end
-        local command = { 'mmdc' }
+        local command = { mmdc_command }
 
         local tmpsource = vim.fn.tempname()
         vim.fn.writefile(vim.split(source, '\n'), tmpsource)
@@ -95,8 +187,8 @@ return {
         if options.scale then
           vim.list_extend(command, { '-s', tostring(options.scale) })
         end
-        if options.width then
-          vim.list_extend(command, { '--width', tostring(options.width) })
+        if resolved_width then
+          vim.list_extend(command, { '--width', tostring(resolved_width) })
         end
         if options.height then
           vim.list_extend(command, { '--height', tostring(options.height) })
@@ -165,15 +257,19 @@ return {
 
       vim.api.nvim_create_user_command('DiagramCheck', function()
         local image_ok = pcall(function() return require('image') end)
+        local mmdc_command = resolve_mmdc_command()
         local info = {
           '=== Diagram.nvim Debug Info ===',
-          'mmdc executable: ' .. (vim.fn.executable('mmdc') == 1 and 'YES' or 'NO'),
+          'mmdc executable: ' .. (mmdc_command and 'YES' or 'NO'),
+          'mmdc command: ' .. (mmdc_command or 'not found'),
           'image.nvim loaded: ' .. (image_ok and 'YES' or 'NO'),
           'TERM: ' .. (vim.env.TERM or 'not set'),
           'TERM_PROGRAM: ' .. (vim.env.TERM_PROGRAM or 'not set'),
           'WEZTERM_UNIX_SOCKET: ' .. (vim.env.WEZTERM_UNIX_SOCKET or 'not set'),
           'TMUX: ' .. (vim.env.TMUX ~= nil and 'YES' or 'NO'),
+          'ZELLIJ: ' .. (in_zellij and 'YES' or 'NO'),
           'KITTY_WINDOW_ID: ' .. (vim.env.KITTY_WINDOW_ID or 'not set'),
+          'open command: ' .. open_cmd,
           'PATH: ' .. vim.env.PATH,
           'cache_dir: ' .. cache_dir,
           'cache_dir exists: ' .. (vim.fn.isdirectory(cache_dir) == 1 and 'YES' or 'NO'),
@@ -205,8 +301,9 @@ return {
           return
         end
         local latest = files[#files]
-        vim.fn.jobstart({ 'xdg-open', latest }, { detach = true })
-        print('Opened: ' .. latest)
+        if open_externally(latest) then
+          print('Opened: ' .. latest)
+        end
       end, { desc = 'Open latest cached diagram image' })
 
       -- Wrap hover to catch errors and fall back gracefully
@@ -220,8 +317,9 @@ return {
             local cache_files = vim.fn.glob(cache_dir .. '/*.png', false, true)
             if #cache_files > 0 then
               local latest = cache_files[#cache_files]
-              vim.fn.jobstart({ 'xdg-open', latest }, { detach = true })
-              vim.notify('Opened diagram in external viewer: ' .. latest, vim.log.levels.INFO, { title = 'diagram.nvim' })
+              if open_externally(latest) then
+                vim.notify('Opened diagram in external viewer: ' .. latest, vim.log.levels.INFO, { title = 'diagram.nvim' })
+              end
             else
               vim.notify('No cached diagram. Use <leader>dr to render first.', vim.log.levels.WARN, { title = 'diagram.nvim' })
             end

@@ -15,3 +15,7 @@ export PATH=$PATH:/usr/local/go/bin
 export PATH=$PATH:$GOPATH/bin
 export PATH="$GOROOT/bin:$PATH"
 export PATH="/home/bronco/.local/share/fnm:$PATH"
+
+if [[ -d "$HOME/.bun/bin" && ":$PATH:" != *":$HOME/.bun/bin:"* ]]; then
+  export PATH="$HOME/.bun/bin:$PATH"
+fi

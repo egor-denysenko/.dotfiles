@@ -17,23 +17,30 @@ return {
   { -- Useful plugin to show you pending keybinds.
     'folke/which-key.nvim',
     event = 'VimEnter', -- Sets the loading event to 'VimEnter'
+    keys = {
+      {
+        '<leader>?',
+        function()
+          require('which-key').show { global = false }
+        end,
+        desc = 'Buffer Local Keymaps (which-key)',
+      },
+    },
     config = function() -- This is the function that runs, AFTER loading
       local wk = require 'which-key'
 
       -- Document existing selection groups
       wk.add {
-        { '<leader>s', desc = '', group = '[S]earch' },
         { '<leader>c', desc = '', group = '[C]ode' },
         { '<leader>d', desc = '', group = '[D]ocument' },
         { '<leader>dr', desc = '[D]ocument [D]iagram [R]ender' },
         { '<leader>dh', desc = '[D]ocument [D]iagram [H]over' },
         { '<leader>dc', desc = '[D]ocument [D]iagram [C]lear' },
+        { '<leader>h', desc = '', group = 'Git [H]unk' },
         { '<leader>r', desc = '', group = '[R]ename' },
         { '<leader>s', desc = '', group = '[S]earch' },
         { '<leader>w', desc = '', group = '[W]orkspace' },
-        { '<leader>t', desc = '', group = '[t]esting' },
-        { '<leader>T', desc = '', group = '[T]oggle' },
-        { '<leader>h', desc = '', group = 'Git [H]unk' },
+        { '<leader>t', desc = '', group = '[T]oggle' },
       }
 
       -- visual mode command selection

@@ -28,3 +28,7 @@
 [".config/starship"]
     source = "dot_config/starship"
     destination = "~/.config/starship"
+
+[".config/opencode"]
+    source = "dot_config/opencode"
+    destination = "~/.config/opencode"
