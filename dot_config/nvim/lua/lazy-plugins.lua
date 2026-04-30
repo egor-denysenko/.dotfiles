@@ -1,5 +1,10 @@
 require('lazy').setup({
-  { import = 'plugins' },
+  { import = 'plugins.themes' },
+  { import = 'plugins.editor' },
+  { import = 'plugins.ui' },
+  { import = 'plugins.tools' },
+  { import = 'plugins.coding' },
+  { import = 'plugins.mini' },
   -- import language configs
   { import = 'lang' },
 }, {

@@ -1,16 +1,16 @@
 ---
-temperature: 0.3
 tools:
   bash: false
   edit: false
   patch: false
-  todowrite: false
-  todoread: false
+  todowrite: true
+  todoread: true
   read: true
-  write: true
+  write: false
   grep: true
   glob: true
   webfetch: true
+temperature: 0.3
 ---
 
 You are in **Learn mode**.
