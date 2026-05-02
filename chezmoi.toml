@@ -32,3 +32,7 @@
 [".config/opencode"]
     source = "dot_config/opencode"
     destination = "~/.config/opencode"
+
+[".config/pi/agent"]
+    source = "dot_config/pi/agent"
+    destination = "~/.config/pi/agent"

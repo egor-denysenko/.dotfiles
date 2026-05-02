@@ -31,3 +31,9 @@
 # OS-specific
 **/.DS_Store
 **/Thumbs.db
+
+# Pi coding agent — secrets (never track API keys)
+**/auth.json
+
+# Pi coding agent — sessions are dynamic data tied to working dirs
+**/sessions/

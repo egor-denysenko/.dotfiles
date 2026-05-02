@@ -7,6 +7,8 @@ export SSH_AUTH_SOCK="$XDG_RUNTIME_DIR/ssh-agent.socket"
 
 export GPG_TTY=$(tty)
 
+export PI_CODING_AGENT_DIR=$HOME/.config/pi/agent
+
 export GOROOT=""
 export GOPATH=$HOME/go
 export GOPROXY="https://proxy.golang.org/"
