@@ -1,5 +1,7 @@
 {
+  "enableInstallTelemetry": false,
   "defaultProvider": "opencode-go",
   "defaultModel": "deepseek-v4-flash",
-  "defaultThinkingLevel": "medium"
+  "defaultThinkingLevel": "medium",
+  "shellCommandPrefix": "shopt -s expand_aliases\n[ -f ~/.config/zsh/aliases.zsh ] && source ~/.config/zsh/aliases.zsh"
 }

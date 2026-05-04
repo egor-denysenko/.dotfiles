@@ -21,22 +21,11 @@ config.enable_tab_bar = false
 -- Spawn a zsh on wezterm start
 config.default_prog = { "/usr/bin/zsh" }
 
--- Set DepartureMono as terminal default font
--- config.font = wezterm.font("DepartureMono-Regular", {
--- 	weight = "Regular",
--- 	italic = true,
--- })
--- config.font_size = 11.0
-
--- Work with it later cause i want the image to be slightly visible and text as the mostimportant thing in there as a terminal should be.
--- config.background = {
--- 	{
--- 		source = {
--- 			File = "/home/bronco/Downloads/test.png",
--- 		},
--- 		opacity = 1.0,
--- 	},
--- }
+-- Font and background customization are left as an exercise for the reader.
+-- Uncomment and tweak when you're ready to dial in the look:
+--   config.font = wezterm.font("DepartureMono-Regular", { weight = "Regular", italic = true })
+--   config.font_size = 11.0
+--   config.background = { { source = { File = "/path/to/image.png" }, opacity = 1.0 } }
 
 -- and finally, return the configuration to wezterm
 return config

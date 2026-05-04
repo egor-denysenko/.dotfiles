@@ -287,7 +287,8 @@ return {
 
       -- Command to manually clear all diagram images
       vim.api.nvim_create_user_command('DiagramClear', function()
-        if image_ok then
+        local ok = pcall(function() return require('image') end)
+        if ok then
           require('image').clear()
           print('Cleared all images')
         end

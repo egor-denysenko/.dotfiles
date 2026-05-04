@@ -26,7 +26,6 @@ $nodejs\
 $python\
 $rust\
 $docker_context\
-$gcloud\
 $line_break\
 $character"""
 
