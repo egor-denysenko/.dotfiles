@@ -2,8 +2,16 @@
 {{- if hasKey . "machine" -}}
 {{-   $machine = .machine -}}
 {{- else -}}
-{{-   $machine = promptString "machine type (personal/work)" -}}
+{{-   $machine = promptStringOnce . "machine" "machine type (personal/work)" -}}
+{{- end -}}
+
+{{- $theme := "" -}}
+{{- if hasKey . "theme" -}}
+{{-   $theme = .theme -}}
+{{- else -}}
+{{-   $theme = promptStringOnce . "theme" "theme (dark/light)" "dark" -}}
 {{- end -}}
 
 [data]
 machine = {{ $machine | quote }}
+theme = {{ $theme | quote }}

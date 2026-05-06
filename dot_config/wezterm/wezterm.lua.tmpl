@@ -12,8 +12,26 @@ end
 
 -- This is where you actually apply your config choices
 
--- For example, changing the color scheme:
-config.color_scheme = "Liquid Carbon Transparent (Gogh)"
+config.color_scheme_dirs = { os.getenv("HOME") .. "/.config/wezterm/colors" }
+
+{{- $theme := "dark" -}}
+{{- if hasKey . "theme" -}}
+{{-   $theme = .theme -}}
+{{- end -}}
+{{- if eq $theme "dark" }}
+config.color_scheme = "Warm Burnout Dark"
+{{- else if eq $theme "light" }}
+config.color_scheme = "Warm Burnout Light"
+{{- else }}
+local function scheme_for_appearance(appearance)
+	if appearance:find("Light") then
+		return "Warm Burnout Light"
+	end
+
+	return "Warm Burnout Dark"
+end
+config.color_scheme = scheme_for_appearance(wezterm.gui.get_appearance())
+{{- end }}
 
 -- Remove tab bar in order to gain more space
 config.enable_tab_bar = false

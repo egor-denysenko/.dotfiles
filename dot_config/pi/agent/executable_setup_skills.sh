@@ -23,6 +23,7 @@ SKILLS=(
   triage
   write-a-skill
   zoom-out
+  plan-first
 )
 
 for skill in "${SKILLS[@]}"; do

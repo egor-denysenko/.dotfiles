@@ -1,0 +1,24 @@
+# Warm Burnout -- Ghostty config
+# Theme files live in ~/.config/ghostty/themes
+
+theme = dark:warm-burnout-dark,light:warm-burnout-light
+
+font-family = "JetBrains Mono"
+font-size = 13
+bold-is-bright = true
+
+cursor-style = block
+cursor-underline-thickness = 2px
+
+scrollbar = false
+
+window-padding-width = 10
+window-padding-height = 10
+
+tab-bar = "off"
+
+background-opacity = 1.0
+
+keybind = "ctrl+shift+plus=font_size_incr"
+keybind = "ctrl+shift+minus=font_size_decr"
+keybind = "ctrl+shift+0=font_size_reset"

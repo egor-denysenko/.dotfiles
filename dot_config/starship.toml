@@ -1,0 +1,201 @@
+"$schema" = 'https://starship.rs/config-schema.json'
+
+add_newline = true
+command_timeout = 1000
+
+# Warm Burnout ANSI config with your existing runtime modules preserved.
+format = """
+$username\
+$hostname\
+$directory\
+$git_branch\
+$git_state\
+$git_status\
+$golang\
+$nodejs\
+$python\
+$rust\
+$docker_context\
+$cmd_duration\
+$line_break\
+$character"""
+
+[username]
+style_user = "bright-black"
+style_root = "red"
+format = "[$user]($style)"
+show_always = false
+
+[hostname]
+ssh_only = true
+trim_at = "."
+style = "bright-black"
+format = "[@$hostname]($style) "
+ssh_symbol = " "
+
+[directory]
+truncation_length = 3
+truncation_symbol = "../"
+style = "bold bright-yellow"
+read_only = " 󰌾"
+
+[character]
+success_symbol = "[❯](yellow)"
+error_symbol = "[❯](red)"
+vimcmd_symbol = "[❮](green)"
+
+[git_branch]
+format = "[$symbol$branch]($style) "
+symbol = " "
+style = "green"
+
+[git_status]
+format = "[[(*$conflicted$untracked$modified$staged$renamed$deleted)](red) ($ahead_behind$stashed)]($style) "
+style = "blue"
+conflicted = "\u200b"
+untracked = "\u200b"
+modified = "\u200b"
+staged = "\u200b"
+renamed = "\u200b"
+deleted = "\u200b"
+stashed = "≡"
+
+[git_state]
+format = '\([$state( $progress_current/$progress_total)]($style)\) '
+style = "bright-black"
+
+[golang]
+symbol = " "
+style = "cyan"
+format = "[$symbol($version )]($style) "
+
+[nodejs]
+symbol = " "
+style = "green"
+format = "[$symbol($version )]($style) "
+
+[python]
+symbol = " "
+style = "yellow"
+format = '[${symbol}${pyenv_prefix}(${version} )(\($virtualenv\) )]($style) '
+
+[rust]
+symbol = " "
+style = "red"
+format = "[$symbol($version )]($style) "
+
+[docker_context]
+symbol = " "
+style = "blue dimmed"
+format = "[$symbol$context]($style) "
+
+[cmd_duration]
+format = "[$duration]($style) "
+style = "bright-black"
+
+[gcloud]
+symbol = "󱇶 "
+style = "blue"
+format = 'on [$symbol$active]($style) '
+disabled = true
+
+[aws]
+symbol = "󰸏 "
+
+[azure]
+symbol = "󰠅 "
+
+[buf]
+symbol = " "
+
+[c]
+symbol = " "
+
+[conda]
+symbol = " "
+
+[dart]
+symbol = " "
+
+[elixir]
+symbol = " "
+
+[haxe]
+symbol = " "
+
+[hg_branch]
+symbol = " "
+
+[java]
+symbol = " "
+
+[julia]
+symbol = " "
+
+[lua]
+symbol = " "
+
+[memory_usage]
+symbol = "󰍛 "
+
+[meson]
+symbol = "󰔷 "
+
+[nim]
+symbol = "󰆥 "
+
+[nix_shell]
+symbol = " "
+
+[os.symbols]
+Alpaquita = " "
+Alpine = " "
+Amazon = " "
+Android = " "
+Arch = " "
+Artix = " "
+CentOS = " "
+Debian = " "
+DragonFly = " "
+Emscripten = " "
+EndeavourOS = " "
+Fedora = " "
+FreeBSD = " "
+Garuda = "󰛓 "
+Gentoo = " "
+HardenedBSD = "󰞌 "
+Illumos = "󰈸 "
+Linux = " "
+Mabox = " "
+Macos = " "
+Manjaro = " "
+Mariner = " "
+MidnightBSD = " "
+Mint = " "
+NetBSD = " "
+NixOS = " "
+OpenBSD = "󰈺 "
+openSUSE = " "
+OracleLinux = "󰌷 "
+Pop = " "
+Raspbian = " "
+Redhat = " "
+RedHatEnterprise = " "
+Redox = "󰀘 "
+Solus = "󰠳 "
+SUSE = " "
+Ubuntu = " "
+Unknown = " "
+Windows = "󰍲 "
+
+[package]
+symbol = "󰏗 "
+
+[rlang]
+symbol = "󰟔 "
+
+[ruby]
+symbol = " "
+
+[scala]
+symbol = " "
