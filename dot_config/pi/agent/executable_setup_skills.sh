@@ -12,10 +12,16 @@ mkdir -p "$PI_SKILLS_DIR"
 
 SKILLS=(
   caveman
+  caveman-commit
+  caveman-review
+  compress
   diagnose
   grill-me
   grill-with-docs
+  handoff
   improve-codebase-architecture
+  plan-first
+  prototype
   setup-matt-pocock-skills
   tdd
   to-issues
@@ -23,7 +29,6 @@ SKILLS=(
   triage
   write-a-skill
   zoom-out
-  plan-first
 )
 
 for skill in "${SKILLS[@]}"; do

@@ -14,6 +14,21 @@ fi
 # Ensure completions and local binaries are in the path
 fpath=($HOME/.config/zsh/completions $fpath)
 
+# fnm (Fast Node Manager)
+export PATH="$HOME/.local/share/fnm:$PATH"
+eval "$(fnm env --use-on-cd)"
+
+# pnpm
+export PNPM_HOME="$HOME/.local/share/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME/bin:"*) ;;
+  *) export PATH="$PNPM_HOME/bin:$PATH" ;;
+esac
+case ":$PATH:" in
+  *":$PNPM_HOME:"*) ;;
+  *) export PATH="$PNPM_HOME:$PATH" ;;
+esac
+
 # -----------------
 # 2. History & Input Options
 # -----------------
@@ -71,6 +86,12 @@ fi
 
 # local bin
 export PATH="$HOME/.local/bin:$PATH"
+
+# npm blocker — use pnpm instead
+npm() {
+  echo "npm is disabled. Use pnpm instead." >&2
+  return 1
+}
 
 # opencode
 export PATH=/home/bronco/.opencode/bin:$PATH

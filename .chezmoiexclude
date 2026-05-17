@@ -37,3 +37,6 @@
 
 # Pi coding agent — sessions are dynamic data tied to working dirs
 **/sessions/
+
+# Pi coding agent — settings.json is managed by pi (lastChangelogVersion, model selection, etc.)
+**/settings.json

@@ -1,0 +1,13 @@
+{
+  "app.thinking.toggle": ["ctrl+t"],
+  "app.model.cycleForward": ["ctrl+p"],
+  "app.model.cycleBackward": ["shift+ctrl+p"],
+  "app.session.tree": ["alt+t"],
+  "app.interrupt": ["escape"],
+  "app.clear": ["ctrl+c"],
+  "app.exit": ["ctrl+d"],
+  "tui.editor.cursorWordLeft": ["alt+left", "ctrl+left", "alt+b"],
+  "tui.editor.cursorWordRight": ["alt+right", "ctrl+right", "alt+f"],
+  "tui.input.newLine": ["shift+enter"],
+  "tui.input.submit": ["enter"]
+}
