@@ -1,0 +1,20 @@
+{
+  "sound": false,
+  "notification": true,
+  "suppressWhenFocused": true,
+  "volume_percentage": 18,
+  "events": {
+    "agent_end": {
+      "sound": false,
+      "notification": true
+    },
+    "tool_error": {
+      "sound": false,
+      "notification": false
+    }
+  },
+  "sounds": {
+    "agent_end": "~/.config/pi/agent/extensions/notify/chime.oga",
+    "tool_error": "~/.config/pi/agent/extensions/notify/chime.oga"
+  }
+}

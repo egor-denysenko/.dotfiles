@@ -1,1 +1,23 @@
-{}
+{
+  "providers": {
+    "lmstudio": {
+      "baseUrl": "http://192.168.31.96:1234/v1",
+      "apiKey": "lm-studio",
+      "api": "openai-completions",
+      "compat": {
+        "supportsDeveloperRole": false,
+        "supportsReasoningEffort": false
+      },
+      "models": [
+        {
+          "id": "qwen/qwen3.6-35b-a3b",
+          "reasoning": true,
+          "thinkingFormat": "qwen"
+        },
+        {
+          "id": "granite-4.1-8b@q8_k_xl"
+        }
+      ]
+    }
+  }
+}
