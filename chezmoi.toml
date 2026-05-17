@@ -1,38 +1,6 @@
 [chezmoi]
     editor = "nvim"
 
-[".config/zsh"]
-    source = "dot_config/zsh"
-    destination = "~/.config/zsh"
-
-[".config/sway"]
-    source = "dot_config/sway"
-    destination = "~/.config/sway"
-
-[".config/wezterm"]
-    source = "dot_config/wezterm"
-    destination = "~/.config/wezterm"
-
-[".config/zellij"]
-    source = "dot_config/zellij"
-    destination = "~/.config/zellij"
-
-[".config/scripts"]
-    source = "dot_config/scripts"
-    destination = "~/.config/scripts"
-
-[".config/nvim"]
-    source = "dot_config/nvim"
-    destination = "~/.config/nvim"
-
-[".config/starship"]
-    source = "dot_config/starship"
-    destination = "~/.config/starship"
-
-[".config/opencode"]
-    source = "dot_config/opencode"
-    destination = "~/.config/opencode"
-
-[".config/pi/agent"]
-    source = "dot_config/pi/agent"
-    destination = "~/.config/pi/agent"
+[diff]
+    command = "nvim"
+    args = ["-d"]

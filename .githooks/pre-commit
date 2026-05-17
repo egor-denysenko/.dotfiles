@@ -1,0 +1,12 @@
+#!/bin/sh
+# Pre-commit hook: run chezmoi diff to catch drift before committing
+if command -v chezmoi >/dev/null 2>&1; then
+    DIFF=$(chezmoi diff 2>&1)
+    if [ -n "$DIFF" ]; then
+        echo "⚠ chezmoi diff detected (target state differs from actual state):"
+        echo "$DIFF"
+        echo ""
+        echo "Run 'chezmoi apply' to resolve, or commit with --no-verify to skip."
+        exit 1
+    fi
+fi
