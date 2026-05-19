@@ -19,8 +19,14 @@ import { homedir } from "node:os";
 // Config
 // ---------------------------------------------------------------------------
 
-const ART_SCRIPT =
-  "/home/bronco/.local/share/chezmoi/dot_config/nvim/utils/thisisfine.sh";
+const ART_SCRIPT = join(
+  homedir(),
+  ".config",
+  "pi",
+  "agent",
+  "extensions",
+  "thisisfine.sh",
+);
 
 const startTime = Date.now();
 

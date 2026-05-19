@@ -1,20 +1,22 @@
 [init]
 	defaultBranch = main
-{{ if eq .machine "personal" -}}
 [user]
+{{- if eq .machine "personal" }}
 	email = 75579636+egor-denysenko@users.noreply.github.com
 	name = egor-denysenko
 	signingkey = 2A132DB1C8C3D189
-{{ else }}
-	email = 
-	name = 
-	signingkey = 
-{{ end }}
+{{- else }}
+	name =
+	email =
+	signingKey =
+{{- end }}
 [core]
 	editor = nvim
 	sparseCheckout = true
 [commit]
 	gpgsign = true
+[push]
+	autoSetupRemote = true
 [alias]
 	staash = stash --all
 	bb = !~/scripts/betterGitBranch.sh
@@ -29,6 +31,6 @@
 [branch]
 	sort = -committerdate
 [maintenance]
-	repo = ~/.dotfiles
+	repo = ~/.local/share/chezmoi
 [include]
 	path = $HOME/.gitconfig

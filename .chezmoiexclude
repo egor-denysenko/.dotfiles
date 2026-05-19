@@ -1,6 +1,8 @@
 # Chezmoi Exclude Patterns
 # Files that should NOT be tracked in the dotfiles repo
 
+README.md
+
 # Neovim
 **/lazy-lock.json
 **/lazyvim.json
@@ -40,3 +42,8 @@
 
 # Pi coding agent — settings.json is managed by pi (lastChangelogVersion, model selection, etc.)
 **/settings.json
+
+# Pi coding agent — local/generated state under ~/.config/pi/agent, not source-of-truth config
+# Skills are sourced from ~/.agents/skills and linked into ~/.config/pi/agent/skills by setup scripts.
+dot_config/pi/agent/skills/
+dot_config/pi/agent/bin/

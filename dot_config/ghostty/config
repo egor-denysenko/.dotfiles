@@ -8,17 +8,15 @@ font-size = 13
 bold-is-bright = true
 
 cursor-style = block
-cursor-underline-thickness = 2px
+adjust-underline-thickness = 2
 
-scrollbar = false
+window-padding-x = 10
+window-padding-y = 10
 
-window-padding-width = 10
-window-padding-height = 10
-
-tab-bar = "off"
+window-show-tab-bar = never
 
 background-opacity = 1.0
 
-keybind = "ctrl+shift+plus=font_size_incr"
-keybind = "ctrl+shift+minus=font_size_decr"
-keybind = "ctrl+shift+0=font_size_reset"
+keybind = "ctrl+shift+plus=increase_font_size:1"
+keybind = "ctrl+shift+minus=decrease_font_size:1"
+keybind = "ctrl+shift+0=reset_font_size"
