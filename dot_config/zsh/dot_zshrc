@@ -24,10 +24,6 @@ case ":$PATH:" in
   *":$PNPM_HOME/bin:"*) ;;
   *) export PATH="$PNPM_HOME/bin:$PATH" ;;
 esac
-case ":$PATH:" in
-  *":$PNPM_HOME:"*) ;;
-  *) export PATH="$PNPM_HOME:$PATH" ;;
-esac
 
 # -----------------
 # 2. History & Input Options
@@ -96,10 +92,3 @@ npm() {
 # opencode
 export PATH=/home/bronco/.opencode/bin:$PATH
 
-# pnpm
-export PNPM_HOME="/home/bronco/.local/share/pnpm"
-case ":$PATH:" in
-  *":$PNPM_HOME/bin:"*) ;;
-  *) export PATH="$PNPM_HOME/bin:$PATH" ;;
-esac
-# pnpm end
