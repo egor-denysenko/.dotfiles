@@ -10,8 +10,10 @@
  */
 
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
+import { visibleWidth, truncateToWidth } from "@earendil-works/pi-tui";
 import { execSync } from "node:child_process";
-import { existsSync, readdirSync, readFileSync } from "node:fs";
+import { existsSync } from "node:fs";
+import { readdir, readFile } from "node:fs/promises";
 import { dirname, join, resolve } from "node:path";
 import { homedir } from "node:os";
 
@@ -123,31 +125,37 @@ function renderContext(cwd: string, th: HeaderTheme): string[] {
 // Extensions list (directory scan + settings.json packages)
 // ---------------------------------------------------------------------------
 
-function collectExtensions(): string[] {
+async function collectExtensions(): Promise<string[]> {
   const home = homedir();
   const names: string[] = [];
 
   // Global extensions dir
   const globalDir = join(home, ".config/pi/agent/extensions");
   if (existsSync(globalDir)) {
-    for (const e of readdirSync(globalDir)) {
-      if (e.endsWith(".ts")) names.push(e);
-    }
+    try {
+      const entries = await readdir(globalDir);
+      for (const e of entries) {
+        if (e.endsWith(".ts")) names.push(e);
+      }
+    } catch { /* ignore */ }
   }
 
   // Project extensions dir
   const projDir = join(process.cwd(), ".pi/extensions");
   if (existsSync(projDir)) {
-    for (const e of readdirSync(projDir)) {
-      if (e.endsWith(".ts")) names.push(e);
-    }
+    try {
+      const entries = await readdir(projDir);
+      for (const e of entries) {
+        if (e.endsWith(".ts")) names.push(e);
+      }
+    } catch { /* ignore */ }
   }
 
   // Packages from settings.json
   const settingsPath = join(home, ".config/pi/agent/settings.json");
   if (existsSync(settingsPath)) {
     try {
-      const raw = readFileSync(settingsPath, "utf-8");
+      const raw = await readFile(settingsPath, "utf-8");
       const cfg = JSON.parse(raw);
       const pkgs: Array<{
         source?: string;
@@ -166,8 +174,7 @@ function collectExtensions(): string[] {
   return [...new Set(names)].sort();
 }
 
-function renderExtensions(th: HeaderTheme): string[] {
-  const exts = collectExtensions();
+function renderExtensions(exts: string[], th: HeaderTheme): string[] {
   if (exts.length === 0) return [];
   const out: string[] = [th.label("[Extensions]")];
   out.push(`  ${th.value(exts.join(", "))}`);
@@ -228,6 +235,8 @@ export default function (pi: ExtensionAPI) {
     const artLines = getArtLines();
     if (artLines.length === 0) return;
 
+    const extensions = await collectExtensions();
+
     ctx.ui.setHeader((_tui, theme) => {
       const th = mkTheme(theme as any);
 
@@ -239,17 +248,20 @@ export default function (pi: ExtensionAPI) {
 
           const sections = [
             ...renderContext(ctx.cwd, th),
-            ...renderExtensions(th),
+            ...renderExtensions(extensions, th),
             ...renderSkills(pi, th),
             ...renderThemes(ctx as any, th),
           ];
 
+          const fit = (line: string) =>
+            visibleWidth(line) > width ? truncateToWidth(line, width) : line;
+
           return [
             "",
-            ...artLines.map((line) => " ".repeat(pad) + line),
-            th.faint(`   startup: ${elapsedMs}ms`),
+            ...artLines.map((line) => fit(" ".repeat(pad) + line)),
+            fit(th.faint(`   startup: ${elapsedMs}ms`)),
             "",
-            ...sections.flatMap((line, _i, _arr) => [line]),
+            ...sections.map(fit),
             "",
           ];
         },

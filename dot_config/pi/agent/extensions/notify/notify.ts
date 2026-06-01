@@ -32,7 +32,8 @@
 
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 import { execSync } from "node:child_process";
-import { existsSync, readFileSync, unlinkSync, writeFileSync } from "node:fs";
+import { existsSync, unlinkSync, writeFileSync } from "node:fs";
+import { readFile } from "node:fs/promises";
 import { homedir } from "node:os";
 import { join } from "node:path";
 
@@ -89,10 +90,10 @@ function checkMuted(): boolean {
 // Config loading
 // ---------------------------------------------------------------------------
 
-function loadConfig(): NotifyConfig {
+async function loadConfig(): Promise<NotifyConfig> {
   try {
     if (existsSync(CONFIG_PATH)) {
-      const raw = readFileSync(CONFIG_PATH, "utf-8");
+      const raw = await readFile(CONFIG_PATH, "utf-8");
       return JSON.parse(raw);
     }
   } catch { /* ignore parse errors, use defaults */ }
@@ -105,15 +106,15 @@ function saveConfig(config: NotifyConfig): void {
   } catch { /* ignore write errors */ }
 }
 
-function isEventEnabled(eventKey: string, key: "sound" | "notification"): boolean {
-  const config = loadConfig();
+async function isEventEnabled(eventKey: string, key: "sound" | "notification"): Promise<boolean> {
+  const config = await loadConfig();
   const eventCfg = config.events?.[eventKey];
   if (eventCfg?.[key] !== undefined) return eventCfg[key]!;
   return config[key] ?? false;
 }
 
-function getSoundPath(eventKey: string): string | null {
-  const config = loadConfig();
+async function getSoundPath(eventKey: string): Promise<string | null> {
+  const config = await loadConfig();
   let path = config.sounds?.[eventKey] ?? null;
   if (path?.startsWith("~")) {
     path = join(homedir(), path.slice(1));
@@ -125,8 +126,8 @@ function getSoundPath(eventKey: string): string | null {
 // Focused terminal detection
 // ---------------------------------------------------------------------------
 
-function isTerminalFocused(): boolean {
-  const config = loadConfig();
+async function isTerminalFocused(): Promise<boolean> {
+  const config = await loadConfig();
   if (!config.suppressWhenFocused) return false;
   try {
     const term = process.env.TERM_PROGRAM ?? "";
@@ -264,11 +265,11 @@ function detectSoundPlayer(): string | null {
 
 let cachedPlayer: string | null | undefined;
 
-function playSound(soundPath: string): boolean {
+async function playSound(soundPath: string): Promise<boolean> {
   if (!soundEnabled) return false;
   if (!existsSync(soundPath)) return false;
 
-  const config = loadConfig();
+  const config = await loadConfig();
   const volPct = config.volume_percentage ?? 100;
   const clamped = Math.max(0, Math.min(100, volPct));
 
@@ -311,28 +312,28 @@ function playSound(soundPath: string): boolean {
 // ---------------------------------------------------------------------------
 
 /** Return which notification layer succeeded (empty string = none) */
-function notify(
+async function notify(
   title: string,
   body: string,
   level: NotifyLevel,
   eventKey: string,
-): string {
+): Promise<string> {
   if (checkMuted()) return "muted";
 
   const now = Date.now();
   if (now - lastNotifyTime < COOLDOWN_MS) return "cooldown";
   lastNotifyTime = now;
 
-  if (isTerminalFocused()) return "suppressed";
+  if (await isTerminalFocused()) return "suppressed";
 
-  const config = loadConfig();
-  const doNotification = config.notification !== false && isEventEnabled(eventKey, "notification");
-  const doSound = isEventEnabled(eventKey, "sound");
+  const config = await loadConfig();
+  const doNotification = config.notification !== false && await isEventEnabled(eventKey, "notification");
+  const doSound = await isEventEnabled(eventKey, "sound");
 
   // Sound first (if enabled)
   if (doSound) {
-    const soundPath = getSoundPath(eventKey);
-    if (soundPath) playSound(soundPath);
+    const soundPath = await getSoundPath(eventKey);
+    if (soundPath) await playSound(soundPath);
   }
 
   if (!doNotification) return "sound-only";
@@ -376,7 +377,7 @@ export default function (pi: ExtensionAPI) {
         }
       } catch { /* ignore */ }
       // Also update config
-      const config = loadConfig();
+      const config = await loadConfig();
       config.sound = soundEnabled;
       saveConfig(config);
       ctx.ui.notify(`Sound: ${soundEnabled ? "ON" : "OFF"}`, "info");
@@ -393,13 +394,13 @@ export default function (pi: ExtensionAPI) {
       const title = "Pi Test";
       const body = `${icon} Test notification (${level})`;
       const eventKey = "agent_end";
-      const result = notify(title, body, level, eventKey);
+      const result = await notify(title, body, level, eventKey);
       ctx.ui.notify(`Sent: ${result} — "${body}"`, level === "error" ? "error" : "info");
     },
   });
 
   // --- session_start: reset state ---
-  pi.on("session_start", () => {
+  pi.on("session_start", async () => {
     errorCount = 0;
     if (errorBurstTimer) {
       clearTimeout(errorBurstTimer);
@@ -407,13 +408,13 @@ export default function (pi: ExtensionAPI) {
     }
     // Load sound state from file flag
     soundEnabled = existsSync(SOUND_FLAG_FILE);
-    const config = loadConfig();
+    const config = await loadConfig();
     if (config.sound !== undefined) soundEnabled = config.sound;
   });
 
   // --- agent_end: task complete / waiting for input ---
   pi.on("agent_end", async () => {
-    notify("Pi", "Done — waiting for input", "info", "agent_end");
+    await notify("Pi", "Done — waiting for input", "info", "agent_end");
   });
 
   // --- tool_execution_end: error detection ---
@@ -428,7 +429,7 @@ export default function (pi: ExtensionAPI) {
       clearTimeout(errorBurstTimer);
     }
 
-    errorBurstTimer = setTimeout(() => {
+    errorBurstTimer = setTimeout(async () => {
       const count = errorCount;
       errorCount = 0;
       errorBurstTimer = null;
@@ -437,7 +438,7 @@ export default function (pi: ExtensionAPI) {
         count > 1
           ? `${count} tool errors`
           : `Error in ${formatToolName(event.toolName)}`;
-      notify("Pi Error", body, "error", "tool_error");
+      await notify("Pi Error", body, "error", "tool_error");
     }, 500);
   });
 }
