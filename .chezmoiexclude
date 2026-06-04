@@ -47,6 +47,6 @@ dot_config/zsh/local.zsh
 **/settings.json
 
 # Pi coding agent — local/generated state under ~/.config/pi/agent, not source-of-truth config
-# Skills are sourced from ~/.agents/skills and linked into ~/.config/pi/agent/skills by setup scripts.
-dot_config/pi/agent/skills/
+# Skills live in ~/.agents/skills/ (synced from dot_agents/skills/). Pi's native
+# config dir ~/.pi/agent/skills/ is symlinked to it by dot_config/scripts/run_once_symlink_pi_skills.sh.
 dot_config/pi/agent/bin/

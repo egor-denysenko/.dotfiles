@@ -19,8 +19,8 @@ chezmoi init https://github.com/egor-denysenko/dotfiles.git && chezmoi apply -v
 | `dot_config/zellij` | Zellij multiplexer |
 | `dot_config/starship` | Starship prompt |
 | `dot_config/scripts` | Utility scripts |
-| `dot_config/pi/agent` | Pi coding agent config |
-| `dot_agents/skills` | Agent skills (caveman, compress, etc.) |
+| `dot_config/pi/agent` | Pi coding agent config (extensions, themes, models) |
+| `dot_agents/skills` | Agent skills (synced to `~/.agents/skills/`; pi gets them via a symlink in `~/.pi/agent/skills/`) |
 
 ## Templates
 

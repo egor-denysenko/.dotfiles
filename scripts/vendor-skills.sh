@@ -3,7 +3,7 @@ set -euo pipefail
 
 SOURCE_DIR="$(chezmoi source-path)"
 DATA_FILE="$SOURCE_DIR/.chezmoidata/third_party_skills.yaml"
-TARGET_BASE="$SOURCE_DIR/dot_agents/external_skills"
+TARGET_BASE="$SOURCE_DIR/dot_agents/skills"
 TMP_DIR="$(mktemp -d)"
 trap 'rm -rf "$TMP_DIR"' EXIT
 

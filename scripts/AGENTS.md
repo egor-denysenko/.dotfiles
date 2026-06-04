@@ -2,12 +2,11 @@
 
 ## Skills Structure
 
-- `dot_agents/personal_skills/` - Owned skills (tracked in git)
-- `dot_agents/external_skills/` - Vendored third-party skills (managed by vendor script)
+All skills live in `dot_agents/skills/`, managed by chezmoi and synced to `~/.agents/skills/`.
 
 ## install-skills.sh
 
-Copies skills from both source directories to `~/.agents/skills/`.
+Copies skills from the chezmoi source to `~/.agents/skills/`.
 
 ```bash
 ./scripts/install-skills.sh
@@ -15,7 +14,7 @@ Copies skills from both source directories to `~/.agents/skills/`.
 
 ## vendor-skills.sh
 
-Vendors third-party skills into `dot_agents/external_skills/` using `npx skills add`.
+Vendors third-party skills into `dot_agents/skills/` using `npx skills add`.
 
 ### Prerequisites
 
@@ -40,7 +39,7 @@ Reads pinned sources from `.chezmoidata/third_party_skills.yaml`.
 ```bash
 $EDITOR .chezmoidata/third_party_skills.yaml  # change ref
 ./scripts/vendor-skills.sh
-git add .chezmoidata/third_party_skills.yaml dot_agents/external_skills/
+git add .chezmoidata/third_party_skills.yaml dot_agents/skills/
 git commit -m "Upgrade third-party skills"
 chezmoi apply
 ```
