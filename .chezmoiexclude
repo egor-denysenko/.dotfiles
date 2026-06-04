@@ -21,6 +21,9 @@ README.md
 # Zim framework (let it install itself)
 **/dot_zim/
 
+# Machine- and context-specific local shell overrides should stay off-repo.
+dot_config/zsh/local.zsh
+
 # Build artifacts
 **/*.o
 **/*.so

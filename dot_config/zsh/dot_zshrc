@@ -92,3 +92,5 @@ npm() {
 # opencode
 export PATH=/home/bronco/.opencode/bin:$PATH
 
+# Machine-local overrides that should not be managed by chezmoi.
+[[ -f $ZDOTDIR/local.zsh ]] && source $ZDOTDIR/local.zsh
