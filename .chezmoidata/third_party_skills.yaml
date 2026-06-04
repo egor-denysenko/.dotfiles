@@ -18,7 +18,7 @@ third_party_skills:
 
   mattpocock-skills:
     source: mattpocock/skills
-    ref: e3b90b5238f38cdea5996e16861dcae28ef52eda
+    ref: aaf2453fbdfe7a15c07f11d861224f34ab4b53cb
     skills:
       - caveman
       - diagnose
