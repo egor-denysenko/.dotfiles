@@ -1,5 +1,6 @@
 # Third-party skills pinned to specific versions.
-# Used by scripts/vendor-skills.sh to install via `npx skills add`.
+# Vendored by `./scripts/vendor-skills.sh` (uses the `skills` CLI; YAML
+# parsing is done via `chezmoi execute-template`, no `yq` required).
 #
 # Pin with:
 #   tag:       skill-v3.1.1  (for repos with version tags)
@@ -8,23 +9,29 @@
 # For multi-skill repos, list specific skills to install.
 # If omitted, all discoverable skills from the repo are installed.
 
-impeccable:
-  source: pbakaus/impeccable
-  ref: skill-v3.1.1
-  skills:
-    - impeccable
+third_party_skills:
+  impeccable:
+    source: pbakaus/impeccable
+    ref: skill-v3.1.1
+    skills:
+      - impeccable
 
-mattpocock-skills:
-  source: mattpocock/skills
-  ref: e3b90b5238f38cdea5996e16861dcae28ef52eda
-  skills:
-    - caveman
-    - caveman-commit
-    - caveman-review
-    - diagnose
-    - grill-me
-    - grill-with-docs
-    - improve-codebase-architecture
-    - tdd
-    - write-a-skill
-    - zoom-out
+  mattpocock-skills:
+    source: mattpocock/skills
+    ref: e3b90b5238f38cdea5996e16861dcae28ef52eda
+    skills:
+      - caveman
+      - diagnose
+      - grill-me
+      - grill-with-docs
+      - improve-codebase-architecture
+      - tdd
+      - write-a-skill
+      - zoom-out
+
+  caveman-skills:
+    source: JuliusBrussee/caveman
+    ref: v1.8.2
+    skills:
+      - caveman-commit
+      - caveman-review

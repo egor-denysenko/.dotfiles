@@ -2,7 +2,12 @@
 
 ## Skills Structure
 
-All skills live in `dot_agents/skills/`, managed by chezmoi and synced to `~/.agents/skills/`.
+All skills live in `dot_agents/skills/`, managed by chezmoi and synced to `~/.agents/skills/`. The tree is split:
+
+- `dot_agents/skills/personal/<name>/` — hand-written, not vendored
+- `dot_agents/skills/vendored/<name>/` — pulled by `vendor-skills.sh`; each contains a `dot_vendored-version` marker (`<source>@<ref>`)
+
+Both opencode and pi recurse under `~/.agents/skills/`, so the split is purely organizational — discovery still works.
 
 ## install-skills.sh
 
@@ -14,20 +19,23 @@ Copies skills from the chezmoi source to `~/.agents/skills/`.
 
 ## vendor-skills.sh
 
-Vendors third-party skills into `dot_agents/skills/` using `npx skills add`.
+Vendors third-party skills into `dot_agents/skills/` using the `skills` CLI.
+YAML parsing is done via `chezmoi execute-template` (no `yq` required).
 
 ### Prerequisites
 
 - `skills` CLI installed: `npm install -g skills`
-- `yq` installed
+- `chezmoi` installed (already a hard dep of this repo)
 
 ### Usage
 
 ```bash
-./scripts/vendor-skills.sh
+./scripts/vendor-skills.sh            # vendor everything in YAML
+./scripts/vendor-skills.sh --dry-run  # print planned actions, write nothing
 ```
 
-Reads pinned sources from `.chezmoidata/third_party_skills.yaml`.
+Reads pinned sources from `.chezmoidata/third_party_skills.yaml` (under
+the `third_party_skills:` key).
 
 ### Pinning
 
