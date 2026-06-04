@@ -1,6 +1,5 @@
-# Global Agent Context
+# Agent Context
 
-**RTK**: Always prefix commands with `rtk`. Safe everywhere — passes through if no dedicated filter.
-Full reference: [docs/rtk.md](docs/rtk.md)
+**RTK**: Prefix all commands with `rtk`. Ref: [docs/rtk.md](docs/rtk.md)
 
-**Preferences**: Prefer `edit` over `write`. Run tests after changes.
+**Rules**: Use `edit` over `write`. Test after changes.
