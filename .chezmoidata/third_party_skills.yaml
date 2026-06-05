@@ -35,3 +35,15 @@ third_party_skills:
     skills:
       - caveman-commit
       - caveman-review
+
+  cursor-skills:
+    source: cursor/plugins
+    ref: 64fe0147d32e0c05d2953501ddf9ff65ebcadc54
+    skills:
+      - arena
+      - deslop
+      - fix-mergeeconflicts 
+      - how
+      - thermo-nuclear-code-quality-review
+      - thermo-nuclear-review
+      - thermos
