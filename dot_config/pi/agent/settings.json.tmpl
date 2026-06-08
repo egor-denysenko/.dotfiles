@@ -1,0 +1,34 @@
+{{- $machine := .machine | default "" -}}
+{{- $emptyProfile := dict
+  "defaultProvider" ""
+  "defaultModel" ""
+  "enabledModels" (list)
+  "packages" (list)
+-}}
+{{- $profile := $emptyProfile -}}
+{{- $profiles := .pi_agent.machine_profiles -}}
+{{- if hasKey $profiles $machine -}}
+{{- $profile = index $profiles $machine -}}
+{{- end }}
+
+{
+  "enableInstallTelemetry": false,
+  "defaultProvider": {{ index $profile "defaultProvider" | toJson }},
+  "defaultModel": {{ index $profile "defaultModel" | toJson }},
+  "defaultThinkingLevel": "minimal",
+  "quietStartup": true,
+  "hideThinkingBlock": true,
+  "theme": "warm-burnout-dark",
+  "shellCommandPrefix": "shopt -s expand_aliases\n[ -f ~/.config/zsh/aliases.zsh ] && source ~/.config/zsh/aliases.zsh",
+  "enabledModels": {{ index $profile "enabledModels" | toPrettyJson | indent 2 | trim }},
+  "retry": {
+    "enabled": true,
+    "maxRetries": 3,
+    "baseDelayMs": 2000,
+    "provider": {
+      "maxRetryDelayMs": 60000
+    }
+  },
+  "packages": {{ index $profile "packages" | toPrettyJson | indent 2 | trim }},
+  "lastChangelogVersion": "0.78.1"
+}
