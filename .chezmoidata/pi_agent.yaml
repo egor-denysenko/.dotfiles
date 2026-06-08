@@ -1,0 +1,26 @@
+# Machine-specific Pi agent settings.
+# Shared settings stay in dot_config/pi/agent/settings.json.tmpl.
+
+pi_agent:
+  machine_profiles:
+    personal:
+      defaultProvider: nvidia-nim
+      defaultModel: moonshotai/kimi-k2.6
+      enabledModels:
+        - deepseek-v4-flash
+        - deepseek-v4-pro
+        - glm-5.1
+        - kimi-k2.6
+        - minimax-m2.7
+        - qwen3.6-plus
+      packages:
+        - git:github.com/xRyul/pi-nvidia-nim
+
+    # Work machines stay on LM Studio and never install the NIM plugin.
+    work:
+      defaultProvider: lmstudio
+      defaultModel: google/gemma-4-12b-qat
+      enabledModels:
+        - google/gemma-4-12b-qat
+        - qwen/qwen3.5-35b-a3b
+      packages: []
