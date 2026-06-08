@@ -1,6 +1,4 @@
 export ZDOTDIR=$HOME/.config/zsh
-export PI_CODING_AGENT_DIR=$HOME/.config/pi/agent
-
 if [[ -f "$ZDOTDIR/.zshenv" ]]; then
   source "$ZDOTDIR/.zshenv"
 fi
