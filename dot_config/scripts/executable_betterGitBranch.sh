@@ -6,7 +6,6 @@ GREEN='\033[0;32m'
 NO_COLOR='\033[0m'
 BLUE='\033[0;34m'
 YELLOW='\033[0;33m'
-NO_COLOR='\033[0m'
 
 width1=5
 width2=6
@@ -14,13 +13,15 @@ width3=30
 width4=20
 width5=40
 
+row_format="${GREEN}%-${width1}s ${RED}%-${width2}s ${BLUE}%-${width3}s ${YELLOW}%-${width4}s ${NO_COLOR}%-${width5}s\n"
+
 # Main script
 main_branch=$(git rev-parse HEAD)
 
-printf "${GREEN}%-${width1}s ${RED}%-${width2}s ${BLUE}%-${width3}s ${YELLOW}%-${width4}s ${NO_COLOR}%-${width5}s\n" "Ahead" "Behind" "Branch" "Last Commit"  " "
+printf "$row_format" "Ahead" "Behind" "Branch" "Last Commit" " "
 
 # Separator line for clarity
-printf "${GREEN}%-${width1}s ${RED}%-${width2}s ${BLUE}%-${width3}s ${YELLOW}%-${width4}s ${NO_COLOR}%-${width5}s\n" "-----" "------" "------------------------------" "-------------------" " "
+printf "$row_format" "-----" "------" "------------------------------" "-------------------" " "
 
 
 format_string="%(refname:short)@%(committerdate:relative)@%(ahead-behind:HEAD)"
@@ -44,7 +45,7 @@ for branchdata in $(git for-each-ref --sort=-authordate --format="$format_string
             IFS=' ' read -r ahead behind <<< "$ahead_behind"
             
             # Display branch info
-	    printf "${GREEN}%-${width1}s ${RED}%-${width2}s ${BLUE}%-${width3}s ${YELLOW}%-${width4}s ${NO_COLOR}%-${width5}s\n" "$ahead" "$behind" "$branch" "$time" "$description"
+	    printf "$row_format" "$ahead" "$behind" "$branch" "$time" "$description"
     fi
 done
 
