@@ -12,6 +12,7 @@
 
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent"
 import { isToolCallEventType } from "@earendil-works/pi-coding-agent"
+import { hasUnsupportedFindSyntax } from "./rtk-shared"
 
 const REWRITE_TIMEOUT_MS = 2_000
 const MIN_SUPPORTED_RTK_MINOR = 23
@@ -68,7 +69,7 @@ export default async function (pi: ExtensionAPI) {
 
       // Delegate to RTK.
       const rewritten = await rewriteCommand(pi, cmd, ctx.signal)
-      if (rewritten && rewritten !== cmd) {
+      if (rewritten && rewritten !== cmd && !hasUnsupportedFindSyntax(cmd, rewritten)) {
         event.input.command = rewritten
       }
     } catch (err) {
