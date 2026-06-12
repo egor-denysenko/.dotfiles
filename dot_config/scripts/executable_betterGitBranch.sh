@@ -15,6 +15,7 @@ width5=40
 
 row_format="${GREEN}%-${width1}s ${RED}%-${width2}s ${BLUE}%-${width3}s ${YELLOW}%-${width4}s ${NO_COLOR}%-${width5}s\n"
 
+
 # Main script
 main_branch=$(git rev-parse HEAD)
 

@@ -1,4 +1,5 @@
 import type { Plugin } from "@opencode-ai/plugin"
+import { hasUnsupportedFindSyntax } from "../pi/agent/extensions/rtk-shared"
 
 // RTK OpenCode plugin — rewrites commands to use rtk for token savings.
 // Requires: rtk >= 0.23.0 in PATH.
@@ -28,7 +29,7 @@ export const RtkOpenCodePlugin: Plugin = async ({ $ }) => {
       try {
         const result = await $`rtk rewrite ${command}`.quiet().nothrow()
         const rewritten = String(result.stdout).trim()
-        if (rewritten && rewritten !== command) {
+        if (rewritten && rewritten !== command && !hasUnsupportedFindSyntax(command, rewritten)) {
           ;(args as Record<string, unknown>).command = rewritten
         }
       } catch {
