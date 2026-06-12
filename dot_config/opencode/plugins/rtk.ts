@@ -1,5 +1,5 @@
 import type { Plugin } from "@opencode-ai/plugin"
-import { hasUnsupportedFindSyntax } from "../pi/agent/extensions/rtk-shared"
+import { hasUnsupportedFindSyntax } from "../../pi/agent/rtk-shared"
 
 // RTK OpenCode plugin — rewrites commands to use rtk for token savings.
 // Requires: rtk >= 0.23.0 in PATH.

@@ -1,12 +1,12 @@
 ---
-name: yeet
+name: mozzarella
 description: >
-  Commit and push the current repository changes. Use when user says "yeet",
-  "yeet it", "yeet these changes", "/yeet", or asks to commit and push the
+  Commit and push the current repository changes. Use when user says "mozzarella",
+  "mozzarella it", "mozzarella these changes", "/mozzarella", or asks to commit and push the
   current branch in one shot.
 ---
 
-# Yeet
+# Mozzarella
 
 Commit and push the current repository changes end to end.
 
@@ -47,10 +47,10 @@ Commit and push the current repository changes end to end.
 - If a pre-commit hook fails, report the failure and stop. Do not bypass with
   `--no-verify`.
 - If the user passed extra instructions with the request, treat them as
-  modifications to the workflow above (e.g. "yeet with a fix: prefix" means
+  modifications to the workflow above (e.g. "mozzarella with a fix: prefix" means
   force a `fix:` commit type).
 
 ## User-provided extra instructions
 
-If invoked with arguments (e.g. `/yeet use chore: prefix`), append them as
+If invoked with arguments (e.g. `/mozzarella use chore: prefix`), append them as
 constraints on top of the rules above.

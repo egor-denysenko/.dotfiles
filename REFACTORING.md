@@ -100,8 +100,8 @@ Future architectural work worth revisiting. Terms below use the shared architect
 - `dot_config/opencode/agents/learn.md`
 - `dot_agents/skills/personal/plan-first/SKILL.md`
 - `dot_config/opencode/modes/plan-first.md`
-- `dot_agents/skills/personal/yeet/SKILL.md`
-- `dot_config/opencode/commands/yeet.md`
+- `dot_agents/skills/personal/mozzarella/SKILL.md`
+- `dot_config/opencode/commands/mozzarella.md`
 
 **Problem**
 - The same workflow concepts exist in multiple Modules with overlapping Interface and Implementation.

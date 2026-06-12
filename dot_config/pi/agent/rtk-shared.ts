@@ -1,5 +1,5 @@
 // Shared RTK find-syntax guard.
-// Used by both the OpenCode plugin (rtk.ts) and the Pi extension (private_rtk.ts).
+// Used by both the OpenCode plugin (rtk.ts) and the Pi extension (rtk.ts).
 
 const UNSUPPORTED_RTK_FIND_SYNTAX = [
   /(^|[ \t])\\?!(?=$|[ \t])/,

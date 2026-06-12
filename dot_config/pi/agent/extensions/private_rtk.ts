@@ -12,7 +12,7 @@
 
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent"
 import { isToolCallEventType } from "@earendil-works/pi-coding-agent"
-import { hasUnsupportedFindSyntax } from "./rtk-shared"
+import { hasUnsupportedFindSyntax } from "../rtk-shared"
 
 const REWRITE_TIMEOUT_MS = 2_000
 const MIN_SUPPORTED_RTK_MINOR = 23

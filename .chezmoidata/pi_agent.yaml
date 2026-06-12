@@ -14,13 +14,25 @@ pi_agent:
         - minimax-m2.7
         - qwen3.6-plus
       packages:
-        - git:github.com/xRyul/pi-nvidia-nim
+        # Pinned to commit hash — update by reviewing upstream and replacing the SHA.
+        - git:github.com/xRyul/pi-nvidia-nim@a7e54ce700a095d63315c57d7f17e69a0e8d38d5
+        # Voice dictation (on-device Whisper STT) + i18n — pinned to npm versions.
+        - npm:@juicesharp/rpiv-voice@1.19.1
+        - npm:@juicesharp/rpiv-i18n@1.19.1
+        # Async subagent delegation — pinned to commit hash.
+        - git:github.com/nicobailon/pi-subagents@efa7120047eaf76a32620eed0ec7d038b6cfa44e
 
-    # Work machines stay on LM Studio and never install the NIM plugin.
     work:
       defaultProvider: lmstudio
       defaultModel: google/gemma-4-12b-qat
       enabledModels:
         - google/gemma-4-12b-qat
         - qwen/qwen3.5-35b-a3b
-      packages: []
+      packages:
+        # Pinned to commit hash — update by reviewing upstream and replacing the SHA.
+        - git:github.com/xRyul/pi-nvidia-nim@a7e54ce700a095d63315c57d7f17e69a0e8d38d5
+        # Voice dictation (on-device Whisper STT) + i18n — pinned to npm versions.
+        - npm:@juicesharp/rpiv-voice@1.19.1
+        - npm:@juicesharp/rpiv-i18n@1.19.1
+        # Async subagent delegation — pinned to commit hash.
+        - git:github.com/nicobailon/pi-subagents@efa7120047eaf76a32620eed0ec7d038b6cfa44e
