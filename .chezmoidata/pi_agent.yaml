@@ -7,15 +7,11 @@ pi_agent:
       defaultProvider: nvidia-nim
       defaultModel: moonshotai/kimi-k2.6
       enabledModels:
-        - deepseek-v4-flash
-        - deepseek-v4-pro
-        - glm-5.1
-        - kimi-k2.6
-        - minimax-m2.7
-        - qwen3.6-plus
+        - glm-5.2
+        - minimax-m3
       packages:
         # Pinned to commit hash — update by reviewing upstream and replacing the SHA.
-        - git:github.com/xRyul/pi-nvidia-nim@a7e54ce700a095d63315c57d7f17e69a0e8d38d5
+        - git:github.com/egor-denysenko/pi-nvidia-nim@49ea9520525ac347947cdac94bcec400339a6708
         # Voice dictation (on-device Whisper STT) + i18n — pinned to npm versions.
         - npm:@juicesharp/rpiv-voice@1.19.1
         - npm:@juicesharp/rpiv-i18n@1.19.1
@@ -27,10 +23,7 @@ pi_agent:
       defaultModel: google/gemma-4-12b-qat
       enabledModels:
         - google/gemma-4-12b-qat
-        - qwen/qwen3.5-35b-a3b
       packages:
-        # Pinned to commit hash — update by reviewing upstream and replacing the SHA.
-        - git:github.com/xRyul/pi-nvidia-nim@a7e54ce700a095d63315c57d7f17e69a0e8d38d5
         # Voice dictation (on-device Whisper STT) + i18n — pinned to npm versions.
         - npm:@juicesharp/rpiv-voice@1.19.1
         - npm:@juicesharp/rpiv-i18n@1.19.1

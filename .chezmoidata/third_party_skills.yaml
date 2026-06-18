@@ -12,15 +12,14 @@
 third_party_skills:
   impeccable:
     source: pbakaus/impeccable
-    ref: skill-v3.1.1
+    ref: skill-v3.7.1
     skills:
       - impeccable
 
   mattpocock-skills:
     source: mattpocock/skills
-    ref: aaf2453fbdfe7a15c07f11d861224f34ab4b53cb
+    ref: v1.0.1
     skills:
-      - caveman
       - diagnose
       - grill-me
       - grill-with-docs
@@ -28,17 +27,19 @@ third_party_skills:
       - tdd
       - write-a-skill
       - zoom-out
+      - handoff
+      - teach
 
   caveman-skills:
     source: JuliusBrussee/caveman
-    ref: v1.8.2
+    ref: v1.9.0
     skills:
       - caveman-commit
       - caveman-review
 
   cursor-skills:
     source: cursor/plugins
-    ref: 64fe0147d32e0c05d2953501ddf9ff65ebcadc54
+    ref: e46364b8be46000b7df0f260550cd712afbb8d36
     skills:
       - arena
       - deslop

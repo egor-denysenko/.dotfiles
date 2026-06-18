@@ -15,7 +15,7 @@
   "enableInstallTelemetry": false,
   "defaultProvider": {{ index $profile "defaultProvider" | toJson }},
   "defaultModel": {{ index $profile "defaultModel" | toJson }},
-  "defaultThinkingLevel": "minimal",
+  "defaultThinkingLevel": "low",
   "quietStartup": true,
   "hideThinkingBlock": true,
   "theme": "warm-burnout-dark",
@@ -23,12 +23,13 @@
   "enabledModels": {{ index $profile "enabledModels" | toPrettyJson | indent 2 | trim }},
   "retry": {
     "enabled": true,
-    "maxRetries": 3,
-    "baseDelayMs": 2000,
+    "maxRetries": 5,
+    "baseDelayMs": 3400,
     "provider": {
       "maxRetryDelayMs": 60000
     }
   },
   "packages": {{ index $profile "packages" | toPrettyJson | indent 2 | trim }},
-  "lastChangelogVersion": "0.78.1"
+  "lastChangelogVersion": "0.79.1",
+  "subagents": {}
 }
