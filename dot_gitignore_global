@@ -1,0 +1,52 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# IDEs
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Python
+venv/
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+
+# Node
+node_modules/
+
+# Go
+vendor/
+
+# Rust
+target/
+
+# Build artifacts
+dist/
+build/
+*.o
+*.a
+*.so
+*.dylib
+
+# Secrets
+*.key
+*.pem
+.env
+.env.*
+
+# Misc
+*.log
+coverage/
+*.cover
+*.gcno
+*.gcda
