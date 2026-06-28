@@ -18,6 +18,17 @@
 	gpgsign = true
 [push]
 	autoSetupRemote = true
+	default = current
+[diff]
+	tool = delta
+[merge]
+	tool = nvim
+[mergetool]
+	prompt = false
+[delta]
+	line-numbers = true
+	navigate = true
+	dark = true
 [alias]
 	staash = stash --all
 	bb = !~/scripts/betterGitBranch.sh
