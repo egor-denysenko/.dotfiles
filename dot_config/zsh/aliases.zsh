@@ -11,16 +11,7 @@ alias mux="zellij"
 
 alias air='/home/bronco/go/bin/air'
 
-pi() {
-  case "$1" in
-    install|remove|uninstall|update|list|config)
-      command pi "$@"
-      ;;
-    *)
-      command pi -t read,bash,edit,write,ls "$@"
-      ;;
-  esac
-}
+alias pii='pi -t read,bash,edit,write,ls'
 
 alias pd='podman-compose'
 alias pdup='podman-compose up'
