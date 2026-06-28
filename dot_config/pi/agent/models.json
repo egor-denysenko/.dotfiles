@@ -1,21 +1,15 @@
 {
   "providers": {
-    "lmstudio": {
-      "baseUrl": "http://192.168.31.96:1234/v1",
-      "apiKey": "lm-studio",
-      "api": "openai-completions",
-      "compat": {
-        "supportsDeveloperRole": false,
-        "supportsReasoningEffort": false
-      },
+    "nvidia-nim": {
       "models": [
         {
-          "id": "qwen/qwen3.6-35b-a3b",
-          "reasoning": true,
-          "thinkingFormat": "qwen"
-        },
-        {
-          "id": "granite-4.1-8b@q8_k_xl"
+          "id": "minimaxai/minimax-m3",
+          "name": "MiniMax M3",
+          "reasoning": false,
+          "input": ["text", "image"],
+          "contextWindow": 1048576,
+          "maxTokens": 8192,
+          "cost": { "input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0 }
         }
       ]
     }

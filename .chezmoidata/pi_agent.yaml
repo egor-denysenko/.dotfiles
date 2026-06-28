@@ -13,10 +13,10 @@ pi_agent:
         # Pinned to commit hash — update by reviewing upstream and replacing the SHA.
         - git:github.com/egor-denysenko/pi-nvidia-nim@49ea9520525ac347947cdac94bcec400339a6708
         # Voice dictation (on-device Whisper STT) + i18n — pinned to npm versions.
-        - npm:@juicesharp/rpiv-voice@1.19.1
-        - npm:@juicesharp/rpiv-i18n@1.19.1
+        - npm:@juicesharp/rpiv-voice@1.20.0
+        - npm:@juicesharp/rpiv-i18n@1.20.0
         # Async subagent delegation — pinned to commit hash.
-        - git:github.com/nicobailon/pi-subagents@efa7120047eaf76a32620eed0ec7d038b6cfa44e
+        - git:github.com/nicobailon/pi-subagents@0.31.0
 
     work:
       defaultProvider: lmstudio
@@ -25,7 +25,7 @@ pi_agent:
         - google/gemma-4-12b-qat
       packages:
         # Voice dictation (on-device Whisper STT) + i18n — pinned to npm versions.
-        - npm:@juicesharp/rpiv-voice@1.19.1
-        - npm:@juicesharp/rpiv-i18n@1.19.1
+        - npm:@juicesharp/rpiv-voice@1.20.0
+        - npm:@juicesharp/rpiv-i18n@1.20.0
         # Async subagent delegation — pinned to commit hash.
         - git:github.com/nicobailon/pi-subagents@efa7120047eaf76a32620eed0ec7d038b6cfa44e

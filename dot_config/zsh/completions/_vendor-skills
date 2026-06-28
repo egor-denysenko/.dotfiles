@@ -1,0 +1,10 @@
+#compdef vendor-skills.sh vendor-skills
+
+_vendor_skills() {
+  _arguments \
+    '--dry-run[Show planned actions without invoking skills CLI]' \
+    '--check-latest[Check latest available versions on GitHub for each entry]' \
+    '--help[Show usage information]'
+}
+
+_vendor_skills "$@"

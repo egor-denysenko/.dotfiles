@@ -6,16 +6,19 @@
 #   tag:       skill-v3.1.1  (for repos with version tags)
 #   commit:    abc123def     (for repos without tags)
 #
+# To check for newer versions from GitHub, run:
+#   ./scripts/vendor-skills.sh --check-latest       # check + pin
+#   ./scripts/vendor-skills.sh --check-latest --dry-run  # preview only
+#
 # For multi-skill repos, list specific skills to install.
 # If omitted, all discoverable skills from the repo are installed.
 
 third_party_skills:
   impeccable:
     source: pbakaus/impeccable
-    ref: skill-v3.7.1
+    ref: skill-v3.8.0
     skills:
       - impeccable
-
   mattpocock-skills:
     source: mattpocock/skills
     ref: v1.0.1
@@ -29,21 +32,19 @@ third_party_skills:
       - zoom-out
       - handoff
       - teach
-
   caveman-skills:
     source: JuliusBrussee/caveman
     ref: v1.9.0
     skills:
       - caveman-commit
       - caveman-review
-
   cursor-skills:
     source: cursor/plugins
-    ref: e46364b8be46000b7df0f260550cd712afbb8d36
+    ref: 0452e08a314c
     skills:
       - arena
       - deslop
-      - fix-mergeeconflicts 
+      - fix-mergeeconflicts
       - how
       - thermo-nuclear-code-quality-review
       - thermo-nuclear-review
