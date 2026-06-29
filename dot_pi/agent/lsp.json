@@ -1,0 +1,26 @@
+{
+  "servers": {
+    "go": {
+      "bin": "gopls",
+      "args": ["serve"],
+      "rootMarkers": ["go.mod", "go.sum"]
+    },
+    "typescript": {
+      "_comment": "Install: pnpm add -g typescript-language-server typescript",
+      "bin": "typescript-language-server",
+      "args": ["--stdio"],
+      "rootMarkers": ["tsconfig.json", "package.json"],
+      "initializationOptions": {
+        "preferences": {
+          "importModuleSpecifierPreference": "relative"
+        }
+      }
+    },
+    "python": {
+      "_comment": "Install: uv pip install --system pyrefly",
+      "bin": "pyrefly-langserver",
+      "args": ["--stdio"],
+      "rootMarkers": ["pyproject.toml", "setup.py", "requirements.txt"]
+    }
+  }
+}

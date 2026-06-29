@@ -16,6 +16,8 @@ pi_agent:
         - git:github.com/nicobailon/pi-subagents@0.31.0
         # FFF file search — frecency-ranked grep/find for pi.
         - npm:@ff-labs/pi-fff@0.9.6
+        # LSP diagnostics & language server navigation tools
+        - npm:pi-lsp
 
     work:
       defaultProvider: lmstudio
@@ -30,3 +32,6 @@ pi_agent:
         - git:github.com/nicobailon/pi-subagents@0.31.0
         # FFF file search — frecency-ranked grep/find for pi.
         - npm:@ff-labs/pi-fff@0.9.6
+        # LSP diagnostics & language server navigation tools
+        - npm:pi-lsp
+

@@ -3,7 +3,7 @@
 The setup command for a project. One codebase crawl feeds everything it writes:
 
 - **PRODUCT.md** (strategic): root project file for register, target users, product purpose, brand personality, anti-references, strategic design principles. Answers "who/what/why".
-- **DESIGN.md** (visual): root project file for visual theme, color palette, typography, components, layout. Follows the [Google Stitch DESIGN.md format](https://stitch.withgoogle.com/docs/design-md/format/). Answers "how it looks".
+- **DESIGN.md** (visual): root project file for visual theme, color palette, typography, components, layout. Follows the [DESIGN.md format spec](https://raw.githubusercontent.com/google-labs-code/design.md/main/docs/spec.md). Answers "how it looks".
 - **`.impeccable/live/config.json`** (live mode): pre-configured so `$impeccable live` boots straight into variant mode with no first-time detour.
 
 It closes by pointing the user at the best command to run next. Every other impeccable command reads PRODUCT.md and DESIGN.md before doing any work.
@@ -137,7 +137,7 @@ If the user prefers to skip, mention they can run `$impeccable document` any tim
 
 ## Step 6: Configure live mode (when code exists)
 
-If the project has code with HTML entries and a dev server (the same "code exists" condition that puts `$impeccable document` in scan mode), pre-configure live mode now. You already identified the framework and the served HTML entry in Step 2, so this is nearly free, and it spares the user the first-time setup detour when they later run `$impeccable live`.
+foo()
 
 **Skip this step for empty / pre-implementation projects** (nothing to inject into yet). Tell the user live mode will configure itself the first time they run it once there's code.
 
@@ -161,12 +161,12 @@ Summarize tersely:
 
 Then recommend the **best commands to run next**, drawn from what your Step 2 crawl already surfaced. Do not run a fresh analysis here; surface observations you already have. Tailor to register and to what you saw, offer the 2-4 most relevant (not a menu dump), and give the exact command to type. Group by intent:
 
-- **Build something new**: `$impeccable craft <feature>` (shape, then build end-to-end) or `$impeccable shape <feature>` (plan first). Lead with this for empty or early-stage projects.
+- foo()
 - **Improve what's there**: name the specific surface. `$impeccable critique <page>` for a scored UX review; `$impeccable audit <area>` for a11y / perf / responsive checks; `$impeccable polish <component>` for a pre-ship pass. When the crawl flagged a specific weakness, point the matching command at it: thin hierarchy or spacing → `layout`, flat or gray palette → `colorize`, missing error / empty states → `harden` or `onboard`, dull or unclear copy → `clarify`.
 - **Iterate visually**: `$impeccable live` (configured in Step 6) to pick elements in the browser and generate variants in place.
 
 The full command menu is one bare `$impeccable` away; keep this list short and pointed.
 
-If init was invoked as a blocker by another impeccable command (e.g. the user ran `$impeccable polish` with no PRODUCT.md), resume that original task now. Your own writes are the freshest source; no reload needed.
+foo()
 
 Optionally STOP and use Codex's structured user-input/question tool when available; if unavailable, ask directly in chat to clarify what you cannot infer. Ask whether they'd like a brief summary of PRODUCT.md appended to AGENTS.md for easier agent reference. If yes, append a short **Design Context** pointer section there.
