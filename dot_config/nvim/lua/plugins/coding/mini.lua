@@ -32,6 +32,10 @@ return {
         return '%2l:%-2v'
       end
 
+      -- Simple and intuitive file explorer
+      require('mini.files').setup()
+      vim.keymap.set('n', '-', function() require('mini.files').open() end, { desc = 'Open mini.files' })
+
       -- ... and there is more!
       --  Check out: https://github.com/nvim-mini/mini.nvim
     end,

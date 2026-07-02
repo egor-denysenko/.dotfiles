@@ -1,11 +1,10 @@
-#!/bin/bash
-# Update standalone LSP servers via uv tool install.
-# Uses uv tool (isolated env) instead of --system to avoid PEP 668
-# externally-managed Python issues.
+#!/usr/bin/env bash
+# Update standalone LSP servers.
 set -euo pipefail
 
 log() { printf "\033[1;34m[lsp]\033[0m %s\n" "$*"; }
 
+# Python-based LSPs (installed via uv tool for isolated environments)
 log "Updating pyrefly (>=1,<2)..."
 uv tool install --force 'pyrefly>=1,<2' 2>&1
 

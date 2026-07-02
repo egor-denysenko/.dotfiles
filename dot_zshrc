@@ -1,5 +1,3 @@
 source ~/.config/zsh/.zshrc
 
 
-# Added by Antigravity CLI installer
-export PATH="/home/bronco/.local/bin:$PATH"

@@ -17,7 +17,7 @@ row_format="${GREEN}%-${width1}s ${RED}%-${width2}s ${BLUE}%-${width3}s ${YELLOW
 
 
 # Main script
-main_branch=$(git rev-parse HEAD)
+main_branch=$(git branch --show-current)
 
 printf "$row_format" "Ahead" "Behind" "Branch" "Last Commit" " "
 

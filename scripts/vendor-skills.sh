@@ -88,7 +88,14 @@ fetch_latest_ref() {
 
 update_yaml_ref() {
   local group="$1" new_ref="$2"
-  yq eval ".third_party_skills.\"${group}\".ref = \"${new_ref}\"" -i "$DATA_FILE"
+  awk -v group="$group" -v new_ref="$new_ref" '
+    $0 ~ "^  " group ":" { in_group=1 }
+    in_group && $0 ~ "^    ref:" {
+      sub(/ref: .*/, "ref: " new_ref)
+      in_group=0
+    }
+    { print }
+  ' "$DATA_FILE" > "$DATA_FILE.tmp" && mv "$DATA_FILE.tmp" "$DATA_FILE"
 }
 
 vendor_group() {

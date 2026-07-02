@@ -5,22 +5,27 @@ export SHELL="/bin/zsh"
 
 export SSH_AUTH_SOCK="$XDG_RUNTIME_DIR/ssh-agent.socket"
 
-export GPG_TTY=$(tty)
+if [[ -t 1 ]]; then
+  export GPG_TTY=$(tty)
+fi
 
 export PI_HOME=$HOME/.config/pi
 export PI_CODING_AGENT_DIR=$PI_HOME/agent
 export PI_TELEMETRY=0
 export PI_SKIP_VERSION_CHECK=1
 
-export GOROOT=""
 export GOPATH=$HOME/go
 export GOPROXY="https://proxy.golang.org/"
 
-export PATH=$PATH:/usr/local/go/bin
-export PATH=$PATH:$GOPATH/bin
-export PATH="$GOROOT/bin:$PATH"
-export PATH="/home/bronco/.local/share/fnm:$PATH"
-
-if [[ -d "$HOME/.bun/bin" && ":$PATH:" != *":$HOME/.bun/bin:"* ]]; then
-  export PATH="$HOME/.bun/bin:$PATH"
-fi
+# Sane, deduplicated PATH construction
+typeset -U path
+path=(
+  $HOME/.local/bin
+  $HOME/.local/share/fnm
+  $HOME/.opencode/bin
+  $HOME/.bun/bin
+  $GOPATH/bin
+  /usr/local/go/bin
+  $path
+)
+export PATH

@@ -15,7 +15,6 @@ fi
 fpath=($HOME/.config/zsh/completions $fpath)
 
 # fnm (Fast Node Manager)
-export PATH="$HOME/.local/share/fnm:$PATH"
 eval "$(fnm env --use-on-cd)"
 
 # pnpm
@@ -80,17 +79,11 @@ if command -v starship &> /dev/null; then
   eval "$(starship init zsh)"
 fi
 
-# local bin
-export PATH="$HOME/.local/bin:$PATH"
-
 # npm blocker — use pnpm instead
 npm() {
   echo "npm is disabled. Use pnpm instead." >&2
   return 1
 }
-
-# opencode
-export PATH=/home/bronco/.opencode/bin:$PATH
 
 # Machine-local overrides that should not be managed by chezmoi.
 [[ -f $ZDOTDIR/local.zsh ]] && source $ZDOTDIR/local.zsh

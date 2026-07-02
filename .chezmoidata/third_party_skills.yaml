@@ -16,36 +16,32 @@
 third_party_skills:
   impeccable:
     source: pbakaus/impeccable
-    ref: skill-v3.8.0
+    ref: skill-v3.9.1
     skills:
       - impeccable
   mattpocock-skills:
     source: mattpocock/skills
-    ref: v1.0.1
+    ref: 1445797da5ee4e4054233878c0029e9276f9986a
     skills:
       - diagnose
-      - grill-me
-      - grill-with-docs
+      - wayfinder
+      - grilling
+      # --- Dependant one on the other ---
       - improve-codebase-architecture
+      - codebase-design
+      - domain-modeling
+      # ---
       - tdd
-      - write-a-skill
-      - zoom-out
       - handoff
       - teach
-  caveman-skills:
-    source: JuliusBrussee/caveman
-    ref: v1.9.0
-    skills:
-      - caveman-commit
-      - caveman-review
   cursor-skills:
     source: cursor/plugins
     ref: 0452e08a314c
     skills:
-      - arena
       - deslop
-      - fix-mergeeconflicts
       - how
+      # --- Dependant one on the other ---
       - thermo-nuclear-code-quality-review
       - thermo-nuclear-review
       - thermos
+      # ---

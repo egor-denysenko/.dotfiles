@@ -9,7 +9,7 @@ alias l="ls -lah"
 alias vim="nvim"
 alias mux="zellij"
 
-alias air='/home/bronco/go/bin/air'
+alias air='$HOME/go/bin/air'
 
 alias pii='pi -t read,bash,edit,write,ls'
 

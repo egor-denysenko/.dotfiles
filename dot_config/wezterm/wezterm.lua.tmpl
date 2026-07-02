@@ -36,8 +36,8 @@ config.color_scheme = scheme_for_appearance(wezterm.gui.get_appearance())
 -- Remove tab bar in order to gain more space
 config.enable_tab_bar = false
 
--- Spawn a zsh on wezterm start
-config.default_prog = { "/usr/bin/zsh" }
+-- Spawn the user's default shell (falling back to zsh) on wezterm start
+config.default_prog = { os.getenv("SHELL") or "zsh" }
 
 -- Font and background customization are left as an exercise for the reader.
 -- Uncomment and tweak when you're ready to dial in the look:

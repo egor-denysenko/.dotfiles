@@ -51,3 +51,18 @@ git add .chezmoidata/third_party_skills.yaml dot_agents/skills/
 git commit -m "Upgrade third-party skills"
 chezmoi apply
 ```
+
+## run_once scripts
+
+Scripts prefixed with `executable_run_once_` in `dot_config/scripts/` are deployed to `~/.config/scripts/` and run once on `chezmoi apply`. Chezmoi tracks execution state — they won't re-run unless you clear `~/.local/share/chezmoi/run_once/`.
+
+| Script | Purpose |
+|--------|---------|
+| `executable_run_once_ensure_agents_skills_dir.sh` | Creates `~/.agents/skills/` |
+| `executable_run_once_symlink_pi_skills.sh` | Symlinks `~/.pi/agent/skills/` → `~/.agents/skills/` |
+| `executable_run_once_patch_pi_offline_export.sh` | Patches pi-coding-agent's export-html to include system prompt snapshots |
+
+---
+
+**Rules:**
+- When adding or moving scripts, update this file.

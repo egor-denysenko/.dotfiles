@@ -15,7 +15,7 @@
 	sparseCheckout = true
 	excludesfile = ~/.gitignore_global
 [commit]
-	gpgsign = true
+	gpgsign = {{ if eq .machine "personal" }}true{{ else }}false{{ end }}
 [push]
 	autoSetupRemote = true
 	default = current
@@ -45,4 +45,4 @@
 [maintenance]
 	repo = ~/.local/share/chezmoi
 [include]
-	path = $HOME/.gitconfig
+	path = ~/.gitconfig_local

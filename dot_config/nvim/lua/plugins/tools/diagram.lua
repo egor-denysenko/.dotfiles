@@ -1,5 +1,4 @@
-local uv = vim.uv or vim.loop
-local system_name = uv.os_uname().sysname
+local system_name = vim.uv.os_uname().sysname
 local in_zellij = vim.env.ZELLIJ ~= nil or vim.env.ZELLIJ_SESSION_NAME ~= nil
 
 return {

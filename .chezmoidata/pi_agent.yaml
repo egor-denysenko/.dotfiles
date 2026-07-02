@@ -3,7 +3,7 @@
 
 pi_agent:
   machine_profiles:
-    personal:
+    personal: &default_profile
       defaultProvider: lmstudio
       defaultModel: google/gemma-4-12b-qat
       enabledModels:
@@ -20,18 +20,4 @@ pi_agent:
         - git:github.com/samfoy/pi-lsp-extension@v1.2.1
 
     work:
-      defaultProvider: lmstudio
-      defaultModel: google/gemma-4-12b-qat
-      enabledModels:
-        - google/gemma-4-12b-qat
-      packages:
-        # Voice dictation (on-device Whisper STT) + i18n — pinned to npm versions.
-        - npm:@juicesharp/rpiv-voice@1.20.0
-        - npm:@juicesharp/rpiv-i18n@1.20.0
-        # Async subagent delegation — pinned to commit hash.
-        - git:github.com/nicobailon/pi-subagents@0.31.0
-        # FFF file search — frecency-ranked grep/find for pi.
-        - npm:@ff-labs/pi-fff@0.9.6
-        # LSP diagnostics & language server navigation tools
-        - git:github.com/samfoy/pi-lsp-extension@v1.2.1
-
+      <<: *default_profile

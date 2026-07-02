@@ -35,7 +35,7 @@ end
 
 return {
   check = function()
-    vim.health.start 'kickstart.nvim'
+    vim.health.start 'dotfiles.nvim'
 
     vim.health.info [[NOTE: Not every warning is a 'must-fix' in `:checkhealth`
 
@@ -43,8 +43,7 @@ return {
     Mason will give warnings for languages that are not installed.
     You do not need to install, unless you want to use those languages!]]
 
-    local uv = vim.uv or vim.loop
-    vim.health.info('System Information: ' .. vim.inspect(uv.os_uname()))
+    vim.health.info('System Information: ' .. vim.inspect(vim.uv.os_uname()))
 
     check_version()
     check_external_reqs()
