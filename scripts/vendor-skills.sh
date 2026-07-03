@@ -13,7 +13,7 @@ for arg in "$@"; do
 Usage: $0 [--dry-run] [--check-latest]
 
 Vendors third-party skills listed in .chezmoidata/third_party_skills.yaml
-into dot_agents/skills/ using the npx \`skills\` CLI.
+into dot_agents/skills/ using the pnpm dlx \`skills\` CLI.
 
   --dry-run       Show planned actions without invoking skills CLI.
   --check-latest  Check latest available versions on GitHub for each entry.
@@ -124,16 +124,14 @@ vendor_group() {
 
   echo "--- Vendoring $group ($source@$ref) ---"
 
-  if [ ! -x "$SKILLS_BIN" ]; then
-    echo "  skills CLI not found at $SKILLS_BIN" >&2
-    echo "  Install with: npm install -g skills" >&2
-    return 1
-  fi
 
   local install_dir="$TMP_DIR/$group"
   mkdir -p "$install_dir"
 
   local cmd=("$SKILLS_BIN" "add" "${source}@${ref}" "-a" "opencode" "-y" "--copy")
+  if [ ! -x "$SKILLS_BIN" ]; then
+    cmd=("pnpm" "dlx" "skills" "add" "${source}@${ref}" "-a" "opencode" "-y" "--copy")
+  fi
   local s
   for s in "${skills[@]}"; do
     cmd+=("-s" "$s")

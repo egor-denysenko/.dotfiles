@@ -28,7 +28,7 @@ Frontier thinking LLMs can follow ~150-200 instructions with reasonable consiste
 The absolute minimum that earns its token cost:
 
 1. **One-sentence project description** — anchors every decision the agent makes
-2. **Package manager** — only if not the language default (e.g., pnpm instead of npm)
+2. **Package manager** — only if not the language default (e.g., pnpm)
 3. **Build/test/lint commands** — only if non-standard or non-discoverable
 4. **Architecture boundaries** — high-level component relationships
 5. **Domain terminology** — terms that could be ambiguous (e.g., "organization" vs "workspace" vs "team")

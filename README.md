@@ -38,7 +38,7 @@ Layout: `dot_agents/skills/personal/<name>/` (hand-written) and `dot_agents/skil
 4. `chezmoi apply` to push to `~/.agents/skills/`
 5. Commit `.chezmoidata/third_party_skills.yaml` + `dot_agents/skills/vendored/`
 
-Script uses `npx skills` under the hood. Strips `README.md` from each vendored skill, writes `dot_vendored-version: <source>@<ref>` marker.
+Script uses `pnpm dlx skills` under the hood. Strips `README.md` from each vendored skill, writes `dot_vendored-version: <source>@<ref>` marker.
 
 ### Add a personal skill
 

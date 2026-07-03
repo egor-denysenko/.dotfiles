@@ -181,7 +181,7 @@ export async function runAstGrepSearch(args: {
       return {
         error:
           'ast-grep binary not found. Ensure ast-grep v0.44+ is installed and on PATH. ' +
-          'Install via: npm i -g @ast-grep/cli  or  cargo install ast-grep',
+          'Install via: pnpm add -g @ast-grep/cli  or  cargo install ast-grep',
       };
     }
 
@@ -305,7 +305,7 @@ export async function runAstGrepReplace(args: {
       return {
         error:
           'ast-grep binary not found. Ensure ast-grep v0.44+ is installed and on PATH. ' +
-          'Install via: npm i -g @ast-grep/cli  or  cargo install ast-grep',
+          'Install via: pnpm add -g @ast-grep/cli  or  cargo install ast-grep',
       };
     }
 

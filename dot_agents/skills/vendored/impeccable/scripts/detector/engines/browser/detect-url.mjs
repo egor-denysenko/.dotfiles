@@ -119,7 +119,7 @@ async function detectUrl(url, options = {}) {
         target: url,
       }, () => import('puppeteer'));
     } catch {
-      throw new Error('puppeteer is required for URL scanning. Install: npm install puppeteer');
+      throw new Error('puppeteer is required for URL scanning. Install: pnpm add puppeteer');
     }
   }
 
@@ -246,7 +246,7 @@ async function createBrowserDetector(options = {}) {
   try {
     puppeteer = await import('puppeteer');
   } catch {
-    throw new Error('puppeteer is required for URL scanning. Install: npm install puppeteer');
+    throw new Error('puppeteer is required for URL scanning. Install: pnpm add puppeteer');
   }
   const launchArgs = options.launchArgs || (process.env.CI ? ['--no-sandbox', '--disable-setuid-sandbox'] : []);
   const browser = options.browser || await puppeteer.default.launch({
