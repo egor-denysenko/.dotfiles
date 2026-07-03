@@ -3,11 +3,18 @@ set -euo pipefail
 
 DRY_RUN=0
 CHECK_LATEST=0
+AGENT_HARNESSES=("opencode" "antigravity-cli" "pi")
 
-for arg in "$@"; do
-  case "$arg" in
-    --dry-run) DRY_RUN=1 ;;
-    --check-latest) CHECK_LATEST=1 ;;
+while [ $# -gt 0 ]; do
+  case "$1" in
+    --dry-run)
+      DRY_RUN=1
+      shift
+      ;;
+    --check-latest)
+      CHECK_LATEST=1
+      shift
+      ;;
     -h|--help)
       cat <<USAGE
 Usage: $0 [--dry-run] [--check-latest]
@@ -23,7 +30,7 @@ USAGE
       exit 0
       ;;
     *)
-      echo "Unknown argument: $arg" >&2
+      echo "Unknown argument: $1" >&2
       exit 2
       ;;
   esac
@@ -128,10 +135,14 @@ vendor_group() {
   local install_dir="$TMP_DIR/$group"
   mkdir -p "$install_dir"
 
-  local cmd=("$SKILLS_BIN" "add" "${source}@${ref}" "-a" "opencode" "-y" "--copy")
+  local cmd=("$SKILLS_BIN" "add" "${source}@${ref}" "-y" "--copy")
   if [ ! -x "$SKILLS_BIN" ]; then
-    cmd=("pnpm" "dlx" "skills" "add" "${source}@${ref}" "-a" "opencode" "-y" "--copy")
+    cmd=("pnpm" "dlx" "skills" "add" "${source}@${ref}" "-y" "--copy")
   fi
+  local h
+  for h in "${AGENT_HARNESSES[@]}"; do
+    cmd+=("-a" "$h")
+  done
   local s
   for s in "${skills[@]}"; do
     cmd+=("-s" "$s")
@@ -155,19 +166,11 @@ vendor_group() {
     return 1
   }
 
-  local installed_dir="$install_dir/.agents/skills"
-  if [ ! -d "$installed_dir" ]; then
-    local try
-    for try in "$install_dir/.config/opencode/skills" "$install_dir/.claude/skills" "$install_dir/.pi/skills"; do
-      if [ -d "$try" ]; then
-        installed_dir="$try"
-        break
-      fi
-    done
-  fi
+  local installed_dir
+  installed_dir=$(find "$install_dir" -type d -name "skills" -print -quit || true)
 
-  if [ ! -d "$installed_dir" ]; then
-    echo "  No skills installed for $group" >&2
+  if [ -z "$installed_dir" ] || [ ! -d "$installed_dir" ]; then
+    echo "  No skills directory found for $group under $install_dir" >&2
     return 1
   fi
 

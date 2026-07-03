@@ -22,7 +22,22 @@ mkdir -p "$TARGET_DIR"
 
 if [ -d "$SOURCE_DIR/dot_agents/skills" ]; then
   echo "Installing skills from chezmoi source..."
-  cp -r "$SOURCE_DIR/dot_agents/skills/"* "$TARGET_DIR/" 2>/dev/null || true
+  # Remove only the old nested directories to avoid duplicates,
+  # keeping any custom/unversioned root folders.
+  rm -rf "$TARGET_DIR/personal" "$TARGET_DIR/vendored"
+
+  # Flatten personal skills into the root of TARGET_DIR
+  if [ -d "$SOURCE_DIR/dot_agents/skills/personal" ]; then
+    cp -r "$SOURCE_DIR/dot_agents/skills/personal/"* "$TARGET_DIR/" 2>/dev/null || true
+  fi
+
+  # Flatten vendored skills into the root of TARGET_DIR
+  if [ -d "$SOURCE_DIR/dot_agents/skills/vendored" ]; then
+    cp -r "$SOURCE_DIR/dot_agents/skills/vendored/"* "$TARGET_DIR/" 2>/dev/null || true
+  fi
+
+  # Also copy any other top-level files or directories (excluding personal and vendored)
+  find "$SOURCE_DIR/dot_agents/skills/" -maxdepth 1 -mindepth 1 -not -name "personal" -not -name "vendored" -exec cp -r {} "$TARGET_DIR/" \; 2>/dev/null || true
 fi
 
 # Pi's native config dir (~/.pi/agent/skills/) does not read from

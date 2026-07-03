@@ -48,3 +48,7 @@ README.md
 # Skills live in ~/.agents/skills/ (synced from dot_agents/skills/). Pi's native
 # config dir ~/.pi/agent/skills/ is symlinked to it by dot_config/scripts/run_once_symlink_pi_skills.sh.
 .config/pi/agent/bin/
+
+# Do not sync nested personal/vendored structures from dot_agents/skills/ to home
+.agents/skills/personal/
+.agents/skills/vendored/
