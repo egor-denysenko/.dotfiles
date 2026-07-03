@@ -9,7 +9,7 @@ rtk vitest run / playwright test
 rtk git <any-subcommand>
 rtk gh pr view / checks / run list / issue list / api
 rtk pnpm list / outdated / install
-rtk npm run / npx
+rtk pnpm run / pnpm dlx
 rtk ls / read / grep / find (simple predicates only; use native `find` for `-o`, `-not`, `-exec`, grouped expressions)
 rtk err <cmd> / log <file> / json <file>
 rtk docker ps / images / logs

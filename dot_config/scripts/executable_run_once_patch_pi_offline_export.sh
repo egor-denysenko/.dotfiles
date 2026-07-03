@@ -2,15 +2,8 @@
 set -eu
 
 # Resolve the export-html/index.js path dynamically.
-# macOS: npm via Homebrew → /opt/homebrew/lib/node_modules/...
-# Linux: pnpm global store → <pnpm-global-root>/<hash>/node_modules/...
+# pnpm global store → <pnpm-global-root>/<hash>/node_modules/...
 resolve_file_path() {
-  # Try macOS Homebrew/npm path first
-  local npm_path="/opt/homebrew/lib/node_modules/@earendil-works/pi-coding-agent/dist/core/export-html/index.js"
-  if [ -f "$npm_path" ]; then
-    echo "$npm_path"
-    return
-  fi
 
   # Try pnpm global install
   if command -v pnpm >/dev/null 2>&1; then
@@ -27,18 +20,6 @@ resolve_file_path() {
     fi
   fi
 
-  # Fallback: standard npm global root (Linux)
-  if command -v npm >/dev/null 2>&1; then
-    local npm_root
-    npm_root=$(npm root -g 2>/dev/null) || true
-    if [ -n "$npm_root" ]; then
-      local fallback="$npm_root/@earendil-works/pi-coding-agent/dist/core/export-html/index.js"
-      if [ -f "$fallback" ]; then
-        echo "$fallback"
-        return
-      fi
-    fi
-  fi
 
   return 1
 }

@@ -61,7 +61,7 @@ return {
       local mermaid = require('diagram.renderers').mermaid
       local cache_dir = vim.fn.resolve(vim.fn.stdpath('cache') .. '/diagram-cache/' .. mermaid.id)
       local open_cmd = system_name == 'Darwin' and 'open' or 'xdg-open'
-      local mmdc_install_hint = 'Install with: npm install -g @mermaid-js/mermaid-cli or bun install -g @mermaid-js/mermaid-cli'
+      local mmdc_install_hint = 'Install with: pnpm add -g @mermaid-js/mermaid-cli or bun install -g @mermaid-js/mermaid-cli'
       local resolved_mmdc_command = nil
       vim.fn.mkdir(cache_dir, 'p')
 
@@ -116,12 +116,39 @@ return {
           return resolved_mmdc_command
         end
 
-        if vim.fn.executable('npm') == 1 then
-          local prefix_lines = vim.fn.systemlist({ 'npm', 'prefix', '-g' })
+        if vim.fn.executable('pnpm') == 1 then
+          -- 1. Try pnpm config get global-bin-dir
+          local bin_dir_lines = vim.fn.systemlist({ 'pnpm', 'config', 'get', 'global-bin-dir' })
+          if vim.v.shell_error == 0 and bin_dir_lines[1] then
+            local bin_dir = vim.trim(bin_dir_lines[1])
+            if bin_dir ~= '' and bin_dir ~= 'undefined' then
+              local candidate = vim.fn.resolve(bin_dir .. '/mmdc')
+              if vim.fn.executable(candidate) == 1 then
+                resolved_mmdc_command = candidate
+                return resolved_mmdc_command
+              end
+            end
+          end
+
+          -- 2. Try pnpm config get prefix
+          local prefix_lines = vim.fn.systemlist({ 'pnpm', 'config', 'get', 'prefix' })
           if vim.v.shell_error == 0 and prefix_lines[1] then
             local prefix = vim.trim(prefix_lines[1])
-            if prefix ~= '' then
+            if prefix ~= '' and prefix ~= 'undefined' then
               local candidate = vim.fn.resolve(prefix .. '/bin/mmdc')
+              if vim.fn.executable(candidate) == 1 then
+                resolved_mmdc_command = candidate
+                return resolved_mmdc_command
+              end
+            end
+          end
+
+          -- 3. Fallback: try pnpm root -g and look for .bin in the parent
+          local root_lines = vim.fn.systemlist({ 'pnpm', 'root', '-g' })
+          if vim.v.shell_error == 0 and root_lines[1] then
+            local root = vim.trim(root_lines[1])
+            if root ~= '' and root ~= 'undefined' then
+              local candidate = vim.fn.resolve(root .. '/.bin/mmdc')
               if vim.fn.executable(candidate) == 1 then
                 resolved_mmdc_command = candidate
                 return resolved_mmdc_command

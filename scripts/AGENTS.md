@@ -24,7 +24,7 @@ YAML parsing is done via `chezmoi execute-template` (no `yq` required).
 
 ### Prerequisites
 
-- `skills` CLI installed: `npm install -g skills`
+- `skills` CLI installed: `pnpm add -g skills`
 - `chezmoi` installed (already a hard dep of this repo)
 
 ### Usage
