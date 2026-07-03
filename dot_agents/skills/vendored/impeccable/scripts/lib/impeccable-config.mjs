@@ -1,7 +1,7 @@
 /**
  * CLI-side reader/writer for the unified `.impeccable` config.
  *
- * The CLI (published to pnpm) and the skill scripts (bundled into the install)
+ * The CLI (published to npm) and the skill scripts (bundled into the install)
  * live in separate trees and cannot share runtime code, so this duplicates a
  * small slice of skill/scripts/hook-lib.mjs — the config-path layout, detector
  * ignore semantics, and the `.git/info/exclude` handling. Keep the schema,
@@ -94,7 +94,7 @@ function uniqueStrings(values) {
 }
 
 /**
- * Detector filters shared by `pnpm dlx impeccable detect` and the design hook.
+ * Detector filters shared by `npx impeccable detect` and the design hook.
  * `hook.enabled` remains hook lifecycle state; manual CLI scans still run when
  * the hook is disabled, but they honor the same ignore rules and design-system
  * toggle.

@@ -344,7 +344,7 @@ function getManualEditStatus() {
 
 function loadBrowserScripts() {
   // Detection script: prefer the skill-bundled detector, then fall back to
-  // source/pnpm package locations for local development and older installs.
+  // source/npm package locations for local development and older installs.
   // This one IS cached — detect.js rarely changes during a session.
   const detectPaths = [
     path.join(__dirname, 'detector', 'detect-antipatterns-browser.js'),
