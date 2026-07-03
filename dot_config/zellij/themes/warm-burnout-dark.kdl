@@ -1,17 +1,24 @@
-// Warm Burnout Dark -- Zellij theme
+// Warm Burnout Dark: Zellij theme
 // https://github.com/felipefdl/warm-burnout
 //
-// Modern UI-component spec. Colors are RGB triplets (0-255).
-// Single `0` means terminal default (transparent).
-// Terminal ANSI colors come from your terminal emulator, not from Zellij.
-//
-// Brand rule: warm everywhere, blue nowhere. Steel blue is reserved for
-// syntax types only and is not used in Zellij UI chrome.
+// Modern UI-component spec + standard ANSI colors.
 
 themes {
   warm-burnout-dark {
+    // Standard ANSI colors (used for tab icons, terminal colors, plugins)
+    fg 191 189 182
+    bg 26 21 16
+    black 35 33 27
+    red 240 107 115
+    green 112 191 86
+    yellow 253 176 76
+    blue 79 191 255
+    magenta 208 161 255
+    cyan 147 226 200
+    white 180 168 156          // Set to same as base to prevent white/unreadable alternating tabs
+    orange 255 143 64
+
     // Bare text in the UI (Ctrl/Alt modifier hints, mode names in status bar).
-    // Background matches Ghostty terminal bg so the bar feels integrated, not like a darker strip.
     text_unselected {
       base 180 168 156          // comments / warm stone
       background 26 21 16       // terminal bg (matches Ghostty)
@@ -21,32 +28,32 @@ themes {
       emphasis_3 212 168 184    // constants / dusty mauve
     }
     text_selected {
-      base 191 189 182          // foreground
-      background 31 29 23       // widget surface
-      emphasis_0 255 143 64     // keywords / burnt orange
+      base 26 21 16             // bg (dark contrast on orange highlight)
+      background 255 143 64     // keywords / burnt orange (same as tab view / active tab)
+      emphasis_0 255 180 84     // functions / amber
       emphasis_1 180 188 120    // strings
       emphasis_2 220 158 146    // tags / terra cotta
       emphasis_3 212 168 184    // constants
     }
     // Inactive tabs and inactive keybinding modes in the status bar.
-    // Background raised one tone above the bar so chips read as pills, not floating text.
+    // Emphasis colors collapse to base to ensure unified coloring for tab text/numbers.
     ribbon_unselected {
       base 180 168 156          // comments
       background 31 29 23       // widget surface (raised)
-      emphasis_0 255 180 84     // functions
-      emphasis_1 180 188 120    // strings
-      emphasis_2 220 158 146    // tags / terra cotta
-      emphasis_3 212 168 184    // constants
+      emphasis_0 180 168 156
+      emphasis_1 31 29 23
+      emphasis_2 180 168 156
+      emphasis_3 180 168 156
     }
-    // Active tab and active keybinding mode. Strongest landmark.
-    // Mirrors tmux active window: dark text on burnt orange.
+    // Active tab and active keybinding mode.
+    // Emphasis colors collapse to base to ensure unified coloring for active tab text/numbers.
     ribbon_selected {
       base 26 21 16             // bg
       background 255 143 64     // keywords / burnt orange
-      emphasis_0 26 21 16       // bg, for emphasized indices
-      emphasis_1 245 197 110    // cursor / gold
-      emphasis_2 184 82 46      // accent / copper rust
-      emphasis_3 26 21 16       // bg
+      emphasis_0 26 21 16
+      emphasis_1 26 21 16
+      emphasis_2 26 21 16
+      emphasis_3 26 21 16
     }
     table_title {
       base 255 180 84           // functions / amber
@@ -88,8 +95,6 @@ themes {
       emphasis_2 180 188 120    // strings
       emphasis_3 212 168 184    // constants
     }
-    // Frame around non-focused panes. Subtle stone tone, ~1.5:1 against bg.
-    // Stepped past line-highlight (further from bg) so unfocused borders stay legible without competing.
     frame_unselected {
       base 58 52 42             // raised stone
       background 0
@@ -98,10 +103,6 @@ themes {
       emphasis_2 220 158 146    // tags / terra cotta
       emphasis_3 212 168 184    // constants
     }
-    // Frame around focused pane. Accent copper.
-    // Mirrors tmux pane-active-border-style.
-    // emphasis_3 = 0 (terminal default) so the most prominent emphasis defers to the pane bg
-    // instead of stacking another warm hue on the focused border.
     frame_selected {
       base 184 82 46            // accent / copper rust
       background 0
@@ -110,10 +111,6 @@ themes {
       emphasis_2 245 197 110    // cursor / gold
       emphasis_3 0
     }
-    // Frame in PANE/TAB mode. Functions amber for mode signal.
-    // Three-tier hierarchy: cursor=gold, focus=copper, mode=amber. All distinct.
-    // emphasis_1..3 collapse to amber so the compact-bar plugin renders the active mode
-    // name (NORMAL, PANE, TAB, ...) as a single warm signal instead of fanning out.
     frame_highlight {
       base 255 180 84           // functions / amber
       background 0
@@ -122,7 +119,6 @@ themes {
       emphasis_2 255 180 84     // amber
       emphasis_3 255 180 84     // amber
     }
-    // Successful command exit code in command panes.
     exit_code_success {
       base 180 188 120          // strings / sage
       background 0
@@ -131,7 +127,6 @@ themes {
       emphasis_2 220 158 146    // tags / terra cotta
       emphasis_3 180 168 156    // comments
     }
-    // Failed command exit code in command panes.
     exit_code_error {
       base 244 144 144          // error / muted pink
       background 0
@@ -140,7 +135,6 @@ themes {
       emphasis_2 0
       emphasis_3 0
     }
-    // Multi-user session colors. Warm hues only, accent last.
     multiplayer_user_colors {
       player_1 255 143 64       // keywords / burnt orange
       player_2 220 158 146      // tags / terra cotta
