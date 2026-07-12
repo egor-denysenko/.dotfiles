@@ -1,6 +1,7 @@
 ---
 name: mozzarella
-description: Commit and push current branch in one shot. Trigger: "mozzarella", "commit and push", "commit this", any request to commit+push the current branch.
+description: >
+  Commit and push current branch in one shot. Trigger: "mozzarella", "commit and push", "commit this", any request to commit+push the current branch.
 ---
 
 ## Workflow

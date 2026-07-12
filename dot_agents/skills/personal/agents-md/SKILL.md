@@ -1,6 +1,7 @@
 ---
 name: agents-md
-description: Create/optimize AGENTS.md per https://agents.md. Analyze codebase, stack, conventions. Minimal w/ progressive disclosure. Handles monorepos. Trigger: "create AGENTS.md", "add AGENTS.md", "optimize AGENTS.md", "refactor AGENTS.md", "make repo AI-friendly".
+description: >
+  Create/optimize AGENTS.md per https://agents.md. Analyze codebase, stack, conventions. Minimal w/ progressive disclosure. Handles monorepos. Trigger: "create AGENTS.md", "add AGENTS.md", "optimize AGENTS.md", "refactor AGENTS.md", "make repo AI-friendly".
 ---
 
 ## Workflow
