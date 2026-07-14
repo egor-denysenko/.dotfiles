@@ -23,13 +23,12 @@
   "enabledModels": {{ index $profile "enabledModels" | toPrettyJson | indent 2 | trim }},
   "retry": {
     "enabled": true,
-    "maxRetries": 5,
-    "baseDelayMs": 3400,
+    "maxRetries": 7,
+    "baseDelayMs": 2400,
     "provider": {
       "maxRetryDelayMs": 60000
     }
   },
   "packages": {{ index $profile "packages" | toPrettyJson | indent 2 | trim }},
-  "lastChangelogVersion": "0.80.1",
   "subagents": {}
 }
