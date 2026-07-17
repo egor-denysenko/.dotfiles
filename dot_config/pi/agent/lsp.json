@@ -1,8 +1,24 @@
 {
-  "servers": {
-    "python": {
-      "command": "pyrefly-langserver",
-      "args": ["--stdio"]
+  "servers": [
+    {
+      "id": "go",
+      "bin": "gopls",
+      "include": ["**/*.go"],
+      "rootMarkers": ["go.mod", "go.sum"]
+    },
+    {
+      "id": "python",
+      "bin": "pyrefly",
+      "args": ["lsp"],
+      "include": ["**/*.py"],
+      "rootMarkers": ["pyproject.toml", "setup.py", "setup.cfg", "requirements.txt", "Pipfile"]
+    },
+    {
+      "id": "typescript",
+      "bin": "typescript-language-server",
+      "args": ["--stdio"],
+      "include": ["**/*.{ts,tsx,js,jsx,mjs,cjs}"],
+      "rootMarkers": ["tsconfig.json", "package.json"]
     }
-  }
+  ]
 }

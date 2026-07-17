@@ -15,9 +15,9 @@ pi_agent:
         # Async subagent delegation — pinned to commit hash.
         - git:github.com/nicobailon/pi-subagents@0.31.0
         # FFF file search — frecency-ranked grep/find for pi.
-        - npm:@ff-labs/pi-fff@0.9.6
+        - npm:@ff-labs/pi-fff@0.10.0
         # LSP diagnostics & language server navigation tools
-        - git:github.com/samfoy/pi-lsp-extension@v1.2.1
+        - npm:pi-lsp@0.1.7
 
     work:
       <<: *default_profile
