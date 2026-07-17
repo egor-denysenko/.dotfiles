@@ -20,7 +20,8 @@ import { TOOL_ROUTING_GUIDANCE, EXCLUDED_PATHS } from './lsp-policy.js';
 export default function (pi: ExtensionAPI): void {
   setup(pi);
 
-  pi.registerTool('ast_grep_search', {
+  pi.registerTool({
+    name: 'ast_grep_search',
     description:
       'Structural, AST-aware code search using ast-grep patterns. ' +
       'Matches code shapes (function signatures, imports, JSX, decorators), not text. ' +
@@ -57,7 +58,7 @@ export default function (pi: ExtensionAPI): void {
       required: ['pattern'],
     },
 
-    handler: async (args: Record<string, unknown>) => {
+    execute: async (args: Record<string, unknown>) => {
       const result = await runAstGrepSearch({
         pattern: String(args.pattern ?? ''),
         language: args.language ? String(args.language) : undefined,
@@ -76,7 +77,8 @@ export default function (pi: ExtensionAPI): void {
     },
   });
 
-  pi.registerTool('ast_grep_replace', {
+  pi.registerTool({
+    name: 'ast_grep_replace',
     description:
       'Structural, AST-aware code rewrite using ast-grep patterns. ' +
       'Replace code shapes (function signatures, imports, JSX) in-place with preview mode. ' +
@@ -115,7 +117,7 @@ export default function (pi: ExtensionAPI): void {
       required: ['pattern', 'rewrite'],
     },
 
-    handler: async (args: Record<string, unknown>) => {
+    execute: async (args: Record<string, unknown>) => {
       const result = await runAstGrepReplace({
         pattern: String(args.pattern ?? ''),
         rewrite: String(args.rewrite ?? ''),
