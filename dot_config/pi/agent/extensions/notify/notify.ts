@@ -44,7 +44,7 @@ import { join } from "node:path";
 const SOUND_FLAG_FILE = "/tmp/pi-notify-sound";
 const COOLDOWN_MS = 3000;
 const EXTENSION_DIR = __dirname;
-const CONFIG_PATH = join(homedir(), ".config", "pi", "agent", "notify.json");
+const CONFIG_PATH = join(homedir(), ".config", "pi", "agent", "extensions", "notify", "notify.json");
 const DEFAULT_SOUND = join(EXTENSION_DIR, "chime.oga");
 
 const DEFAULT_CONFIG: NotifyConfig = {
