@@ -1,31 +1,39 @@
 import type { ExtensionAPI } from '@earendil-works/pi-coding-agent';
 
-const ACTIVE_TOOLS = [
-  // built-in — always present
+// ─── Active tool set ───────────────────────────────────────────────────────
+// Below is the complete list of tools that will be active. Uncomment or add
+// tools to include them. Tools not in this list are pruned on session start.
+// To disable pruning entirely, remove or rename this extension.
+//
+// Core (built-in)
+//   read, bash, edit, write
+// Fast search (@ff-labs/pi-fff)
+//   ffgrep, fffind
+// LSP semantic (pi-lsp)
+//   lsp_hover, lsp_definition, lsp_references, lsp_symbols
+// Structural (code-intel)
+//   ast_grep_search
+// Delegation (pi-subagents)
+//   subagent
+// ────────────────────────────────────────────────────────────────────────────
+
+const ACTIVE = new Set([
   'read', 'bash', 'edit', 'write',
-
-  // @ff-labs/pi-fff — fast fuzzy file/content search
   'ffgrep', 'fffind',
-
-  // pi-lsp — semantic code intelligence via language server
   'lsp_hover', 'lsp_definition', 'lsp_references', 'lsp_symbols',
-
-  // code-intel — AST structural pattern search (complements text search)
   'ast_grep_search',
-
-  // pi-subagents — delegate/chain/parallel sub-tasks
   'subagent',
-];
+]);
 
 export default function (pi: ExtensionAPI): void {
   pi.on('session_start', () => {
-    const active = pi.getActiveTools();
     const all = pi.getAllTools().map(t => t.name);
+    const active = pi.getActiveTools();
 
-    // If --tools or --exclude-tools was passed, the active set will differ
-    // from the full registry. In that case respect the user's explicit choice.
+    // --tools or --exclude-tools was passed. Respect user's explicit choice.
     if (active.length !== all.length) return;
 
-    pi.setActiveTools(ACTIVE_TOOLS);
+    const pruned = active.filter(t => ACTIVE.has(t));
+    pi.setActiveTools(pruned);
   });
 }
