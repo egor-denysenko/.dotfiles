@@ -202,6 +202,18 @@ function renderSkills(
 }
 
 // ---------------------------------------------------------------------------
+// Tools list
+// ---------------------------------------------------------------------------
+
+function renderTools(pi: ExtensionAPI, th: HeaderTheme): string[] {
+  const names = pi.getActiveTools();
+  if (names.length === 0) return [];
+  const out: string[] = [th.label('[Tools]')];
+  out.push(`  ${th.value(names.join(', '))}`);
+  return out;
+}
+
+// ---------------------------------------------------------------------------
 // Themes list
 // ---------------------------------------------------------------------------
 
@@ -250,6 +262,7 @@ export default function (pi: ExtensionAPI) {
             ...renderContext(ctx.cwd, th),
             ...renderExtensions(extensions, th),
             ...renderSkills(pi, th),
+            ...renderTools(pi, th),
             ...renderThemes(ctx as any, th),
           ];
 
