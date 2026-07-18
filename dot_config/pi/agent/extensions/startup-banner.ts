@@ -206,10 +206,19 @@ function renderSkills(
 // ---------------------------------------------------------------------------
 
 function renderTools(pi: ExtensionAPI, th: HeaderTheme): string[] {
-  const names = pi.getActiveTools();
-  if (names.length === 0) return [];
+  const active = pi.getActiveTools();
+  const all = pi.getAllTools().map(t => t.name);
+
+  if (active.length === all.length) {
+    const out: string[] = [th.label('[Tools]')];
+    out.push(`  ${th.value(active.join(', '))}`);
+    return out;
+  }
+
+  const missing = all.filter(t => !active.includes(t));
   const out: string[] = [th.label('[Tools]')];
-  out.push(`  ${th.value(names.join(', '))}`);
+  out.push(`  ${th.value(active.join(', '))}`);
+  out.push(`  ${th.faint('pruned:')} ${th.faint(missing.join(', '))}`);
   return out;
 }
 

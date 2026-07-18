@@ -26,7 +26,7 @@ const ACTIVE = new Set([
 ]);
 
 export default function (pi: ExtensionAPI): void {
-  pi.on('session_start', () => {
+  pi.on('session_start', (_event: unknown, ctx?: { ui?: { notify: (msg: string, level: string) => void } }) => {
     const all = pi.getAllTools().map(t => t.name);
     const active = pi.getActiveTools();
 
@@ -34,6 +34,13 @@ export default function (pi: ExtensionAPI): void {
     if (active.length !== all.length) return;
 
     const pruned = active.filter(t => ACTIVE.has(t));
+    const removed = active.filter(t => !ACTIVE.has(t));
+
+    if (removed.length > 0) {
+      const msg = `ActiveTools: pruned ${removed.join(', ')}. Add to ACTIVE set in active_tools/index.ts to keep them.`;
+      ctx?.ui?.notify(msg, 'warn');
+    }
+
     pi.setActiveTools(pruned);
   });
 }
