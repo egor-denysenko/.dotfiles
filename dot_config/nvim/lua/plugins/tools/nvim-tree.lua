@@ -5,12 +5,8 @@ return {
 		dependencies = {
 			"nvim-tree/nvim-web-devicons",
 		},
-		config = function()
-			-- Disable netrw entirely so nvim-tree takes over.
-			vim.g.loaded_netrw = 1
-			vim.g.loaded_netrwPlugin = 1
-
-			require("nvim-tree").setup({
+	config = function()
+		require("nvim-tree").setup({
 				hijack_cursor = true,
 				hijack_netrw = true,
 				hijack_directories = {
