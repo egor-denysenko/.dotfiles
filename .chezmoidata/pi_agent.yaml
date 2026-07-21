@@ -4,10 +4,10 @@
 pi_agent:
   machine_profiles:
     personal: &default_profile
-      defaultProvider: lmstudio
-      defaultModel: google/gemma-4-12b-qat
+      defaultProvider: tokenrouter
+      defaultModel: z-ai/glm-5.2-free
       enabledModels:
-        - google/gemma-4-12b-qat
+        - z-ai/glm-5.2-free
       packages:
         # Voice dictation (on-device Whisper STT) + i18n — pinned to npm versions.
         - npm:@juicesharp/rpiv-voice@1.20.0
@@ -16,7 +16,7 @@ pi_agent:
         - git:github.com/nicobailon/pi-subagents@0.31.0
         # FFF file search — frecency-ranked grep/find for pi.
         - npm:@ff-labs/pi-fff@0.10.0
-        # LSP diagnostics & language server navigation tools
+        # LSP diagnostics & language server navigation tools — 0.1.7 is latest.
         - npm:pi-lsp@0.1.7
 
     work:

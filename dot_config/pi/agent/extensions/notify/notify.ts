@@ -82,9 +82,6 @@ interface NotifyConfig {
 
 let lastNotifyTime = 0;
 let soundEnabled = false;
-function checkMuted(): boolean {
-  return false;
-}
 
 // ---------------------------------------------------------------------------
 // Config loading
@@ -318,8 +315,6 @@ async function notify(
   level: NotifyLevel,
   eventKey: string,
 ): Promise<string> {
-  if (checkMuted()) return "muted";
-
   const now = Date.now();
   if (now - lastNotifyTime < COOLDOWN_MS) return "cooldown";
   lastNotifyTime = now;

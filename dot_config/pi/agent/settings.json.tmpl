@@ -9,7 +9,7 @@
 {{- $profiles := .pi_agent.machine_profiles -}}
 {{- if hasKey $profiles $machine -}}
 {{- $profile = index $profiles $machine -}}
-{{- end }}
+{{- end -}}
 
 {
   "enableInstallTelemetry": false,
@@ -17,18 +17,19 @@
   "defaultModel": {{ index $profile "defaultModel" | toJson }},
   "defaultThinkingLevel": "low",
   "quietStartup": true,
-  "hideThinkingBlock": true,
+  "hideThinkingBlock": false,
   "theme": "warm-burnout-dark",
   "shellCommandPrefix": "shopt -s expand_aliases\n[ -f ~/.config/zsh/aliases.zsh ] && source ~/.config/zsh/aliases.zsh",
   "enabledModels": {{ index $profile "enabledModels" | toPrettyJson | indent 2 | trim }},
   "retry": {
     "enabled": true,
-    "maxRetries": 7,
-    "baseDelayMs": 2400,
+    "maxRetries": 5,
+    "baseDelayMs": 3400,
     "provider": {
       "maxRetryDelayMs": 60000
     }
   },
   "packages": {{ index $profile "packages" | toPrettyJson | indent 2 | trim }},
-  "subagents": {}
+  "subagents": {},
+  "lastChangelogVersion": "0.80.10"
 }

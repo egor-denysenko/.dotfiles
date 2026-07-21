@@ -21,9 +21,8 @@ third_party_skills:
       - impeccable
   mattpocock-skills:
     source: mattpocock/skills
-    ref: 1445797da5ee4e4054233878c0029e9276f9986a
+    ref: v1.1.0
     skills:
-      - diagnose
       - wayfinder
       - grilling
       # --- Dependant one on the other ---
@@ -36,7 +35,7 @@ third_party_skills:
       - teach
   cursor-skills:
     source: cursor/plugins
-    ref: 0452e08a314c
+    ref: 3fe2823ce17c
     skills:
       - deslop
       - how

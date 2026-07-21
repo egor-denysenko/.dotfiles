@@ -57,11 +57,6 @@ function mkTheme(theme: {
 // Art: run thisisfine.sh, keep ANSI colours intact
 // ---------------------------------------------------------------------------
 
-/** Strip ANSI escape sequences to measure visual width. */
-function visualWidth(line: string): number {
-  return line.replace(/\x1b\[[0-9;]*m/g, "").length;
-}
-
 function getArtLines(): string[] {
   if (!existsSync(ART_SCRIPT)) return [];
   try {
@@ -263,7 +258,7 @@ export default function (pi: ExtensionAPI) {
 
       return {
         render(width: number): string[] {
-          const artVisualWidth = Math.max(...artLines.map((l) => visualWidth(l)));
+          const artVisualWidth = Math.max(...artLines.map((l) => visibleWidth(l)));
           // Pad to centre; also add 1 char of breathing room
           const pad = Math.max(0, Math.floor((width - artVisualWidth) / 2)) + 1;
 
