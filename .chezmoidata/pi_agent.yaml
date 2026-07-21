@@ -4,10 +4,6 @@
 pi_agent:
   machine_profiles:
     personal: &default_profile
-      defaultProvider: tokenrouter
-      defaultModel: z-ai/glm-5.2-free
-      enabledModels:
-        - z-ai/glm-5.2-free
       packages:
         # Voice dictation (on-device Whisper STT) + i18n — pinned to npm versions.
         - npm:@juicesharp/rpiv-voice@1.20.0
