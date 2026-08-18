@@ -16,12 +16,12 @@
 third_party_skills:
   impeccable:
     source: pbakaus/impeccable
-    ref: skill-v3.9.1
+    ref: skill-v4.1.1
     skills:
       - impeccable
   mattpocock-skills:
     source: mattpocock/skills
-    ref: v1.1.0
+    ref: v1.2.3
     skills:
       - wayfinder
       - grilling
@@ -35,7 +35,7 @@ third_party_skills:
       - teach
   cursor-skills:
     source: cursor/plugins
-    ref: 3fe2823ce17c
+    ref: 2a8044425c7b
     skills:
       - deslop
       - how
