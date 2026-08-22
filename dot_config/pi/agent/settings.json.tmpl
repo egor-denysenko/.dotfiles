@@ -1,13 +1,11 @@
 {{- $machine := .machine | default "" -}}
 {{- $emptyProfile := dict
-  "packages" (list)
 -}}
 {{- $profile := $emptyProfile -}}
 {{- $profiles := .pi_agent.machine_profiles -}}
 {{- if hasKey $profiles $machine -}}
 {{- $profile = index $profiles $machine -}}
 {{- end -}}
-
 {
   "enableInstallTelemetry": false,
   "defaultThinkingLevel": "low",
@@ -25,5 +23,7 @@
   },
   "packages": {{ index $profile "packages" | toPrettyJson | indent 2 | trim }},
   "subagents": {},
-  "lastChangelogVersion": "0.80.10"
+  "defaultProvider": "llmgateway",
+  "defaultModel": "free-auto",
+  "lastChangelogVersion": "0.84.2"
 }
