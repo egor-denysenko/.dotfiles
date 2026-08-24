@@ -185,6 +185,16 @@ return {
             },
           },
         },
+
+        tinymist = {
+          root_dir = function(fname)
+            return require('lspconfig.util').root_pattern('.git', 'Makefile', 'template.typ')(fname)
+              or require('lspconfig.util').path.dirname(fname)
+          end,
+          settings = {
+            exportPdf = 'onType',
+          },
+        },
       }
 
       -- Register custom pyrefly server configuration
