@@ -35,7 +35,7 @@ third_party_skills:
       - teach
   cursor-skills:
     source: cursor/plugins
-    ref: 2a8044425c7b
+    ref: bdf7aa355337
     skills:
       - deslop
       - how
