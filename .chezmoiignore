@@ -3,6 +3,12 @@
 
 README.md
 
+# Work machines keep a locally managed Git config with private identity and
+# environment-specific settings. Never replace it from this repository.
+{{- if eq .machine "work" }}
+.gitconfig
+{{- end }}
+
 # Neovim
 **/lazy-lock.json
 **/lazyvim.json

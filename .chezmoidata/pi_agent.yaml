@@ -6,12 +6,12 @@ pi_agent:
     personal: &default_profile
       packages:
         # Voice dictation (on-device Whisper STT) + i18n — pinned to npm versions.
-        - npm:@juicesharp/rpiv-voice@1.20.0
-        - npm:@juicesharp/rpiv-i18n@1.20.0
-        # Async subagent delegation — pinned to commit hash.
-        - git:github.com/nicobailon/pi-subagents@0.31.0
+        - npm:@juicesharp/rpiv-voice@2.7.1
+        - npm:@juicesharp/rpiv-i18n@2.7.1
+        # Async subagent delegation.
+        - git:github.com/nicobailon/pi-subagents@0.58.0
         # FFF file search — frecency-ranked grep/find for pi.
-        - npm:@ff-labs/pi-fff@0.10.0
+        - npm:@ff-labs/pi-fff@0.10.5
         # LSP diagnostics & language server navigation tools — 0.1.7 is latest.
         - npm:pi-lsp@0.1.7
 
