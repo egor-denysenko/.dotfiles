@@ -14,6 +14,8 @@ pi_agent:
         - npm:@ff-labs/pi-fff@0.10.5
         # LSP diagnostics & language server navigation tools — 0.1.7 is latest.
         - npm:pi-lsp@0.1.7
+        # Neovim line-based review comments for Pi — pinned to commit hash (no tags).
+        - git:github.com/jillesme/pi-nvim-review@d61a694dcd38
 
     work:
       <<: *default_profile
