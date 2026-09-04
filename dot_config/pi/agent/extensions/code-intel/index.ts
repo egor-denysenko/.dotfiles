@@ -58,7 +58,8 @@ export default function (pi: ExtensionAPI): void {
       required: ['pattern'],
     },
 
-    execute: async (args: Record<string, unknown>) => {
+    execute: async (toolCallId: string | Record<string, unknown>, params?: Record<string, unknown>) => {
+      const args = (typeof toolCallId === 'object' && toolCallId !== null ? toolCallId : (params ?? {})) as Record<string, unknown>;
       const result = await runAstGrepSearch({
         pattern: String(args.pattern ?? ''),
         language: args.language ? String(args.language) : undefined,
@@ -68,11 +69,16 @@ export default function (pi: ExtensionAPI): void {
         excludedPaths: EXCLUDED_PATHS,
       });
 
-      if ('error' in result) return { error: result.error };
+      if ('error' in result) {
+        return {
+          content: [{ type: 'text', text: result.error }],
+          details: result,
+        };
+      }
+
       return {
-        matches: result.matches,
-        totalMatches: result.totalMatches,
-        truncated: result.truncated,
+        content: [{ type: 'text', text: JSON.stringify(result, null, 2) }],
+        details: result,
       };
     },
   });

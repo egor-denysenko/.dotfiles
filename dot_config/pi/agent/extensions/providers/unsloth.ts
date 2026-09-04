@@ -23,6 +23,14 @@ type StoredCredential = {
 
 type ModelRecord = Record<string, unknown>;
 type ModelsResponse = { data?: ModelRecord[] };
+type RuntimeStatus = {
+  active_model?: unknown;
+  context_length?: unknown;
+};
+type AutoSwitchOverridesResponse = {
+  overrides?: Record<string, { custom_context_length?: unknown }>;
+};
+type ModelContextWindows = Map<string, number>;
 
 function normalizeBaseUrl(value: string): string {
   const trimmed = value.trim().replace(/\/+$/, "");
@@ -31,6 +39,14 @@ function normalizeBaseUrl(value: string): string {
 
 function modelsUrl(baseUrl: string): string {
   return `${normalizeBaseUrl(baseUrl)}/models`;
+}
+
+function runtimeStatusUrl(baseUrl: string): string {
+  return `${normalizeBaseUrl(baseUrl).replace(/\/v1$/, "")}/api/inference/status`;
+}
+
+function autoSwitchOverridesUrl(baseUrl: string): string {
+  return `${normalizeBaseUrl(baseUrl).replace(/\/v1$/, "")}/api/settings/openai-auto-switch/overrides`;
 }
 
 function finiteNumber(value: unknown): number | undefined {
@@ -52,10 +68,22 @@ function getBoolean(record: ModelRecord, ...keys: string[]): boolean | undefined
   return undefined;
 }
 
-function getContextWindow(record: ModelRecord, fallback: number): number {
-  // Unsloth Studio's /v1/models reports the actual runtime setting as
-  // `context_length`, including a --max-seq-length/--context-length CLI override.
+function getContextWindow(
+  record: ModelRecord,
+  fallback: number,
+  runtimeStatus?: RuntimeStatus,
+  modelContexts?: ModelContextWindows,
+): number {
+  // Prefer Studio's loaded runtime setting, then its per-model UI override,
+  // and finally retain compatibility with older /v1/models responses.
+  const id = typeof record.id === "string" ? record.id : undefined;
+  const runtimeContext =
+    runtimeStatus?.active_model === id
+      ? finiteNumber(runtimeStatus.context_length)
+      : undefined;
   return (
+    runtimeContext ??
+    (id ? modelContexts?.get(id) : undefined) ??
     finiteNumber(record.context_length) ??
     finiteNumber(record.contextWindow) ??
     finiteNumber(record.context_window) ??
@@ -79,17 +107,34 @@ function getInput(record: ModelRecord): ("text" | "image")[] {
   return vision ? ["text", "image"] : ["text"];
 }
 
-function toModels(records: ModelRecord[], contextWindow: number): ProviderModelConfig[] {
+function toModels(
+  records: ModelRecord[],
+  contextWindow: number,
+  runtimeStatus?: RuntimeStatus,
+  modelContexts?: ModelContextWindows,
+): ProviderModelConfig[] {
   return records.flatMap((record) => {
     const id = typeof record.id === "string" ? record.id : "";
     if (!id || !isGenerationModel(id)) return [];
 
-    const reasoning = getBoolean(record, "reasoning", "supportsReasoning", "supports_reasoning") ?? isQwen(id);
+    // Studio enables thinking by default, even when /v1/models omits reasoning
+    // metadata. Mark such models as reasoning-capable so pi emits the chat
+    // template switch that disables Studio's implicit reasoning mode.
+    const reportedReasoning = getBoolean(record, "reasoning", "supportsReasoning", "supports_reasoning");
+    const reasoning = isQwen(id) ? (reportedReasoning ?? true) : true;
     const compat: NonNullable<ProviderModelConfig["compat"]> = {
       supportsDeveloperRole: false,
       supportsReasoningEffort: false,
       supportsUsageInStreaming: false,
-      ...(reasoning && isQwen(id) ? { thinkingFormat: "qwen" as const } : {}),
+      // Studio's chat template enables thinking by default. Disable it so the
+      // reasoning trace cannot consume the whole completion budget before a
+      // visible answer is produced.
+      ...(reasoning && isQwen(id)
+        ? { thinkingFormat: "qwen" as const }
+        : {
+            thinkingFormat: "chat-template" as const,
+            chatTemplateKwargs: { enable_thinking: false },
+          }),
     };
 
     return [{
@@ -98,7 +143,7 @@ function toModels(records: ModelRecord[], contextWindow: number): ProviderModelC
       reasoning,
       input: getInput(record),
       cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 },
-      contextWindow: getContextWindow(record, contextWindow),
+      contextWindow: getContextWindow(record, contextWindow, runtimeStatus, modelContexts),
       maxTokens: getMaxTokens(record),
       compat,
     }];
@@ -116,14 +161,52 @@ async function readStoredCredential(): Promise<StoredCredential | undefined> {
   }
 }
 
-async function discover(baseUrl: string, apiKey: string): Promise<ModelRecord[]> {
-  const response = await fetch(modelsUrl(baseUrl), {
-    headers: { Authorization: `Bearer ${apiKey}` },
-  });
-  if (!response.ok) throw new Error(`Studio returned HTTP ${response.status}`);
+async function discover(
+  baseUrl: string,
+  apiKey: string,
+): Promise<{
+  records: ModelRecord[];
+  runtimeStatus?: RuntimeStatus;
+  modelContexts: ModelContextWindows;
+}> {
+  const headers = { Authorization: `Bearer ${apiKey}` };
+  const [modelsResult, statusResult, overridesResult] = await Promise.allSettled([
+    fetch(modelsUrl(baseUrl), { headers }),
+    fetch(runtimeStatusUrl(baseUrl), { headers }),
+    fetch(autoSwitchOverridesUrl(baseUrl), { headers }),
+  ]);
+  if (modelsResult.status === "rejected") throw modelsResult.reason;
+  if (!modelsResult.value.ok) throw new Error(`Studio returned HTTP ${modelsResult.value.status}`);
 
-  const payload = await response.json() as ModelsResponse;
-  return Array.isArray(payload.data) ? payload.data : [];
+  const payload = await modelsResult.value.json() as ModelsResponse;
+  let runtimeStatus: RuntimeStatus | undefined;
+  if (statusResult.status === "fulfilled" && statusResult.value.ok) {
+    try {
+      runtimeStatus = await statusResult.value.json() as RuntimeStatus;
+    } catch {
+      // The runtime-status endpoint is optional; the catalog still supports
+      // older Studio versions and remains sufficient when its JSON is invalid.
+    }
+  }
+  const records = Array.isArray(payload.data) ? payload.data : [];
+  const modelContexts: ModelContextWindows = new Map();
+  if (overridesResult.status === "fulfilled" && overridesResult.value.ok) {
+    try {
+      const { overrides } = await overridesResult.value.json() as AutoSwitchOverridesResponse;
+      for (const record of records) {
+        const id = typeof record.id === "string" ? record.id : undefined;
+        const quant = typeof record.quant === "string" ? record.quant : undefined;
+        if (!id) continue;
+        // Studio stores per-model UI settings under <model-id>:<quant>.
+        const override = overrides?.[quant ? `${id}:${quant}` : id] ?? overrides?.[id];
+        const contextWindow = finiteNumber(override?.custom_context_length);
+        if (contextWindow) modelContexts.set(id, contextWindow);
+      }
+    } catch {
+      // The overrides endpoint is optional; retain catalog fields or fallback.
+    }
+  }
+  return { records, runtimeStatus, modelContexts };
 }
 
 function providerConfig(
@@ -182,7 +265,7 @@ export default function (pi: ExtensionAPI) {
       const contextWindow = finiteNumber(Number(context)) ?? DEFAULT_CONTEXT_WINDOW;
 
       callbacks.onProgress?.("Testing Unsloth Studio and discovering loaded models…");
-      const records = await discover(baseUrl, apiKey.trim());
+      const { records, runtimeStatus, modelContexts } = await discover(baseUrl, apiKey.trim());
       if (records.length === 0) throw new Error("Unsloth Studio returned no models");
 
       const credentials: OAuthCredentials = {
@@ -195,7 +278,7 @@ export default function (pi: ExtensionAPI) {
 
       pi.registerProvider(PROVIDER, {
         ...providerConfig(oauth, baseUrl, apiKey.trim()),
-        models: toModels(records, contextWindow),
+        models: toModels(records, contextWindow, runtimeStatus, modelContexts),
       });
       return credentials;
     },
@@ -225,7 +308,7 @@ export default function (pi: ExtensionAPI) {
       );
 
       const baseUrl = normalizeBaseUrl(endpoint?.trim() || DEFAULT_BASE_URL);
-      const records = await discover(baseUrl, apiKey.trim());
+      const { records } = await discover(baseUrl, apiKey.trim());
       if (records.length === 0) throw new Error("Unsloth Studio returned no models");
 
       const contextWindow = finiteNumber(Number(context)) ?? DEFAULT_CONTEXT_WINDOW;
@@ -242,8 +325,8 @@ export default function (pi: ExtensionAPI) {
 
     const baseUrl = normalizeBaseUrl(credential.baseUrl ?? DEFAULT_BASE_URL);
     const contextWindow = finiteNumber(credential.contextWindow) ?? DEFAULT_CONTEXT_WINDOW;
-    const records = await discover(baseUrl, credential.access);
-    const models = toModels(records, contextWindow);
+    const { records, runtimeStatus, modelContexts } = await discover(baseUrl, credential.access);
+    const models = toModels(records, contextWindow, runtimeStatus, modelContexts);
 
     pi.registerProvider(PROVIDER, {
       ...providerConfig(oauth, baseUrl, credential.access),
@@ -277,7 +360,8 @@ export default function (pi: ExtensionAPI) {
     try {
       const baseUrl = normalizeBaseUrl(credential.baseUrl ?? DEFAULT_BASE_URL);
       const contextWindow = finiteNumber(credential.contextWindow) ?? DEFAULT_CONTEXT_WINDOW;
-      const models = toModels(await discover(baseUrl, credential.access), contextWindow);
+      const { records, runtimeStatus, modelContexts } = await discover(baseUrl, credential.access);
+      const models = toModels(records, contextWindow, runtimeStatus, modelContexts);
       if (models.length > 0) {
         pi.registerProvider(PROVIDER, {
           ...providerConfig(oauth, baseUrl, credential.access),

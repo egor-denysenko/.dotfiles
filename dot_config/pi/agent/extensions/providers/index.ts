@@ -1,8 +1,9 @@
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 
+import aperture from "./aperture";
 import litellm from "./litellm";
-import lmstudio from "./lmstudio";
+import unsloth from "./unsloth";
 
 export default async function (pi: ExtensionAPI) {
-  await Promise.all([litellm(pi), lmstudio(pi)]);
+  await Promise.all([litellm(pi), aperture(pi), unsloth(pi)]);
 }
