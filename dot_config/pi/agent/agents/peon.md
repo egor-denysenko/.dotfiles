@@ -3,6 +3,8 @@ name: peon
 description: General-purpose delegated coding agent running on Ornith via Unsloth Studio
 model: unsloth-studio/ornith-ai/Ornith-1.5-35B-A3B-GGUF
 thinking: off
+extensions:
+  - ../extensions/providers/unsloth.ts
 systemPromptMode: append
 inheritProjectContext: true
 inheritSkills: false

@@ -23,7 +23,7 @@
   },
   "packages": {{ index $profile "packages" | toPrettyJson | indent 2 | trim }},
   "subagents": {},
-  "defaultProvider": "llmgateway",
-  "defaultModel": "free-auto",
+  "defaultProvider": {{ get . "pi_private_default_provider" | default "llmgateway" | quote }},
+  "defaultModel": {{ get . "pi_private_default_model" | default "free-auto" | quote }},
   "lastChangelogVersion": "0.85.0"
 }

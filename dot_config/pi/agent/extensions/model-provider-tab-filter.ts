@@ -253,6 +253,8 @@ function patchModelSelector(): void {
     const selected = this.filteredModels?.[selectedIndex];
     if (!selected || !this.listContainer) return;
 
+    // The original renderer clears and rebuilds listContainer on every update,
+    // so this label must be recreated and attached on every render as well.
     this.listContainer.addChild(new Spacer(1));
     this.listContainer.addChild(new Text(`  Provider Name: ${selected.provider}`, 0, 0));
   };
