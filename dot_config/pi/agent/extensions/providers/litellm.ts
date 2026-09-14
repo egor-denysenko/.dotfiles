@@ -2,6 +2,7 @@ import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 import { readFile } from "node:fs/promises";
 import { homedir } from "node:os";
 import { join } from "node:path";
+import { readCatalog, writeCatalog } from "./catalog-cache";
 
 type CompatConfig = {
   supportsDeveloperRole?: boolean;
@@ -43,16 +44,16 @@ const MODELS_PATH = join(homedir(), ".config", "pi", "agent", "models.json");
 const AUTH_PATH = join(homedir(), ".config", "pi", "agent", "auth.json");
 const DEFAULT_BASE_URL = "https://litellm.porchettos.space/v1";
 
-function sleep(ms: number): Promise<void> {
-  return new Promise((r) => setTimeout(r, ms));
-}
-
 function asNumber(value: unknown): number | undefined {
   return typeof value === "number" && Number.isFinite(value) ? value : undefined;
 }
 
 function isGenerationModel(id: string): boolean {
   return !/(^|[-_/])(embed|embedding|rerank)([-_/]|$)/i.test(id);
+}
+
+function isLiteLlmModel(value: unknown): value is Record<string, unknown> {
+  return Boolean(value && typeof value === "object" && typeof (value as Record<string, unknown>).id === "string");
 }
 
 function log(msg: string) {
@@ -116,6 +117,10 @@ async function readProviderConfig(): Promise<{
   return { config, authKey };
 }
 
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 async function fetchLitellmModels(
   baseUrl: string,
   apiKey: string,
@@ -127,56 +132,37 @@ async function fetchLitellmModels(
 
   log(`fetching models from ${endpoint}`);
 
-  for (let attempt = 0; attempt < 5; attempt++) {
-    let response: Response;
+  for (let attempt = 1; attempt <= 3; attempt += 1) {
     try {
-      response = await fetch(endpoint, {
+      const response = await fetch(endpoint, {
         headers: { Authorization: `Bearer ${apiKey}` },
-        signal: AbortSignal.timeout(8000),
+        signal: AbortSignal.timeout(5000),
       });
-    } catch (e) {
-      log(`attempt ${attempt + 1}/5 failed: ${e}`);
-      if (attempt < 4) await sleep(3000);
-      continue;
+      const text = await response.text();
+      const contentType = response.headers.get("content-type") ?? "";
+      const loadingPage = contentType.includes("text/html") ||
+        text.trim().startsWith("<!DOCTYPE html>") || text.includes("Sablier");
+
+      if (!response.ok || loadingPage) {
+        log(`attempt ${attempt}/3 returned an unusable response`);
+      } else {
+        const payload = JSON.parse(text) as ModelsResponse;
+        if (Array.isArray(payload.data)) {
+          log(`fetched ${payload.data.length} models from server`);
+          await writeCatalog("llmgateway-models", payload.data);
+          return payload.data;
+        }
+        log(`attempt ${attempt}/3 returned no model data`);
+      }
+    } catch (error) {
+      log(`attempt ${attempt}/3 failed: ${error}`);
     }
 
-    if (!response.ok) {
-      log(`attempt ${attempt + 1}/5 returned HTTP ${response.status}`);
-      if (attempt < 4) await sleep(3000);
-      continue;
-    }
-
-    const ct = response.headers.get("content-type") ?? "";
-    if (ct.includes("text/html")) {
-      log(`attempt ${attempt + 1}/5 got HTML response, retrying...`);
-      await sleep(3000);
-      continue;
-    }
-
-    const text = await response.text();
-    if (text.trim().startsWith("<!DOCTYPE html>") || text.includes("Sablier")) {
-      log(`attempt ${attempt + 1}/5 got Sablier/loading page, retrying...`);
-      await sleep(3000);
-      continue;
-    }
-
-    let payload: ModelsResponse;
-    try {
-      payload = JSON.parse(text) as ModelsResponse;
-    } catch (e) {
-      log(`attempt ${attempt + 1}/5 JSON parse error: ${e}`);
-      return [];
-    }
-
-    if (Array.isArray(payload.data)) {
-      log(`fetched ${payload.data.length} models from server`);
-      return payload.data;
-    }
-    return [];
+    if (attempt < 3) await sleep(1000);
   }
 
-  log("all 5 fetch attempts exhausted");
-  return [];
+  log("model fetch retries exhausted; using cached catalog");
+  return readCatalog<Record<string, unknown>>("llmgateway-models", isLiteLlmModel);
 }
 
 function buildModels(
