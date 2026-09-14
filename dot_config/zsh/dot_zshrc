@@ -87,3 +87,6 @@ npm() {
 
 # Machine-local overrides that should not be managed by chezmoi.
 [[ -f $ZDOTDIR/local.zsh ]] && source $ZDOTDIR/local.zsh
+
+# Vite+ bin (https://viteplus.dev)
+. "$HOME/.vite-plus/env"

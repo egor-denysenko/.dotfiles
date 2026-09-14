@@ -13,6 +13,7 @@ alias air='$HOME/go/bin/air'
 
 alias pii='pi -t read,bash,edit,write,ls'
 
+alias docker='podman'
 alias pd='podman-compose'
 alias pdup='podman-compose up'
 
