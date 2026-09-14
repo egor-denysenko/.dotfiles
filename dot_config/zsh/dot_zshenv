@@ -13,6 +13,8 @@ export PI_HOME=$HOME/.config/pi
 export PI_CODING_AGENT_DIR=$PI_HOME/agent
 export PI_TELEMETRY=0
 export PI_SKIP_VERSION_CHECK=1
+export PI_OFFLINE=1
+export PI_VCC_CONFIG_PATH=$PI_CODING_AGENT_DIR/pi-vcc-config.json
 
 export GOPATH=$HOME/go
 export GOPROXY="https://proxy.golang.org/"

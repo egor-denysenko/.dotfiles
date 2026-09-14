@@ -16,6 +16,8 @@ pi_agent:
         - npm:pi-lsp@0.1.7
         # Neovim line-based review comments for Pi — pinned to commit hash (no tags).
         - git:github.com/jillesme/pi-nvim-review@d61a694dcd38
+        # Algorithmic lossless session compaction and recall for Pi.
+        - npm:@sting8k/pi-vcc@0.7.2
 
     work:
       <<: *default_profile
