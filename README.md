@@ -2,32 +2,37 @@
 
 Managed by [chezmoi](https://www.chezmoi.io/).
 
-## Requirements
+## Install on Linux
 
-Required:
+### Prerequisites
 
-- [chezmoi](https://www.chezmoi.io/) 2.x
-- `git`, `curl`, and network access (repo clone; Zim bootstraps itself on first shell start)
-- `zsh` — becomes your login shell after install
+| Tool | Needed for |
+|------|-----------|
+| `git`, `curl` | cloning this repo, downloads |
+| `zsh` | becomes your login shell after install |
+| [chezmoi](https://www.chezmoi.io/) 2.x | applies these dotfiles |
 
-Recommended CLI tools (configs degrade gracefully when they are missing):
+```sh
+# Debian/Ubuntu
+sudo apt update && sudo apt install -y git curl zsh
 
-| Tool | Used by |
-|------|---------|
-| neovim | editor, plus `diff`/`merge` tool configured in `chezmoi.toml` |
-| starship | prompt |
-| fzf, ripgrep, git-delta | zsh completions/aliases, `git diff` |
-| zellij, tmux | terminal multiplexers |
-| fnm, pnpm | Node version management; `vendor-skills.sh` shells out to `pnpm dlx skills` |
-| opencode or pi | coding agents that read the synced `~/.agents/skills/` |
+# Fedora
+sudo dnf install -y git curl zsh
 
-Desktop machines only: the Sway, WezTerm, and Ghostty configs are shipped as plain files — no graphical packages are
-installed by `chezmoi apply`. On headless boxes, add the corresponding `.config/...` paths to `.chezmoiignore` to skip
-them entirely.
+# Arch (chezmoi is in extra: sudo pacman -S chezmoi)
+sudo pacman -S --needed git curl zsh
 
-Platform: Linux or macOS.
+# Alpine
+sudo apk add git curl zsh
 
-## Installation
+# chezmoi — any distro
+sh -c "$(curl -fsLS get.chezmoi.io)"
+```
+
+Optional tools — configs degrade gracefully without them: `neovim`, `starship`, `fzf`, `ripgrep`, `git-delta`,
+`zellij`/`tmux`, `fnm`/`pnpm` (needed by `vendor-skills.sh`), and `opencode` or `pi` (read `~/.agents/skills/`).
+
+### Setup
 
 ```sh
 chezmoi init https://github.com/egor-denysenko/.dotfiles.git && chezmoi apply -v
@@ -35,22 +40,17 @@ chezmoi init https://github.com/egor-denysenko/.dotfiles.git && chezmoi apply -v
 chsh -s "$(command -v zsh)"                        # make zsh the login shell
 ```
 
-`chezmoi init` asks two questions (persisted in `~/.config/chezmoi/chezmoi.toml`):
-
-| Prompt | Values |
-|--------|--------|
-| `machine` | `personal` / `work` — `work` keeps your own locally managed `.gitconfig` |
-| `theme` | `dark` (default) / `light` |
-
-Non-interactive install — pre-seed the answers first:
+`chezmoi init` prompts for `machine` (`personal` / `work` — `work` leaves `~/.gitconfig` locally managed) and `theme`
+(`dark` default / `light`), persisted in `~/.config/chezmoi/chezmoi.toml`. Skip both prompts non-interactively by
+pre-seeding the answers before `init`:
 
 ```sh
 mkdir -p ~/.config/chezmoi
 printf '[data]\nmachine = "personal"\ntheme = "dark"\n' > ~/.config/chezmoi/chezmoi.toml
-chezmoi init https://github.com/egor-denysenko/.dotfiles.git && chezmoi apply -v
 ```
 
-Re-run `chezmoi apply -v` any time the source repo changes; `run_once_` scripts only execute on the first apply.
+Re-run `chezmoi apply -v` after pulling repo changes; `run_once_` scripts only execute on the first apply.
+Sway/WezTerm/Ghostty configs are skipped by default (headless-friendly) — see `.chezmoiignore`.
 
 ## Structure
 
