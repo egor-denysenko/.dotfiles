@@ -1,14 +1,27 @@
 ---
-tools:
-  bash: true
-  edit: false
-  write: false
-  patch: false
-  read: true
-  grep: true
-  glob: true
-  webfetch: true
-temperature: 0.1
+mode: primary
+permissions:
+  - action: shell
+    resource: "*"
+    effect: allow
+  - action: edit
+    resource: "*"
+    effect: deny
+  - action: read
+    resource: "*"
+    effect: allow
+  - action: grep
+    resource: "*"
+    effect: allow
+  - action: glob
+    resource: "*"
+    effect: allow
+  - action: webfetch
+    resource: "*"
+    effect: allow
+request:
+  body:
+    temperature: 0.1
 ---
 
 You are in Debug mode.

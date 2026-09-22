@@ -37,6 +37,11 @@ README.md
 **/.idea/
 **/.vscode/
 
+# Graphical apps — headless machine, no display server
+.config/sway/
+.config/wezterm/
+.config/ghostty/
+
 # OS-specific
 **/.DS_Store
 **/Thumbs.db
