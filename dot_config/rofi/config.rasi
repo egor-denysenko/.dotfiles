@@ -1,0 +1,3 @@
+/* Theme lives in themes/ next to this file; the bare name resolves via
+   ${XDG_CONFIG_HOME}/rofi/themes/ — no machine-specific absolute paths. */
+@theme "gruvbox-dark-hard"

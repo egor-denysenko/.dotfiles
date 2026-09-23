@@ -44,6 +44,9 @@ README.md
 .config/sway/
 .config/wezterm/
 .config/ghostty/
+.config/rofi/
+.config/gtk-3.0/
+.local/share/icons/
 {{- end }}
 
 # OS-specific

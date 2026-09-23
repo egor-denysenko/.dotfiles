@@ -29,7 +29,7 @@ sudo apk add git curl zsh
 sh -c "$(curl -fsLS get.chezmoi.io)"
 ```
 
-Optional tools — configs degrade gracefully without them: `neovim`, `starship`, `fzf`, `ripgrep`, `git-delta`,
+Optional tools — configs degrade gracefully without them: `neovim`, `starship`, `fzf`, `ripgrep`, `git-delta`, `btop`,
 `zellij`/`tmux`, `fnm`/`pnpm` (needed by `vendor-skills.sh`), and `opencode` or `pi` (read `~/.agents/skills/`).
 
 ### Setup
@@ -41,9 +41,9 @@ chsh -s "$(command -v zsh)"                        # make zsh the login shell
 ```
 
 `chezmoi init` prompts for `machine` (`personal` / `work` — `work` leaves `~/.gitconfig` locally managed), `theme`
-(`dark` default / `light`), and `gui` (`true` default — deploys Sway/WezTerm/Ghostty; answer `false` on headless
-boxes), persisted in `~/.config/chezmoi/chezmoi.toml`. Skip all three prompts non-interactively by pre-seeding the
-answers before `init`:
+(`dark` default / `light`), and `gui` (`true` default — deploys GUI configs: Sway/WezTerm/Ghostty/Rofi/GTK; answer
+`false` on headless boxes), persisted in `~/.config/chezmoi/chezmoi.toml`. Skip all three prompts non-interactively by
+pre-seeding the answers before `init`:
 
 ```sh
 mkdir -p ~/.config/chezmoi
@@ -51,7 +51,7 @@ printf '[data]\nmachine = "personal"\ntheme = "dark"\ngui = true\n' > ~/.config/
 ```
 
 Re-run `chezmoi apply -v` after pulling repo changes; `run_once_` scripts only execute on the first apply.
-Sway/WezTerm/Ghostty configs are only deployed when `gui = true` — see `.chezmoiignore`.
+Sway/WezTerm/Ghostty/Rofi/GTK configs and the cursor theme are only deployed when `gui = true` — see `.chezmoiignore`.
 
 ## Sway session dependencies
 
@@ -62,7 +62,7 @@ feature skipped) except where noted:
 |------------|-----------|
 | `sway` (+ `swaymsg`, `swaynag`, `swaybg`) | compositor; **config fails to load** if the wallpaper file in `dot_config/sway/backgrounds/` is missing |
 | `swayidle`, `swaylock` | idle timeouts → lock/blank, lock before sleep, `$mod+Shift+i` |
-| `rofi` with Wayland support | launcher (`$mod+d`) + calc menu (`$mod+c`); Fedora ships it as `rofi` ≥ 2.0, other distros: the `rofi-wayland` build |
+| `rofi` with Wayland support | launcher (`$mod+d`) + calc menu (`$mod+c`); Fedora ships it as `rofi` ≥ 2.0, other distros: the `rofi-wayland` build; the gruvbox theme is vendored in `dot_config/rofi/themes/` |
 | `qalc` (package `qalculate`) | calculator backend for rofi's calc mode |
 | `wezterm`, `firefox` | `$term` / `$browser` — change the `set` lines in `dot_config/sway/config` if you use others |
 | `gsettings` (glib2) | dark-scheme hint for GTK apps (optional) |
@@ -83,6 +83,10 @@ swayidle so only one instance runs).
 | `dot_config/sway` | Sway WM (config + keybindings; wallpaper in `backgrounds/`) |
 | `dot_config/wezterm` | WezTerm terminal |
 | `dot_config/ghostty` | Ghostty terminal themes |
+| `dot_config/rofi` | Rofi launcher (gruvbox-dark-hard theme vendored in `themes/`) |
+| `dot_config/gtk-3.0` | GTK dark-mode + Banana-Red cursor preference |
+| `dot_config/btop` | btop system monitor (adwaita-dark theme vendored in `themes/`) |
+| `dot_local/share/icons` | Banana-Red cursor theme (~28 MB of XCursor files) |
 | `dot_config/zellij` | Zellij multiplexer |
 | `dot_config/starship` | Starship prompt |
 | `dot_config/scripts` | Utility scripts |
