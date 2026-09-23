@@ -12,9 +12,9 @@ README.md
 # Neovim
 **/lazy-lock.json
 **/lazyvim.json
-**/*.png
-**/*.jpg
-**/*.jpeg
+.config/nvim/**/*.png
+.config/nvim/**/*.jpg
+.config/nvim/**/*.jpeg
 **/test.*
 
 # Zsh
@@ -37,10 +37,14 @@ README.md
 **/.idea/
 **/.vscode/
 
-# Graphical apps — headless machine, no display server
+# Graphical apps — deployed only when gui = true (prompted by `chezmoi init`,
+# see .chezmoi.toml.tmpl). The wallpaper png inside .config/sway is a normal
+# managed file — the Neovim png patterns above are scoped to nvim on purpose.
+{{- if ne (toString .gui) "true" }}
 .config/sway/
 .config/wezterm/
 .config/ghostty/
+{{- end }}
 
 # OS-specific
 **/.DS_Store

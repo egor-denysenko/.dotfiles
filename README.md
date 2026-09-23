@@ -40,17 +40,39 @@ chezmoi init https://github.com/egor-denysenko/.dotfiles.git && chezmoi apply -v
 chsh -s "$(command -v zsh)"                        # make zsh the login shell
 ```
 
-`chezmoi init` prompts for `machine` (`personal` / `work` — `work` leaves `~/.gitconfig` locally managed) and `theme`
-(`dark` default / `light`), persisted in `~/.config/chezmoi/chezmoi.toml`. Skip both prompts non-interactively by
-pre-seeding the answers before `init`:
+`chezmoi init` prompts for `machine` (`personal` / `work` — `work` leaves `~/.gitconfig` locally managed), `theme`
+(`dark` default / `light`), and `gui` (`true` default — deploys Sway/WezTerm/Ghostty; answer `false` on headless
+boxes), persisted in `~/.config/chezmoi/chezmoi.toml`. Skip all three prompts non-interactively by pre-seeding the
+answers before `init`:
 
 ```sh
 mkdir -p ~/.config/chezmoi
-printf '[data]\nmachine = "personal"\ntheme = "dark"\n' > ~/.config/chezmoi/chezmoi.toml
+printf '[data]\nmachine = "personal"\ntheme = "dark"\ngui = true\n' > ~/.config/chezmoi/chezmoi.toml
 ```
 
 Re-run `chezmoi apply -v` after pulling repo changes; `run_once_` scripts only execute on the first apply.
-Sway/WezTerm/Ghostty configs are skipped by default (headless-friendly) — see `.chezmoiignore`.
+Sway/WezTerm/Ghostty configs are only deployed when `gui = true` — see `.chezmoiignore`.
+
+## Sway session dependencies
+
+Chezmoi ships the Sway config but installs no packages. Missing dependencies degrade gracefully (binding dead /
+feature skipped) except where noted:
+
+| Dependency | Needed for |
+|------------|-----------|
+| `sway` (+ `swaymsg`, `swaynag`, `swaybg`) | compositor; **config fails to load** if the wallpaper file in `dot_config/sway/backgrounds/` is missing |
+| `swayidle`, `swaylock` | idle timeouts → lock/blank, lock before sleep, `$mod+Shift+i` |
+| `rofi` with Wayland support | launcher (`$mod+d`) + calc menu (`$mod+c`); Fedora ships it as `rofi` ≥ 2.0, other distros: the `rofi-wayland` build |
+| `qalc` (package `qalculate`) | calculator backend for rofi's calc mode |
+| `wezterm`, `firefox` | `$term` / `$browser` — change the `set` lines in `dot_config/sway/config` if you use others |
+| `gsettings` (glib2) | dark-scheme hint for GTK apps (optional) |
+| `systemctl` (systemd) | hibernation binding (optional; needs swap) |
+| `waybar` | status bar — only where the distro ships `/usr/share/sway/config.d/90-bar.conf` (Fedora does) |
+
+Distro snippets under `/usr/share/sway/config.d` + `/etc/sway/config.d` also provide media/brightness/screenshot key
+bindings on Fedora; other distros get none of that — add your own `~/.config/sway/config.d/*.conf` to opt in. A user
+file with the same basename as a distro snippet replaces it (e.g. `config.d/90-swayidle.conf` overrides Fedora's
+swayidle so only one instance runs).
 
 ## Structure
 
@@ -58,7 +80,7 @@ Sway/WezTerm/Ghostty configs are skipped by default (headless-friendly) — see 
 |------|---------|
 | `dot_config/zsh` | Zsh + Zim, fzf, aliases |
 | `dot_config/nvim` | Neovim (LazyVim-based) |
-| `dot_config/sway` | Sway WM |
+| `dot_config/sway` | Sway WM (config + keybindings; wallpaper in `backgrounds/`) |
 | `dot_config/wezterm` | WezTerm terminal |
 | `dot_config/ghostty` | Ghostty terminal themes |
 | `dot_config/zellij` | Zellij multiplexer |

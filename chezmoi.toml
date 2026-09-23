@@ -1,6 +1,0 @@
-[chezmoi]
-    editor = "nvim"
-
-[diff]
-    command = "nvim"
-    args = ["-d"]

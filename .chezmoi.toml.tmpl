@@ -12,6 +12,21 @@
 {{-   $theme = promptStringOnce . "theme" "theme (dark/light)" "dark" -}}
 {{- end -}}
 
+{{- $gui := false -}}
+{{- if hasKey . "gui" -}}
+{{-   $gui = .gui -}}
+{{- else -}}
+{{-   $gui = promptBoolOnce . "gui" "graphical session? deploys sway/wezterm/ghostty configs" true -}}
+{{- end -}}
+
+[chezmoi]
+editor = "nvim"
+
+[diff]
+command = "nvim"
+args = ["-d"]
+
 [data]
 machine = {{ $machine | quote }}
 theme = {{ $theme | quote }}
+gui = {{ $gui }}
