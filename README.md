@@ -43,10 +43,10 @@ chsh -s "$(command -v zsh)"                        # make zsh the login shell
 ```
 
 `chezmoi init` prompts for `machine` (`personal` / `work` — `work` leaves `~/.gitconfig` locally managed), `theme`
-(`dark` default / `light`), `gui` (`true` default — deploys GUI configs: Sway/WezTerm/Ghostty/Rofi/GTK/Waybar; answer
-`false` on headless boxes), and `kbd` (keyboard layout XKB code(s), comma-separable — the prompt shows the full list
-and defaults to the system's current layout), persisted in `~/.config/chezmoi/chezmoi.toml`. Skip all four prompts
-non-interactively by pre-seeding the answers before `init`:
+(`dark` default / `light`), `gui` (deploys GUI configs: Sway/WezTerm/Ghostty/Rofi/GTK/Waybar — answer **`y` or `n`**,
+also accepts `yes/no/true/false/1/0`, `Enter` = yes; `n` on headless boxes), and `kbd` (keyboard layout XKB code(s),
+comma-separable — the prompt shows the full list and defaults to the system's current layout), persisted in
+`~/.config/chezmoi/chezmoi.toml`. Skip all four prompts non-interactively by pre-seeding the answers before `init`:
 
 ```sh
 mkdir -p ~/.config/chezmoi
@@ -54,9 +54,11 @@ printf '[data]\nmachine = "personal"\ntheme = "dark"\ngui = true\nkbd = "it"\n' 
 ```
 
 Re-run `chezmoi apply -v` after pulling repo changes; `run_once_` scripts only execute on the first apply.
-Sway/WezTerm/Ghostty/Rofi/GTK/Waybar configs and the cursor theme are only deployed when `gui = true` — see
-`.chezmoiignore`. Change the keyboard layout later with `~/.config/scripts/pick-kbd.sh` (list picker: rofi → fzf →
-printed list; also bound to `$mod+Shift+p` inside sway).
+Sway/WezTerm/Ghostty/Rofi/GTK/Waybar configs and the cursor theme are only deployed when `gui` is truthy — see
+`.chezmoiignore`. If `gui` came out falsy or is missing, everything under `.config/sway/` (wallpaper included) is
+skipped: set `gui = true` under `[data]` in `~/.config/chezmoi/chezmoi.toml` and re-run `chezmoi apply -v`.
+Change the keyboard layout later with `~/.config/scripts/pick-kbd.sh` (list picker: rofi → fzf → printed list; also
+bound to `$mod+Shift+p` inside sway).
 
 ## Sway session dependencies
 

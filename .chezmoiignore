@@ -2,6 +2,7 @@
 # Files that should NOT be applied/copied to the destination (home) directory
 
 README.md
+TODO.md
 
 # Work machines keep a locally managed Git config with private identity and
 # environment-specific settings. Never replace it from this repository.
@@ -40,7 +41,8 @@ README.md
 # Graphical apps — deployed only when gui = true (prompted by `chezmoi init`,
 # see .chezmoi.toml.tmpl). The wallpaper png inside .config/sway is a normal
 # managed file — the Neovim png patterns above are scoped to nvim on purpose.
-{{- if ne (toString .gui) "true" }}
+{{- $g := printf "%v" .gui | lower | trim -}}
+{{- if not (or (eq $g "true") (eq $g "yes") (eq $g "y") (eq $g "1") (eq $g "t")) }}
 .config/sway/
 .config/wezterm/
 .config/ghostty/

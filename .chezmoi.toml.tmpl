@@ -14,9 +14,14 @@
 
 {{- $gui := false -}}
 {{- if hasKey . "gui" -}}
-{{-   $gui = .gui -}}
+{{-   $g := printf "%v" .gui | lower | trim -}}
+{{-   if or (eq $g "true") (eq $g "yes") (eq $g "y") (eq $g "1") (eq $g "t") -}}
+{{-     $gui = true -}}
+{{-   else if not (or (eq $g "false") (eq $g "no") (eq $g "n") (eq $g "0") (eq $g "f")) -}}
+{{-     fail (printf "gui: %q is not a boolean; chezmoi.toml [data] gui must be one of y/yes/true/1/t or n/no/false/0/f" $g) -}}
+{{-   end -}}
 {{- else -}}
-{{-   $gui = promptBoolOnce . "gui" "graphical session? deploys sway/wezterm/ghostty/rofi/gtk/waybar configs" true -}}
+{{-   $gui = eq "y" (promptChoiceOnce . "gui" "setup desktop environment for this machine? (deploys sway session, terminals, rofi, gtk, waybar + wallpaper)" (list "y" "n") "y") -}}
 {{- end -}}
 
 {{- $kbd := "" -}}
