@@ -16,19 +16,19 @@
 # Binding present but silently dead without:
 #   swayidle      idle timeouts -> lock/blank screens (config.d/90-swayidle.conf)
 #   swaylock      screen locker (also $mod+Shift+i hibernation lock)
-#   rofi          launcher ($mod+d) + calc menu ($mod+c) — needs a Wayland-
-#                 capable build (Fedora: rofi >= 2.0, Arch: rofi-wayland)
+#   rofi          launcher ($mod+d) + calc menu ($mod+c) + layout picker
+#                 ($mod+Shift+p; needs fzf there too) — Wayland-capable build
+#                 required (Fedora: rofi >= 2.0, Arch: rofi-wayland)
 #   qalc          calculator backend for rofi's calc mode (package: qalculate)
 #   wezterm       $term
 #   firefox       $browser
 # Optional — feature skipped when missing:
 #   gsettings     dark-scheme hint (glib2)
 #   systemctl     hibernation ($mod+Shift+i; needs systemd + swap)
-# Distro-provided extras (NOT required): /usr/share/sway/config.d and
-# /etc/sway/config.d may add a waybar status bar, media/brightness/screenshot
-# key bindings and policykit autostart — Fedora ships them, other distros may
-# ship none. Add your own snippets under ~/.config/sway/config.d/ (see the
-# include at the bottom) to opt in elsewhere.
+# Session glue (bar, media/brightness/volume/screenshot keys, window rules,
+# policykit/xdg autostart, sway-systemd integration) is vendored in config.d/
+# — each file carries its own Requires: header and no-ops when its tool is
+# missing. Full list: README "Sway session dependencies".
 
 ### Variables
 #
@@ -113,6 +113,10 @@ exec_always gsettings set org.gnome.desktop.interface color-scheme prefer-dark
 
     # Start launcher math
     bindsym $mod+c exec $math_menu
+
+    # Pick keyboard layout from a list (rofi/fzf) — writes the machine-local
+    # `kbd` chezmoi value, re-applies and reloads sway
+    bindsym $mod+Shift+p exec ${XDG_CONFIG_HOME:-$HOME/.config}/scripts/pick-kbd.sh
 
     # Drag floating windows by holding down $mod and left mouse button.
     # Resize them with right mouse button + $mod.
@@ -242,9 +246,11 @@ mode "resize" {
 }
 bindsym $mod+r mode "resize"
 
-# Input configuration lives in config.d/10-input.conf (matches type:Keyboard,
-# so it works on any machine — unlike the old hardcoded
-# "1:1:AT_Translated_Set_2_keyboard" device id, which only exists on one laptop).
+# Input configuration lives in config.d/10-input.conf (rendered from
+# 10-input.conf.tmpl; matches type:keyboard, so it works on any machine —
+# unlike the old hardcoded "1:1:AT_Translated_Set_2_keyboard" device id, which
+# only exists on one laptop). Its xkb_layout comes from the machine-local
+# `kbd` chezmoi value.
 #
 
 #
@@ -261,13 +267,19 @@ gaps inner 0
 hide_edge_borders --i3 smart
 workspace_layout tabbed
 
+# Defaults for the vendored config.d snippet variables — set before the
+# include so every snippet sees them (each snippet documents what they do):
+set $volume_step 5
+set $volume_limit 100
+set $brightness_step 5
+
 # Include configs from 3 locations (all optional; loaded in this order, later
 # wins when a directive is repeated):
-#  - /usr/share/sway/config.d     distro-provided: bar (waybar), media/brightness/
-#                                 screenshot keys, policykit autostart, ...
-#                                 (Fedora ships these; other distros may not)
+#  - /usr/share/sway/config.d     distro-provided (Fedora: swayidle, extras)
 #  - /etc/sway/config.d           system-wide overrides
-#  - ${XDG_CONFIG_HOME}/sway/config.d  ours — ships with these dotfiles
+#  - ${XDG_CONFIG_HOME}/sway/config.d  ours — session glue vendored from
+#                                 Fedora lives here, so every distro gets the
+#                                 same session (see each file's header)
 #
 # On Fedora, /usr/libexec/sway/layered-include merges the three dirs by
 # basename: a user file with the same name REPLACES the distro's (that is how

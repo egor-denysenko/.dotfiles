@@ -1,0 +1,14 @@
+# Keyboard defaults for every machine (no device ids — matches all keyboards).
+# NOTE: sway type identifiers are lowercase — "type:keyboard", not "type:Keyboard".
+# A capital-K type silently matches nothing (no error) and leaves devices at
+# defaults.
+#
+# xkb_layout is machine-bound data: rendered from the `kbd` value in
+# ~/.config/chezmoi/chezmoi.toml ([data]), set by the `chezmoi init` prompt or
+# changed anytime with `~/.config/scripts/pick-kbd.sh` (rofi/fzf list picker,
+# bound to $mod+Shift+p). Comma-separate multiple layouts (e.g. it,us).
+input "type:keyboard" {
+	xkb_layout {{ if hasKey . "kbd" }}{{ .kbd }}{{ else }}it{{ end }}
+	repeat_delay 500
+	repeat_rate 75
+}

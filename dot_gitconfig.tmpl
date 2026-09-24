@@ -31,7 +31,7 @@
 	dark = true
 [alias]
 	staash = stash --all
-	bb = !~/scripts/betterGitBranch.sh
+	bb = !~/.config/scripts/betterGitBranch.sh
 	wdif = diff --word-diff
 	# Usage: git resign HASH
 	resign = rebase --exec 'GIT_COMMITTER_DATE=\"$(git log -n 1 --format=%aD)\" git commit --amend --no-edit -n -S' -i

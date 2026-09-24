@@ -35,23 +35,28 @@ Optional tools — configs degrade gracefully without them: `neovim`, `starship`
 ### Setup
 
 ```sh
-chezmoi init https://github.com/egor-denysenko/.dotfiles.git && chezmoi apply -v
+# GitHub's default branch is `chezmoi` (older state) — --branch pins this work;
+# drop it once this branch becomes the default.
+chezmoi init --branch opencode-v2-and-docs https://github.com/egor-denysenko/.dotfiles.git && chezmoi apply -v
 ~/.local/share/chezmoi/scripts/install-skills.sh   # flatten skills into ~/.agents/skills/
 chsh -s "$(command -v zsh)"                        # make zsh the login shell
 ```
 
 `chezmoi init` prompts for `machine` (`personal` / `work` — `work` leaves `~/.gitconfig` locally managed), `theme`
-(`dark` default / `light`), and `gui` (`true` default — deploys GUI configs: Sway/WezTerm/Ghostty/Rofi/GTK; answer
-`false` on headless boxes), persisted in `~/.config/chezmoi/chezmoi.toml`. Skip all three prompts non-interactively by
-pre-seeding the answers before `init`:
+(`dark` default / `light`), `gui` (`true` default — deploys GUI configs: Sway/WezTerm/Ghostty/Rofi/GTK/Waybar; answer
+`false` on headless boxes), and `kbd` (keyboard layout XKB code(s), comma-separable — the prompt shows the full list
+and defaults to the system's current layout), persisted in `~/.config/chezmoi/chezmoi.toml`. Skip all four prompts
+non-interactively by pre-seeding the answers before `init`:
 
 ```sh
 mkdir -p ~/.config/chezmoi
-printf '[data]\nmachine = "personal"\ntheme = "dark"\ngui = true\n' > ~/.config/chezmoi/chezmoi.toml
+printf '[data]\nmachine = "personal"\ntheme = "dark"\ngui = true\nkbd = "it"\n' > ~/.config/chezmoi/chezmoi.toml
 ```
 
 Re-run `chezmoi apply -v` after pulling repo changes; `run_once_` scripts only execute on the first apply.
-Sway/WezTerm/Ghostty/Rofi/GTK configs and the cursor theme are only deployed when `gui = true` — see `.chezmoiignore`.
+Sway/WezTerm/Ghostty/Rofi/GTK/Waybar configs and the cursor theme are only deployed when `gui = true` — see
+`.chezmoiignore`. Change the keyboard layout later with `~/.config/scripts/pick-kbd.sh` (list picker: rofi → fzf →
+printed list; also bound to `$mod+Shift+p` inside sway).
 
 ## Sway session dependencies
 
@@ -62,17 +67,23 @@ feature skipped) except where noted:
 |------------|-----------|
 | `sway` (+ `swaymsg`, `swaynag`, `swaybg`) | compositor; **config fails to load** if the wallpaper file in `dot_config/sway/backgrounds/` is missing |
 | `swayidle`, `swaylock` | idle timeouts → lock/blank, lock before sleep, `$mod+Shift+i` |
-| `rofi` with Wayland support | launcher (`$mod+d`) + calc menu (`$mod+c`); Fedora ships it as `rofi` ≥ 2.0, other distros: the `rofi-wayland` build; warm-burnout-dark + gruvbox themes (and their shared layout) are vendored in `dot_config/rofi/themes/`, so no distro theme package is needed |
+| `rofi` with Wayland support | launcher (`$mod+d`) + calc menu (`$mod+c`) + layout picker (`$mod+Shift+p`, with `fzf` fallback); Fedora ships it as `rofi` ≥ 2.0, other distros: the `rofi-wayland` build; warm-burnout-dark + gruvbox themes (and their shared layout) are vendored in `dot_config/rofi/themes/`, so no distro theme package is needed |
 | `qalc` (package `qalculate`) | calculator backend for rofi's calc mode |
+| `waybar` + fonts `Font Awesome 6`, `Noto Sans Mono` | status bar — enabled by the vendored `config.d/90-bar.conf`, config vendored in `dot_config/waybar/` (missing fonts = tofu icons) |
 | `wezterm`, `firefox` | `$term` / `$browser` — change the `set` lines in `dot_config/sway/config` if you use others |
+| `pactl` (+ optional `notify-send`) | volume keys — vendored `config.d/60-bindings-volume.conf` + `dot_config/sway/scripts/volume-helper` |
+| `brightnessctl` (+ optional `notify-send`) | brightness keys — vendored `config.d/60-bindings-brightness.conf` |
+| `playerctl` | media keys — vendored `config.d/60-bindings-media.conf` |
+| `grimshot` (+ `grim`, `slurp`) | screenshot keys — vendored `config.d/60-bindings-screenshot.conf` |
+| `lxqt-policykit` or `polkit-gnome` | privilege-request auth agent autostart (vendored `95-autostart-policykit-agent.conf`) |
+| `sway-systemd`, `xdg-user-dirs` | dbus/session env propagation, cgroup + xdg-autostart integration, user dirs (vendored `10-systemd-*` / `95-xdg-*`; no-op when missing) |
 | `gsettings` (glib2) | dark-scheme hint for GTK apps (optional) |
 | `systemctl` (systemd) | hibernation binding (optional; needs swap) |
-| `waybar` | status bar — only where the distro ships `/usr/share/sway/config.d/90-bar.conf` (Fedora does) |
 
-Distro snippets under `/usr/share/sway/config.d` + `/etc/sway/config.d` also provide media/brightness/screenshot key
-bindings on Fedora; other distros get none of that — add your own `~/.config/sway/config.d/*.conf` to opt in. A user
-file with the same basename as a distro snippet replaces it (e.g. `config.d/90-swayidle.conf` overrides Fedora's
-swayidle so only one instance runs).
+Session glue (bar, bindings, window rules, autostart, systemd integration) is **vendored** into
+`dot_config/sway/config.d/` — every distro gets the same session, and each file documents its `Requires:` and no-ops
+without it. On Fedora, layered-include merges by basename, so our copies (e.g. `90-swayidle.conf`, `90-bar.conf`)
+replace the distro's originals — no duplicates. Per-machine extras: any extra `*.conf` in `~/.config/sway/config.d/`.
 
 ## Structure
 
@@ -80,23 +91,24 @@ swayidle so only one instance runs).
 |------|---------|
 | `dot_config/zsh` | Zsh + Zim, fzf, aliases |
 | `dot_config/nvim` | Neovim (LazyVim-based) |
-| `dot_config/sway` | Sway WM (config + keybindings; wallpaper in `backgrounds/`) |
+| `dot_config/sway` | Sway WM (config + keybindings; vendored session glue in `config.d/`, `volume-helper` in `scripts/`; wallpaper in `backgrounds/`) |
 | `dot_config/wezterm` | WezTerm terminal |
 | `dot_config/ghostty` | Ghostty terminal themes |
 | `dot_config/rofi` | Rofi launcher (warm-burnout-dark + gruvbox themes, shared layout, all vendored in `themes/`) |
 | `dot_config/gtk-3.0` | GTK dark-mode + Banana-Red cursor preference |
+| `dot_config/waybar` | Waybar status bar (config + style vendored from distro defaults) |
 | `dot_config/btop` | btop system monitor (adwaita-dark theme vendored in `themes/`) |
 | `dot_local/share/icons` | Banana-Red cursor theme (~28 MB of XCursor files) |
 | `dot_config/zellij` | Zellij multiplexer |
 | `dot_config/starship` | Starship prompt |
-| `dot_config/scripts` | Utility scripts |
+| `dot_config/scripts` | Utility scripts (`pick-kbd.sh` layout picker, `betterGitBranch.sh`, ...) |
 | `dot_config/pi/agent` | Pi coding agent config (extensions, themes, models) |
 | `dot_config/opencode` | OpenCode v2 config: `agents/` (ask, debug), `commands/` (mozzarella) |
 | `dot_agents/skills` | Agent skills (synced to `~/.agents/skills/`; pi gets them via a symlink in `~/.pi/agent/skills/`) |
 
 ## Templates
 
-Uses `.chezmoi.toml.tmpl` for machine-type (personal/work) and theme (dark/light) data.
+Uses `.chezmoi.toml.tmpl` for machine-type (personal/work), theme (dark/light), gui, and keyboard layout (`kbd`) data.
 
 ## Updating skills
 

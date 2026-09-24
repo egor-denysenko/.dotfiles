@@ -14,6 +14,9 @@ fi
 # Ensure completions and local binaries are in the path
 fpath=($HOME/.config/zsh/completions $fpath)
 
+# User scripts shipped with these dotfiles (pick-kbd.sh, betterGitBranch.sh, ...)
+export PATH="$HOME/.config/scripts:$PATH"
+
 # fnm (Fast Node Manager)
 eval "$(fnm env --use-on-cd)"
 

@@ -16,7 +16,15 @@
 {{- if hasKey . "gui" -}}
 {{-   $gui = .gui -}}
 {{- else -}}
-{{-   $gui = promptBoolOnce . "gui" "graphical session? deploys sway/wezterm/ghostty configs" true -}}
+{{-   $gui = promptBoolOnce . "gui" "graphical session? deploys sway/wezterm/ghostty/rofi/gtk/waybar configs" true -}}
+{{- end -}}
+
+{{- $kbd := "" -}}
+{{- if hasKey . "kbd" -}}
+{{-   $kbd = .kbd -}}
+{{- else -}}
+{{-   $detected := output "sh" "-c" "localectl status 2>/dev/null | sed -n 's/^ *X11 Layout: *//p' | tr -d '\\n'" -}}
+{{-   $kbd = promptStringOnce . "kbd" (printf "keyboard layout — XKB code(s), comma-separated (full list: localectl list-x11-keymap-layouts; detected: %s)" ($detected | default "unknown")) ($detected | default "it") -}}
 {{- end -}}
 
 [chezmoi]
@@ -30,3 +38,4 @@ args = ["-d"]
 machine = {{ $machine | quote }}
 theme = {{ $theme | quote }}
 gui = {{ $gui }}
+kbd = {{ $kbd | quote }}

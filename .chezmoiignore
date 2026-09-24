@@ -46,6 +46,7 @@ README.md
 .config/ghostty/
 .config/rofi/
 .config/gtk-3.0/
+.config/waybar/
 .local/share/icons/
 {{- end }}
 
