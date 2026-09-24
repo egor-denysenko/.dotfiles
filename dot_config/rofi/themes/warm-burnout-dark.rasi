@@ -1,0 +1,60 @@
+/* ==========================================================================
+   Warm Burnout Dark — Rofi color theme
+
+   Palette from the Warm Burnout theme
+   https://github.com/felipefdl/warm-burnout — same source as the
+   wezterm/ghostty/nvim/zellij variants shipped in this repo.
+
+   Widget layout is shared with the gruvbox themes through the vendored
+   gruvbox-common next to this file (imports resolve relative to the
+   importing file first), so no distro theme package is required.
+   ========================================================================== */
+
+* {
+    /* Theme settings */
+    highlight: bold italic;
+    scrollbar: true;
+
+    /* Warm Burnout Dark colors */
+    wb-bg:                    #1a1510;
+    wb-bg-alt:                #1f1d17;
+    wb-bg-select:             #33393a;
+    wb-border:                #b4a89c;
+    wb-fg:                    #bfbdb6;
+    wb-fg-bright:             #ffffff;
+    wb-amber-dark:            #fdb04c;
+    wb-amber-light:           #ffb454;
+    wb-red-dark:              #f06b73;
+    wb-red-light:             #f07178;
+
+    /* Theme colors */
+    background:                  @wb-bg;
+    background-color:            @background;
+    foreground:                  @wb-fg;
+    border-color:                @wb-border;
+    separatorcolor:              @border-color;
+    scrollbar-handle:            @border-color;
+
+    normal-background:           @background;
+    normal-foreground:           @foreground;
+    alternate-normal-background: @wb-bg-alt;
+    alternate-normal-foreground: @foreground;
+    selected-normal-background:  @wb-bg-select;
+    selected-normal-foreground:  @wb-fg-bright;
+
+    active-background:           @wb-amber-dark;
+    active-foreground:           @background;
+    alternate-active-background: @active-background;
+    alternate-active-foreground: @active-foreground;
+    selected-active-background:  @wb-amber-light;
+    selected-active-foreground:  @active-foreground;
+
+    urgent-background:           @wb-red-dark;
+    urgent-foreground:           @background;
+    alternate-urgent-background: @urgent-background;
+    alternate-urgent-foreground: @urgent-foreground;
+    selected-urgent-background:  @wb-red-light;
+    selected-urgent-foreground:  @urgent-foreground;
+}
+
+@import "gruvbox-common"

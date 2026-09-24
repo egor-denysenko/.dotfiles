@@ -62,7 +62,7 @@ feature skipped) except where noted:
 |------------|-----------|
 | `sway` (+ `swaymsg`, `swaynag`, `swaybg`) | compositor; **config fails to load** if the wallpaper file in `dot_config/sway/backgrounds/` is missing |
 | `swayidle`, `swaylock` | idle timeouts → lock/blank, lock before sleep, `$mod+Shift+i` |
-| `rofi` with Wayland support | launcher (`$mod+d`) + calc menu (`$mod+c`); Fedora ships it as `rofi` ≥ 2.0, other distros: the `rofi-wayland` build; the gruvbox theme is vendored in `dot_config/rofi/themes/` |
+| `rofi` with Wayland support | launcher (`$mod+d`) + calc menu (`$mod+c`); Fedora ships it as `rofi` ≥ 2.0, other distros: the `rofi-wayland` build; warm-burnout-dark + gruvbox themes (and their shared layout) are vendored in `dot_config/rofi/themes/`, so no distro theme package is needed |
 | `qalc` (package `qalculate`) | calculator backend for rofi's calc mode |
 | `wezterm`, `firefox` | `$term` / `$browser` — change the `set` lines in `dot_config/sway/config` if you use others |
 | `gsettings` (glib2) | dark-scheme hint for GTK apps (optional) |
@@ -83,7 +83,7 @@ swayidle so only one instance runs).
 | `dot_config/sway` | Sway WM (config + keybindings; wallpaper in `backgrounds/`) |
 | `dot_config/wezterm` | WezTerm terminal |
 | `dot_config/ghostty` | Ghostty terminal themes |
-| `dot_config/rofi` | Rofi launcher (gruvbox-dark-hard theme vendored in `themes/`) |
+| `dot_config/rofi` | Rofi launcher (warm-burnout-dark + gruvbox themes, shared layout, all vendored in `themes/`) |
 | `dot_config/gtk-3.0` | GTK dark-mode + Banana-Red cursor preference |
 | `dot_config/btop` | btop system monitor (adwaita-dark theme vendored in `themes/`) |
 | `dot_local/share/icons` | Banana-Red cursor theme (~28 MB of XCursor files) |
