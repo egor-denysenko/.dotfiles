@@ -1,11 +1,18 @@
 # Warm Burnout -- Ghostty config
-# Theme files live in ~/.config/ghostty/themes
+# Ghostty ships the upstream Warm Burnout themes, so reference them by name.
+# Do NOT vendor copies in ~/.config/ghostty/themes: Ghostty matches theme names
+# case-insensitively, so a local "warm-burnout-dark" collides with the built-in
+# "Warm Burnout Dark" and both show up in `ghostty +list-themes`.
 
-theme = dark:warm-burnout-dark,light:warm-burnout-light
+theme = dark:Warm Burnout Dark,light:Warm Burnout Light
+
+# The system reports "light" here (no desktop portal on bare sway), so the
+# light variant would win by default. Pin it to dark.
+window-theme = dark
 
 font-family = "JetBrains Mono"
 font-size = 13
-bold-is-bright = true
+bold-color = bright
 
 cursor-style = block
 adjust-underline-thickness = 2

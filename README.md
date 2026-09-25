@@ -169,7 +169,7 @@ doas adduser "$USER" input
 | `dot_config/nvim` | Neovim (LazyVim-based) |
 | `dot_config/sway` | Sway WM (config + keybindings; vendored session glue in `config.d/`, `volume-helper` in `scripts/`; wallpaper in `backgrounds/`) |
 | `dot_config/wezterm` | WezTerm terminal |
-| `dot_config/ghostty` | Ghostty terminal themes |
+| `dot_config/ghostty` | Ghostty terminal (references the built-in `Warm Burnout Dark`/`Light` themes; no vendored copies — they would name-collide) |
 | `dot_config/rofi` | Rofi launcher (warm-burnout-dark + gruvbox themes, shared layout, all vendored in `themes/`) |
 | `dot_config/gtk-3.0` | GTK dark-mode + Banana-Red cursor preference |
 | `dot_config/waybar` | Waybar status bar (config + style vendored from distro defaults) |
