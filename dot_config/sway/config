@@ -20,11 +20,11 @@
 #                 ($mod+Shift+p; needs fzf there too) — Wayland-capable build
 #                 required (Fedora: rofi >= 2.0, Arch: rofi-wayland)
 #   qalc          calculator backend for rofi's calc mode (package: qalculate)
-#   wezterm       $term
+#   terminal      wezterm -> ghostty -> foot fallback ($term)
 #   firefox       $browser
 # Optional — feature skipped when missing:
 #   gsettings     dark-scheme hint (glib2)
-#   systemctl     hibernation ($mod+Shift+i; needs systemd + swap)
+#   hibernation   $mod+Shift+i via systemctl, loginctl, or zzz (needs swap)
 # Session glue (bar, media/brightness/volume/screenshot keys, window rules,
 # policykit/xdg autostart, sway-systemd integration) is vendored in config.d/
 # — each file carries its own Requires: header and no-ops when its tool is
@@ -39,8 +39,8 @@ set $left h
 set $down j
 set $up k
 set $right l
-# Preferred terminal emulator
-set $term wezterm
+# Preferred terminal emulator (wezterm -> ghostty -> foot fallback)
+set $term ${XDG_CONFIG_HOME:-$HOME/.config}/scripts/open-terminal.sh
 set $browser firefox
 # Your preferred application launcher
 # Note: pass the final command to swaymsg so that the resulting window can be opened
@@ -131,8 +131,8 @@ exec_always gsettings set org.gnome.desktop.interface color-scheme prefer-dark
     # Exit sway (logs you out of your Wayland session)
     bindsym $mod+Shift+e exec swaynag -t warning -m 'You pressed the exit shortcut. Do you really want to exit sway? This will end your Wayland session.' -B 'Yes, exit sway' 'swaymsg exit'
 
-    # Exits sway and hibernates the laptop (Requires: systemd's systemctl)
-    bindsym $mod+Shift+i exec swaynag -t warning -m 'You pressed the hibernation shortcut. Do you really want to hibernate? This will end your Wayland session.' -B 'Yes, hibernate me' 'exec swaylock & systemctl hibernate'
+    # Hibernates the laptop (Requires: systemd / elogind / zzz + swap)
+    bindsym $mod+Shift+i exec swaynag -t warning -m 'You pressed the hibernation shortcut. Do you really want to hibernate?' -B 'Yes, hibernate' '${XDG_CONFIG_HOME:-$HOME/.config}/scripts/hibernate.sh'
 #
 # Moving around:
 #
@@ -287,4 +287,4 @@ set $brightness_step 5
 # ship that helper, so the same include falls back to plain globs; missing
 # directories just match nothing (both paths verified with `sway --validate`).
 # Keep this include LAST: the distro snippets reference $mod defined above.
-include '$(if [ -x /usr/libexec/sway/layered-include ]; then /usr/libexec/sway/layered-include "/usr/share/sway/config.d/*.conf" "/etc/sway/config.d/*.conf" "${XDG_CONFIG_HOME:-$HOME/.config}/sway/config.d/*.conf"; else for f in /usr/share/sway/config.d/*.conf /etc/sway/config.d/*.conf "${XDG_CONFIG_HOME:-$HOME/.config}/sway/config.d/*.conf"; do [ -e "$f" ] && printf "%s\n" "$f"; done; fi)'
+include '$(if [ -x /usr/libexec/sway/layered-include ]; then /usr/libexec/sway/layered-include "/usr/share/sway/config.d/*.conf" "/etc/sway/config.d/*.conf" "${XDG_CONFIG_HOME:-$HOME/.config}/sway/config.d/*.conf"; else for f in /usr/share/sway/config.d/*.conf /etc/sway/config.d/*.conf "${XDG_CONFIG_HOME:-$HOME/.config}/sway/config.d/"*.conf; do [ -e "$f" ] && printf "%s\n" "$f"; done; fi)'
