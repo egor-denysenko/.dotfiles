@@ -86,6 +86,10 @@ exec_always gsettings set org.gnome.desktop.interface color-scheme prefer-dark
     # Start launcher math
     bindsym $mod+c exec $math_menu
 
+    # Pick keyboard layout from a list (rofi/fzf) — writes the machine-local
+    # `kbd` chezmoi value, re-applies and reloads sway
+    bindsym $mod+Shift+p exec ${XDG_CONFIG_HOME:-$HOME/.config}/scripts/pick-kbd.sh
+
     # Drag floating windows by holding down $mod and left mouse button.
     # Resize them with right mouse button + $mod.
     # Despite the name, also works for non-floating windows.
@@ -237,10 +241,12 @@ bindsym $mod+r mode "resize"
 # the trick, it's all in the `wordexp(3)`.
 #
 
-## Input configuration
-input "1:1:AT_Translated_Set_2_keyboard" {
-  xkb_layout it
-}
+# Input configuration lives in config.d/10-input.conf (rendered from
+# 10-input.conf.tmpl; matches type:keyboard, so it works on any machine —
+# unlike a hardcoded device id like "1:1:AT_Translated_Set_2_keyboard", which
+# only exists on one laptop). Its xkb_layout comes from the machine-local
+# `kbd` chezmoi value in ~/.config/chezmoi/chezmoi.toml.
+#
 
 #
 #No titlebars

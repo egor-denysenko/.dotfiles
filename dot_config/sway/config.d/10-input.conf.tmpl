@@ -1,0 +1,53 @@
+{{- /* Resolve the optional per-device override BEFORE emitting anything, so the
+       whitespace trimming below can't eat a newline and so a malformed
+       kbd_usb fails before a half-rendered config is written.
+
+       kbd_usb is "IDENTIFIER=LAYOUT". Split on "=" : XKB identifiers never
+       contain "=" but do contain ":" (vendor:product), so ":" is not a safe
+       delimiter. */ -}}
+{{- $usbId := "" -}}
+{{- $usbLayout := "" -}}
+{{- with index . "kbd_usb" -}}
+{{-   $eq := splitList "=" . -}}
+{{-   $usbId = index $eq 0 -}}
+{{-   if gt (len $eq) 1 -}}
+{{-     $usbLayout = index $eq 1 -}}
+{{-   end -}}
+{{-   if not $usbId -}}
+{{-     fail "kbd_usb is set but its IDENTIFIER is empty; use \"IDENTIFIER=LAYOUT\"" -}}
+{{-   end -}}
+{{-   if not $usbLayout -}}
+{{-     fail (printf "kbd_usb = %q has no LAYOUT; expected \"IDENTIFIER=LAYOUT\" (e.g. \"1234:5678:My_Keyboard=us\")" .) -}}
+{{-   end -}}
+{{- end -}}
+# Keyboard defaults for every machine (no device ids — matches all keyboards).
+# NOTE: sway type identifiers are lowercase — "type:keyboard", not "type:Keyboard".
+# A capital-K type silently matches nothing (no error) and leaves devices at
+# defaults.
+#
+# xkb_layout is machine-bound data: rendered from the `kbd` value in
+# ~/.config/chezmoi/chezmoi.toml ([data]), set by the `chezmoi init` prompt or
+# changed anytime with `~/.config/scripts/pick-kbd.sh` (rofi/fzf list picker,
+# bound to $mod+Shift+p). Comma-separate multiple layouts (e.g. it,us).
+#
+# `kbd_usb` (same file) optionally overrides the layout for ONE external
+# keyboard, as "IDENTIFIER=LAYOUT". Unset or blank means no override.
+input "type:keyboard" {
+	xkb_layout {{ (index . "kbd" | default "us") | quote }}
+	repeat_delay 500
+	repeat_rate 75
+}
+{{ if $usbId }}
+# Per-device override for one external keyboard (from `kbd_usb` in
+# ~/.config/chezmoi/chezmoi.toml). sway gives a more specific selector
+# precedence over a more general one regardless of file order, so this wins
+# over the type:keyboard block above.
+#
+# WARNING: sway matches device selectors as an EXACT string — not a substring,
+# not a name — and a typo is silently ignored (swaymsg reports success while
+# changing nothing). Copy the full "vendor:product:name" verbatim from
+# `swaymsg -t get_inputs`, and re-check it after firmware updates.
+input {{ $usbId | quote }} {
+	xkb_layout {{ $usbLayout | quote }}
+}
+{{ end -}}

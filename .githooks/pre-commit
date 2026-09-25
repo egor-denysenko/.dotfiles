@@ -1,7 +1,10 @@
 #!/bin/sh
 # Pre-commit hook: run chezmoi diff to catch drift before committing
+# Read stdout only: chezmoi writes warnings to stderr (e.g. "config file
+# template has changed"), and capturing those here blocked every commit
+# even with a perfectly clean tree.
 if command -v chezmoi >/dev/null 2>&1; then
-    DIFF=$(chezmoi diff 2>&1)
+    DIFF=$(chezmoi diff 2>/dev/null)
     if [ -n "$DIFF" ]; then
         echo "⚠ chezmoi diff detected (target state differs from actual state):"
         echo "$DIFF"
