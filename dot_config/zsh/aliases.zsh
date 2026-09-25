@@ -1,8 +1,3 @@
-# Check for GH CLI availability
-if ! command -v gh &> /dev/null; then
-  echo "Warning: GitHub CLI (gh) is not installed."
-fi
-
 # Aliases
 alias l="ls -lah"
 

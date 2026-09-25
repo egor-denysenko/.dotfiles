@@ -8,7 +8,7 @@
 # changed anytime with `~/.config/scripts/pick-kbd.sh` (rofi/fzf list picker,
 # bound to $mod+Shift+p). Comma-separate multiple layouts (e.g. it,us).
 input "type:keyboard" {
-	xkb_layout {{ if hasKey . "kbd" }}{{ .kbd }}{{ else }}it{{ end }}
+	xkb_layout {{ (index . "kbd" | default "it") | quote }}
 	repeat_delay 500
 	repeat_rate 75
 }

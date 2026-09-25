@@ -1,5 +1,5 @@
-#!/bin/bash
+#!/bin/sh
 # Ensure the unified skills directory exists for pi, opencode, etc.
-set -euo pipefail
+set -eu
 
 mkdir -p "$HOME/.agents/skills"

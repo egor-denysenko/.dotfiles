@@ -18,6 +18,8 @@ LST="/usr/share/X11/xkb/rules/evdev.lst"
 layouts() {
     if [ -r "$LST" ]; then
         awk '/^! layout/{f=1;next} /^! /{f=0} f && NF >= 2 && $1 !~ /^#/ {printf "%s\t%s\n", $1, substr($0, index($0,$2))}' "$LST"
+    elif [ -r "/usr/share/X11/xkb/rules/base.lst" ]; then
+        awk '/^! layout/{f=1;next} /^! /{f=0} f && NF >= 2 && $1 !~ /^#/ {printf "%s\t%s\n", $1, substr($0, index($0,$2))}' "/usr/share/X11/xkb/rules/base.lst"
     elif command -v localectl >/dev/null 2>&1; then
         localectl list-x11-keymap-layouts
     fi
@@ -25,7 +27,7 @@ layouts() {
 
 current() {
     if [ -f "$CFG" ]; then
-        sed -n -E 's/^kbd *= *"([^"]*)".*/\1/p' "$CFG" | head -n1
+        sed -n -E 's/^[[:space:]]*kbd[[:space:]]*=[[:space:]]*"([^"]*)".*/\1/p' "$CFG" | head -n1
     fi
 }
 
@@ -51,8 +53,8 @@ pick() {
 write_kbd() {
     local val="$1"
     [ -f "$CFG" ] || { echo "no chezmoi config at $CFG — run chezmoi init first" >&2; exit 1; }
-    if grep -qE '^kbd *= ' "$CFG"; then
-        sed -i -E "s|^kbd *= *.*|kbd = \"$val\"|" "$CFG"
+    if grep -qE '^[[:space:]]*kbd[[:space:]]*=' "$CFG"; then
+        sed -i -E "s|^[[:space:]]*kbd[[:space:]]*=.*|kbd = \"$val\"|" "$CFG"
     elif grep -qE '^\[data\]' "$CFG"; then
         sed -i "/^\[data\]/a kbd = \"$val\"" "$CFG"
     else
@@ -75,7 +77,7 @@ esac
 cur="$(current)"
 write_kbd "$val"
 echo "kbd: ${cur:-unset} -> $val (written to $CFG)"
-chezmoi apply
+chezmoi apply "${XDG_CONFIG_HOME:-$HOME/.config}/sway/config.d/10-input.conf"
 if command -v swaymsg >/dev/null 2>&1 && swaymsg -t get_version >/dev/null 2>&1; then
     swaymsg reload >/dev/null && echo "sway reloaded"
 fi

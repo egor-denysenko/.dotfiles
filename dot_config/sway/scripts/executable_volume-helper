@@ -1,4 +1,4 @@
-#!/usr/bin/sh
+#!/bin/sh
 # Vendored from Fedora sway-config-fedora (/usr/libexec/sway/volume-helper) so
 # config.d/60-bindings-volume.conf works on any distro. Requires pactl; uses
 # notify-send only when present. Diff against the original when re-vendoring.
