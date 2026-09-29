@@ -18,6 +18,15 @@
 	editor = nvim
 	sparseCheckout = true
 	excludesfile = ~/.gitignore_global
+[credential]
+	# Set by `gh auth setup-git`. It has to be declared *here* rather than left
+	# to that command alone: this file is managed by chezmoi, so any
+	# `chezmoi apply` rewrites it from the template and silently drops a
+	# helper that was only ever configured in the live file. Symptom is
+	# `git push` failing with "could not read Username for 'https://github.com'"
+	# right after an apply, which looks like a broken remote rather than a
+	# config regression.
+	helper = !gh auth git-credential
 [commit]
 	gpgsign = {{ if eq .machine "personal" }}true{{ else }}false{{ end }}
 [push]
