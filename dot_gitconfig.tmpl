@@ -4,7 +4,11 @@
 {{- if eq .machine "personal" }}
 	email = 75579636+egor-denysenko@users.noreply.github.com
 	name = egor-denysenko
-	signingkey = 2A132DB1C8C3D189
+	# ed25519, registered with GitHub 2026-09-29. The old 2A132DB1C8C3D189 has
+	# no secret key in ~/.gnupg here, so signing with it fails outright.
+	# Key has a passphrase -> signing needs a TTY; use --no-gpg-sign from
+	# non-interactive contexts. See TODO.md.
+	signingkey = 0E9355D8B92B42D0
 {{- else }}
 	name =
 	email =
