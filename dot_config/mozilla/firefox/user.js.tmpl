@@ -1,0 +1,85 @@
+{{- /*
+Firefox performance & battery optimization config.
+Edit the JSON block below, then run: chezmoi apply
+
+Sources: ArchWiki, arkenfox, Betterfox, brainfucksec, Mozilla docs (2026)
+*/}}
+{{- $config := `
+{
+  "prefs": {
+    "dom.ipc.processCount": 4,
+    "dom.ipc.processCount.webIsolated": 1,
+    "browser.sessionhistory.max_total_viewers": 0,
+    "browser.sessionhistory.max_entries": 10,
+    "browser.cache.memory.enable": false,
+    "browser.cache.memory.capacity": 65536,
+    "browser.cache.disk.enable": false,
+    "browser.sessionstore.interval": 60000,
+    "browser.sessionstore.max_tabs_undo": 5,
+    "browser.sessionstore.max_windows_undo": 1,
+    "browser.sessionstore.privacy_level": 2,
+    "browser.sessionstore.resume_from_crash": false,
+    "browser.tabs.unloadOnLowMemory": true,
+    "browser.tabs.min_inactive_duration_before_unload": 3600000,
+    "browser.low_commit_space_threshold_percent": 100,
+    "media.hardware-video-decoding.enabled": true,
+    "media.memory_cache_max_size": 65536,
+    "browser.privatebrowsing.forceMediaMemoryCache": true,
+    "gfx.webrender.all": true,
+    "layers.acceleration.force-enabled": true,
+    "browser.tabs.firefox-view": false,
+    "browser.newtabpage.activity-stream.enabled": false,
+    "browser.newtabpage.activity-stream.telemetry": false,
+    "browser.newtabpage.activity-stream.feeds.telemetry": false,
+    "extensions.pocket.enabled": false,
+    "extensions.abuseReport.enabled": false,
+    "toolkit.telemetry.enabled": false,
+    "toolkit.telemetry.unified": false,
+    "datareporting.healthreport.uploadEnabled": false,
+    "datareporting.policy.dataSubmissionEnabled": false,
+    "browser.ping-centre.telemetry": false,
+    "browser.safebrowsing.malware.enabled": false,
+    "general.smoothScroll": false,
+    "network.dns.disablePrefetch": true,
+    "network.prefetch-next": false,
+    "network.http.http3.enabled": true,
+    "network.http.max-connections": 256,
+    "network.http.max-persistent-connections-per-server": 6,
+    "accessibility.force_disabled": 1,
+    "config.trim_on_minimize": true,
+    "image.mem.min_discard_timeout_ms": 2100000000,
+    "image.mem.max_decoded_image_kb": 512,
+    "sidebar.revamp": false,
+    "browser.ml.enable": false,
+    "browser.ml.chat.enabled": false,
+    "browser.ml.chat.sidebar": false,
+    "browser.ml.chat.menu": false,
+    "browser.ml.chat.page": false,
+    "browser.ml.chat.shortcuts": false,
+    "browser.ml.chat.page.footerBadge": false,
+    "browser.ml.chat.page.menuBadge": false,
+    "browser.ml.linkPreview.enabled": false,
+    "browser.ml.pageAssist.enabled": false,
+    "browser.ml.smartAssist.enabled": false,
+    "extensions.ml.enabled": false,
+    "browser.tabs.groups.smart.enabled": false,
+    "browser.tabs.groups.smart.userEnabled": false,
+    "browser.search.visualSearch.featureGate": false,
+    "browser.urlbar.quicksuggest.mlEnabled": false,
+    "places.semanticHistory.featureGate": false,
+    "pdfjs.enableAltTextModelDownload": false,
+    "pdfjs.enableGuessAltText": false,
+    "pdfjs.enableAltText": false,
+    "browser.ai.control.default": "blocked",
+    "browser.ai.control.sidebarChatbot": "blocked",
+    "browser.ai.control.linkPreviewKeyPoints": "blocked",
+    "browser.ai.control.smartTabGroups": "blocked",
+    "browser.ai.control.translations": "blocked",
+    "browser.ai.control.pdfjsAltText": "blocked"
+  }
+}
+` -}}
+{{- $json := $config | fromJson -}}
+{{- range $key, $value := $json.prefs }}
+user_pref("{{ $key }}", {{ if kindIs "string" $value }}{{ printf "%q" $value }}{{ else }}{{ $value }}{{ end }});
+{{- end }}
