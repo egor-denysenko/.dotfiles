@@ -10,8 +10,13 @@ theme = dark:Warm Burnout Dark,light:Warm Burnout Light
 # light variant would win by default. Pin it to dark.
 window-theme = dark
 
-font-family = "JetBrains Mono"
-font-size = 13
+# Departure Mono is a pixel font: crisp only at multiples of 11px, so 13
+# looked smeared. The Nerd Font patch also carries the icon glyphs used by
+# nvim (lualine, nvim-tree, telescope) and waybar.
+# JetBrains Mono stays in the list as a fallback — this repo runs on machines
+# that don't have Departure Mono installed, and ghostty walks the list.
+font-family = "DepartureMono Nerd Font, JetBrains Mono"
+font-size = 11
 bold-color = bright
 
 cursor-style = block
