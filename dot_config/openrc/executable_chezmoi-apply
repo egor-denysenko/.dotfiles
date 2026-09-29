@@ -1,0 +1,81 @@
+#!/sbin/openrc-run
+# Rebuild the login user's dotfiles from the persistent chezmoi repository.
+#
+# Install (once, then re-run after every edit to this file):
+#   doas cp ~/.config/openrc/chezmoi-apply /etc/init.d/
+#   doas chmod +x /etc/init.d/chezmoi-apply
+#   doas rc-update add chezmoi-apply default
+#   doas lbu commit -d "chezmoi: apply dotfiles at boot"
+#
+# Why this has to exist
+#   This box boots Alpine diskless: `/` is a tmpfs, and so is `/etc` and
+#   `$HOME`. Only an explicit whitelist is bind-mounted from the writable data
+#   partition by /etc/init.d/persistent-storage (~/.local, ~/.cache, ~/bin,
+#   ~/.agents, ~/.config/chezmoi, ~/.config/mozilla, ~/.config/zsh/.zim, ...).
+#
+#   Everything else under $HOME -- which is all of ~/.config -- is destroyed on
+#   every reboot. That includes the sway config, the waybar config, and
+#   ~/.config/zsh/.zprofile, which is what execs sway in the first place.
+#
+#   So without this service the machine comes up with no user config at all:
+#   sway starts from /etc/sway/config, waybar starts with its *built-in*
+#   defaults, and those defaults enable the `pulseaudio` module. There is no
+#   audio server on this box (only the client libraries are installed), so that
+#   module retries in a tight loop, leaks a socket + memfd per attempt, and
+#   exhausts RLIMIT_NOFILE at 1024 fds. waybar then dies before it ever logs
+#   "Bar configured" and `bar {}` does not respawn it, so the failure is a
+#   silently missing bar.
+#
+#   chezmoi itself is already safe across reboots: the source lives in
+#   ~/.local/share/chezmoi and the config + state DB in ~/.config/chezmoi, and
+#   both are on the bind-mounted data partition. All that was missing was
+#   something to re-run `chezmoi apply` from a clean target state.
+#
+# Why --force
+#   chezmoi's "has changed since chezmoi last wrote it?" prompt exists to
+#   protect local edits. On a tmpfs target there are no local edits to
+#   protect -- the target was empty a second ago -- but the state DB still
+#   remembers every file from the previous boot, and the one thing it gets
+#   wrong here is blocking. Specifically `**/btop.conf` is in .chezmoiignore,
+#   so chezmoi wants to *remove* a path it recorded as present; the file being
+#   already absent counts as "changed", it prompts, and a non-interactive
+#   context cannot answer. Apply aborts on that first prompt and everything
+#   alphabetically after `btop` -- fontconfig, gtk-3.0, rofi, tlp, and
+#   waybar -- is silently never written. That is exactly the set of directories
+#   that go missing after a reboot.
+#
+#   --force answers "yes, overwrite" to all of those. Losing local edits is the
+#   intended trade here: on this machine the target is disposable by
+#   construction.
+#
+# Ordering
+#   after persistent-storage -- ~/.local must be bind-mounted before chezmoi
+#                               can read its own source tree.
+#   before  user.jyro       -- that service would otherwise start
+#                               /etc/user/init.d/waybar with no config, which
+#                               reproduces the exact fd-exhaustion above.
+#   Runs inside `openrc default`, which /etc/inittab invokes with `::wait:`
+#   *before* the agetty autologin lines. That guarantees the config exists
+#   before anyone can log in and exec sway from ~/.config/zsh/.zprofile.
+
+description="Apply chezmoi dotfiles for the login user"
+
+# Hardcoded for the same reason /etc/init.d/persistent-storage hardcodes it.
+USER_NAME=jyro
+
+depend() {
+	need localmount
+	after persistent-storage
+	before user.jyro
+}
+
+start() {
+	ebegin "Applying chezmoi dotfiles for ${USER_NAME}"
+	# -s /bin/sh on purpose: a login shell would source
+	# ~/.config/zsh/.zprofile, which `exec sway`s on tty1. This runs with no
+	# controlling terminal so the tty1 guard would hold, but relying on that
+	# is far too fragile for a boot-time hook.
+	su "${USER_NAME}" -s /bin/sh -c \
+		"HOME=/home/${USER_NAME} PATH=/usr/local/bin:/usr/bin:/bin /usr/bin/chezmoi apply --force"
+	eend $?
+}

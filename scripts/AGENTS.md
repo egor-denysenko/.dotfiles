@@ -7,6 +7,13 @@ Config files for machine-local daemons live under `dot_config/<daemon>/` and are
 | Source | Installs to | Purpose |
 |--------|-------------|---------|
 | `dot_config/tlp/10-yoga370.conf` | `/etc/tlp.d/10-yoga370.conf` | TLP power management, tuned for the ThinkPad Yoga 370 (20JJS2Y800) |
+| `dot_config/openrc/executable_chezmoi-apply` | `/etc/init.d/chezmoi-apply` | Re-runs `chezmoi apply --force` at boot |
+
+Both live in `/etc`, which on this diskless box is **tmpfs**. Writing the file
+there is not enough to make it survive a reboot: `/etc/init.d/persistent-storage`
+bind-mounts a short whitelist of `$HOME` paths from `/media/sda3`, and anything
+hand-written under `/etc` only comes back if it is captured into the Alpine
+backup (`doas lbu commit`) or written by a package.
 
 ## Skills Structure
 
