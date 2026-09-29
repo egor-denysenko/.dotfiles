@@ -1,1 +1,5 @@
 source ~/.config/zsh/.zshrc
+
+# Added by flyctl installer
+export FLYCTL_INSTALL="/home/bronco/.fly"
+export PATH="$FLYCTL_INSTALL/bin:$PATH"

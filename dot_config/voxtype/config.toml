@@ -1,0 +1,44 @@
+# Local Sway dictation. No cloud endpoint or post-processing command.
+engine = "whisper"
+state_file = "auto"
+
+[hotkey]
+# Sway handles press/release; no evdev or input-group access.
+enabled = false
+
+[audio]
+# ALSA default routes through PipeWire and follows its default microphone.
+device = "default"
+sample_rate = 16000
+max_duration_secs = 60
+
+[whisper]
+mode = "local"
+model = "small.en"
+# Either downloaded model may also be selected for a single recording.
+available_models = ["base.en", "small.en"]
+language = "en"
+translate = false
+threads = 8
+# Keep the primary model loaded for responsive dictation.
+on_demand_loading = false
+
+[output]
+mode = "type"
+# Explicitly exclude uinput/evdev-based typing drivers.
+driver_order = ["wtype", "clipboard"]
+type_delay_ms = 0
+pre_type_delay_ms = 200
+auto_submit = false
+# This feature requires evdev access; release all shortcut keys instead.
+wait_for_modifier_release = false
+
+[output.notification]
+on_recording_start = true
+on_recording_stop = true
+# Do not expose dictated text in desktop notification history.
+on_transcription = false
+
+[osd]
+# Keep the initial setup minimal; notifications indicate recording state.
+enabled = false

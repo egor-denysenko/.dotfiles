@@ -5,19 +5,15 @@ pi_agent:
   machine_profiles:
     personal: &default_profile
       packages:
-        # Voice dictation (on-device Whisper STT) + i18n — pinned to npm versions.
-        - npm:@juicesharp/rpiv-voice@2.7.1
-        - npm:@juicesharp/rpiv-i18n@2.7.1
-        # Async subagent delegation.
-        - git:github.com/nicobailon/pi-subagents@0.58.0
-        # FFF file search — frecency-ranked grep/find for pi.
-        - npm:@ff-labs/pi-fff@0.10.5
-        # LSP diagnostics & language server navigation tools — 0.1.7 is latest.
+        # Pin npm package versions; update these explicitly when upgrading.
+        - npm:@juicesharp/rpiv-voice@2.11.0
+        - npm:@juicesharp/rpiv-i18n@2.11.0
+        - npm:@ff-labs/pi-fff@0.11.0
         - npm:pi-lsp@0.1.7
-        # Neovim line-based review comments for Pi — pinned to commit hash (no tags).
-        - git:github.com/jillesme/pi-nvim-review@d61a694dcd38
-        # Algorithmic lossless session compaction and recall for Pi.
-        - npm:@sting8k/pi-vcc@0.7.2
+        - npm:@sting8k/pi-vcc@0.8.0
+        # Pin Git packages to immutable commit SHAs; update explicitly.
+        - git:github.com/nicobailon/pi-subagents@14dcf97511c509c9eefd3757f64f4bb3d75ab124
+        - git:github.com/jillesme/pi-nvim-review@d61a694dcd38d68bb70b66b557c08aa581454784
 
     work:
       <<: *default_profile

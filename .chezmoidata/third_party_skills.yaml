@@ -14,11 +14,6 @@
 # If omitted, all discoverable skills from the repo are installed.
 
 third_party_skills:
-  impeccable:
-    source: pbakaus/impeccable
-    ref: skill-v4.1.1
-    skills:
-      - impeccable
   mattpocock-skills:
     source: mattpocock/skills
     ref: v1.2.3
@@ -35,7 +30,7 @@ third_party_skills:
       - teach
   cursor-skills:
     source: cursor/plugins
-    ref: bdf7aa355337
+    ref: ecc249f1e306
     skills:
       - deslop
       - how
