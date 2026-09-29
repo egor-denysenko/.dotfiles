@@ -1,3 +1,42 @@
+# Pick up the session bus address before exec'ing sway.
+#
+# openrc owns the login session bus on this box. Two pieces, both in root's
+# gift and both set up once:
+#
+#   doas ln -s /etc/init.d/user /etc/runlevels/default/user.$USER
+#       Starts an openrc *user session* for you at boot. `rc-update add` is
+#       NOT the way to do this -- it resolves services by exact init-script
+#       filename and there is no /etc/init.d/user.<name>, so it just errors
+#       with "service `user.jyro' does not exist". The symlink is the method;
+#       /etc/init.d/user reads the username out of its own name.
+#
+#   ln -s /etc/user/init.d/dbus ~/.config/rc/runlevels/default/dbus
+#       Actually enables the bus. This is the bit that is easy to miss: a
+#       user session starts only the services symlinked into the *user*
+#       runlevel (~/.config/rc/runlevels/), NOT everything in
+#       /etc/user/init.d/. Those scripts are package-managed but inert until
+#       linked, which is why sway/waybar/swayidle there never started and
+#       never will -- .zprofile and sway's own `bar` block own those.
+#
+# /etc/user/conf.d/dbus is what declares the address. Its header says it
+# exists to be sourced from shell config as well as from other services,
+# which is what this does.
+#
+# The sourcing is the load-bearing part. The openrc user session and this
+# login shell are separate process trees: openrc starts the bus as a
+# supervised daemon under init, but agetty --autologin's shell on tty1 is
+# not its child and inherits nothing. Reading the file here is what actually
+# hands sway the address.
+#
+# The guard matters for machines where the user session is not enabled: the
+# file is absent, DBUS_SESSION_BUS_ADDRESS stays unset, and that is the
+# pre-existing state. waybar-launch.sh starts its own bus when it cannot
+# reach one, so the bar works either way -- this is the tidy path, not the
+# only one.
+if [[ -r /etc/user/conf.d/dbus ]]; then
+  source /etc/user/conf.d/dbus
+fi
+
 # Start the graphical session only from the primary console login.
 # Other virtual terminals remain available for recovery and shell access.
 _sway_vt="${XDG_VTNR:-}"
