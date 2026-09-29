@@ -1,0 +1,13 @@
+# Start the graphical session only from the primary console login.
+# Other virtual terminals remain available for recovery and shell access.
+_sway_vt="${XDG_VTNR:-}"
+if [[ -z "$_sway_vt" && -t 1 ]]; then
+  _sway_vt=$(tty 2>/dev/null)
+  [[ "$_sway_vt" == "/dev/tty1" ]] && _sway_vt=1
+fi
+if [[ -o login && -z ${WAYLAND_DISPLAY:-} && "$_sway_vt" == 1 ]]; then
+  if (( $+commands[sway] )); then
+    exec sway
+  fi
+fi
+unset _sway_vt
