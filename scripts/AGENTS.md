@@ -1,5 +1,13 @@
 # Scripts
 
+## Machine configs
+
+Config files for machine-local daemons live under `dot_config/<daemon>/` and are **not** applied to their real location automatically — chezmoi only manages paths under `$HOME`, so `/etc/...` is out of reach (`chezmoi add /etc/...` refuses: *not in destination directory*). Each file carries its own `doas cp` install line in the header.
+
+| Source | Installs to | Purpose |
+|--------|-------------|---------|
+| `dot_config/tlp/10-yoga370.conf` | `/etc/tlp.d/10-yoga370.conf` | TLP power management, tuned for the ThinkPad Yoga 370 (20JJS2Y800) |
+
 ## Skills Structure
 
 All skills live in `dot_agents/skills/`, managed by chezmoi and synced to `~/.agents/skills/`. The tree is split:
