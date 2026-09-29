@@ -52,6 +52,18 @@ TODO.md
 .local/share/icons/
 {{- end }}
 
+# Application-owned state. These configs are rewritten by the program itself
+# whenever you change a setting in its TUI, so tracking them guarantees drift:
+# every `chezmoi apply` stops on a "has changed since chezmoi last wrote it?"
+# prompt, and fails outright in any non-interactive context. Only the app should
+# own them.
+#
+# btop: keep btop.conf untracked, but dot_config/btop/themes/ stays managed so
+# the vendored adwaita-dark theme still deploys. btop resolves a bare
+# theme name from $HOME/.config/btop/themes, so the theme works without the
+# distro shipping it under /usr/share/btop.
+**/btop.conf
+
 # OS-specific
 **/.DS_Store
 **/Thumbs.db
