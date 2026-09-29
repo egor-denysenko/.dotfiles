@@ -1,0 +1,31 @@
+# Vendored from Fedora /etc/sway/config.d/90-bar.conf — edit here, re-diff against the original when re-vendoring.
+# Status Bar: waybar
+#
+# Read `man 5 sway-bar` for more information about this section.
+# Read `man 5 waybar` for more information about the waybar instance style and layout configuration
+#
+# Requires: waybar
+#
+# LOCAL CHANGE: rendered from a .tmpl and swaybar_command points at a wrapper
+# instead of plain `waybar`.
+#
+# Why the template: `swaybar_command` is exec'd directly (execvp, no shell), so
+# it expands NOTHING — not `${XDG_CONFIG_HOME:-$HOME/.config}`, not a `set $var`
+# reference, and not `~`. Every one of those silently yields a nonexistent path
+# and sway starts no bar at all, with no error. The absolute path has to be
+# baked in at render time. (`exec`, `exec_always` and `output * bg` do expand
+# ${...}, which is why the rest of the config gets away with it.)
+#
+# Why the wrapper: sway spawns the bar from *its own* environment, and on this
+# machine nothing exports DBUS_SESSION_BUS_ADDRESS — sway-systemd is not
+# installed (so 10-systemd-session.conf no-ops) and Alpine's
+# /etc/user/init.d/sway leaves its export line commented out as a FIXME.
+# Without it waybar dies at startup trying to autolaunch a bus via the
+# not-installed dbus-launch, and `bar` never respawns it, so the failure is
+# completely silent. The wrapper starts a real session bus if one is not
+# already reachable, then execs waybar.
+# Full rationale: scripts/executable_waybar-launch.sh
+
+bar {
+    swaybar_command {{ .chezmoi.homeDir }}/.config/scripts/waybar-launch.sh
+}

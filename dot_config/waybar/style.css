@@ -1,7 +1,19 @@
 /* Vendored from Fedora /etc/xdg/waybar/style.css (waybar package defaults) — edit here. */
 * {
-    font-family: 'Noto Sans Mono', 'Font Awesome 6 Free', 'Font Awesome 6 Brands', monospace;
-    font-size: 13px;
+    /* Departure Mono is a PIXEL font: it only renders crisply at multiples of
+       11px (11 / 22 / 33). 13px — the previous value — lands off-grid and
+       looks smeared. 11px is the right fit for a 30px-tall bar.
+       The Nerd Font patch is what supplies the module icons below; without it
+       the private-use-area glyphs in these formats (U+F0C9 memory, U+F4BB cpu,
+       ...) render as tofu.
+
+       Keep the rest of the stack as fallbacks. This repo is deployed to
+       several machines and Departure Mono is not installed everywhere —
+       fontconfig just skips a family it cannot resolve, so the bar still
+       renders on a host that only has Noto Sans Mono / Font Awesome. Do not
+       trim these without checking the other machines. */
+    font-family: 'DepartureMono Nerd Font', 'Noto Sans Mono', 'Font Awesome 6 Free', 'Font Awesome 6 Brands', monospace;
+    font-size: 11px;
 }
 
 window#waybar {
@@ -86,6 +98,7 @@ button:hover {
 #backlight,
 #network,
 #pulseaudio,
+#custom-swap,
 #wireplumber,
 #custom-media,
 #tray,
@@ -216,6 +229,14 @@ label:focus {
     background-color: #66cc99;
     color: #2a5c45;
     min-width: 100px;
+}
+
+/* Swap sits directly right of #memory, so it uses a darker shade of the same
+   purple to read as related while staying a distinct module. */
+#custom-swap {
+    background-color: #420f69;
+    color: #ffffff;
+    min-width: 130px;
 }
 
 #custom-media.custom-spotify {

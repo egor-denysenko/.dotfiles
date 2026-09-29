@@ -17,11 +17,49 @@
     ],
     "modules-right": [
         "idle_inhibitor",
-        "pulseaudio",
+        // "pulseaudio" DISABLED — do not re-enable until an audio *server* runs.
+        //
+        // Only the client libraries are installed (libpulse, pipewire-libs,
+        // wireplumber-libs); there is no pipewire/pulseaudio daemon, so the
+        // module cannot connect. On failure it retries in a tight loop and
+        // leaks a socket + memfd per attempt until it exhausts RLIMIT_NOFILE
+        // (1024). Once the fds are gone, waybar never finishes configuring the
+        // bar — it dies before "Bar configured" is ever logged, so you get a
+        // silently missing bar and no useful error.
+        //
+        // Symptom trail: `ps` shows waybar pinned at exactly 1024 fds, and the
+        // log fills with "socket(): No file descriptors available".
+        //
+        // To restore: install pipewire + wireplumber, start them, confirm a
+        // socket exists at $XDG_RUNTIME_DIR/pulse/native, then re-enable.
+        // "pulseaudio",
         "network",
-        "power-profiles-daemon",
+        // "power-profiles-daemon" DISABLED — TLP is the power manager here,
+        // not PPD. See TODO.md for the full rationale.
+        //
+        // The module is compiled into waybar 0.15.0 and would work (it talks
+        // the legacy net.hadess.PowerProfiles name, which PPD 0.30 still
+        // exports alongside the newer org.freedesktop.UPower one), but
+        // `apk add power-profiles-daemon` was never run, so every bar start
+        // logs:
+        //     Failed to query power-profiles-daemon via dbus:
+        //     ServiceUnknown: The name net.hadess.PowerProfiles was not
+        //     provided by any .service files
+        // Non-fatal (the bar still configures and renders), but it is noise on
+        // every reload and the module renders as an empty block.
+        //
+        // TLP already owns what PPD would own. check_ppd_running() in
+        // tlp-func-base makes TLP yield EPP/turbo/platform-profile to PPD, so
+        // running both is possible — but there is nothing to gain here: TLP
+        // also drives the 70/80 charge thresholds in
+        // dot_config/tlp/10-yoga370.conf, and bat.d/ has zero PPD gates.
+        //
+        // To switch to PPD instead: `doas apk add power-profiles-daemon`,
+        // `doas rc-service power-profiles-daemon start`, then uncomment.
+        // "power-profiles-daemon",
         "cpu",
         "memory",
+        "custom/swap",
         "temperature",
         "backlight",
         "sway/language",
@@ -117,6 +155,22 @@
     },
     "memory": {
         "format": "{}% "
+    },
+    // Swap usage, immediately right of memory.
+    //
+    // A `custom` module because waybar 0.15's own memory module does not
+    // report swap here: {swapUsed}/{swapTotal} parse without error but render
+    // as empty strings, and {swapPercent}/{swap} are rejected outright with
+    // "argument not found". So read /proc/meminfo directly. Values are kB, so
+    // divide by 1048576 for GiB — matches `free -h`.
+    "custom/swap": {
+        // NOTE: waybar 0.15's custom module takes the script's stdout via the
+        // printf-style `{}` slot. `{output}` is NOT valid here and makes the
+        // whole module fail with "argument not found" (rendering as an empty
+        // block). `{icon}` is valid if format-icons is used.
+        "format": "\uf0e7 {}",
+        "interval": 5,
+        "exec": "awk '/^SwapTotal:/ {t=$2} /^SwapFree:/ {f=$2} END { if (t>0) printf \"%.2f/%.2fG (%.0f%%)\\n\", (t-f)/1048576, t/1048576, (t-f)*100/t; else print \"off\" }' /proc/meminfo"
     },
     "temperature": {
         // "thermal-zone": 2,
