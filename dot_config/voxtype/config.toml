@@ -14,10 +14,11 @@ max_duration_secs = 60
 
 [whisper]
 mode = "local"
-model = "small.en"
-# Either downloaded model may also be selected for a single recording.
-available_models = ["base.en", "small.en"]
-language = "en"
+model = "small"
+# Keep the English-only models available for comparison.
+available_models = ["base.en", "small.en", "small"]
+# Auto-detect the spoken language; preserve it rather than translating.
+language = "auto"
 translate = false
 threads = 8
 # Keep the primary model loaded for responsive dictation.

@@ -37,6 +37,8 @@
         "format": "{}",
         "tooltip": true,
         "escape": true,
+        "on-click": "/usr/bin/python3 \"$HOME/.config/waybar/scripts/voxtype-spinner.py\" --toggle-pink",
+        "exec-on-event": false,
         "restart-interval": 2
     },
     // Modules configuration

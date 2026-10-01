@@ -334,6 +334,11 @@ label:focus {
     color: #90b1b1;
 }
 
+#custom-voxtype.pink {
+    background-color: #f5a9cb;
+    color: #282a36;
+}
+
 #custom-voxtype.recording {
     color: #f1c40f;
 }
