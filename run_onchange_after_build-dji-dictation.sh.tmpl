@@ -1,0 +1,19 @@
+#!/bin/sh
+set -eu
+{{ if get . "dji_dictation" | default false -}}
+# Rebuild when the source, tests, or module definition changes.
+# {{ include "scripts/dji-dictation/main.go" | sha256sum }}
+# {{ include "scripts/dji-dictation/main_test.go" | sha256sum }}
+# {{ include "scripts/dji-dictation/go.mod" | sha256sum }}
+command -v go >/dev/null 2>&1 || { echo 'DJI dictation requires Go (Fedora: sudo dnf install golang)' >&2; exit 1; }
+export GOTOOLCHAIN=local
+export CGO_ENABLED=0
+cd {{ printf "%s/scripts/dji-dictation" .chezmoi.sourceDir | quote }}
+go test -mod=readonly ./...
+mkdir -p "$HOME/.local/bin"
+binary=$(mktemp "$HOME/.local/bin/.dji-dictation.XXXXXX")
+trap 'rm -f "$binary"' EXIT HUP INT TERM
+go build -mod=readonly -trimpath -o "$binary" .
+chmod 755 "$binary"
+mv -f "$binary" "$HOME/.local/bin/dji-dictation"
+{{ end -}}

@@ -52,6 +52,12 @@ git commit -m "Upgrade third-party skills"
 chezmoi apply
 ```
 
+## DJI dictation helper
+
+`scripts/dji-dictation/` contains the dependency-free Linux Go recording-toggle helper and tests (no Enter action or click delay). `run_onchange_after_build-dji-dictation.sh.tmpl` tests and builds it to `~/.local/bin/dji-dictation` on machines with `[data] dji_dictation = true`. Go is required; binaries are not committed. The Sway binding calls the binary directly.
+
+Validation: `cd scripts/dji-dictation && GOTOOLCHAIN=local go test -race ./... && go vet ./...`.
+
 ## run_once scripts
 
 Scripts prefixed with `executable_run_once_` in `dot_config/scripts/` are deployed to `~/.config/scripts/` and run once on `chezmoi apply`. Chezmoi tracks execution state — they won't re-run unless you clear `~/.local/share/chezmoi/run_once/`.

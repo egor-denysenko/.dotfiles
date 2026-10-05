@@ -14,9 +14,6 @@ fi
 # Ensure completions and local binaries are in the path
 fpath=($HOME/.config/zsh/completions $fpath)
 
-# fnm (Fast Node Manager)
-eval "$(fnm env --use-on-cd)"
-
 # pnpm
 export PNPM_HOME="$HOME/.local/share/pnpm"
 case ":$PATH:" in
@@ -88,7 +85,7 @@ npm() {
 # Machine-local overrides that should not be managed by chezmoi.
 [[ -f $ZDOTDIR/local.zsh ]] && source $ZDOTDIR/local.zsh
 
-# Vite+ bin (https://viteplus.dev)
-if [[ -f "$HOME/.vite-plus/env" ]]; then
-  . "$HOME/.vite-plus/env"
+# Refresh Vite+ PATH priority and load completions after shell initialization.
+if [[ -f "${XDG_CONFIG_HOME:-$HOME/.config}/vite-plus/env" ]]; then
+  . "${XDG_CONFIG_HOME:-$HOME/.config}/vite-plus/env"
 fi

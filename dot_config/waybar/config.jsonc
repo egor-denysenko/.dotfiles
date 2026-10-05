@@ -16,16 +16,16 @@
         "sway/window"
     ],
     "modules-right": [
-        "idle_inhibitor",
         "custom/voxtype",
+        "idle_inhibitor",
         "pulseaudio",
         "network",
-        "power-profiles-daemon",
         "cpu",
         "memory",
         "temperature",
         "backlight",
         "sway/language",
+        "power-profiles-daemon",
         "battery",
         "clock",
         "tray"
@@ -112,7 +112,7 @@
     },
     "tray": {
         // "icon-size": 21,
-        "spacing": 10,
+        "spacing": 4,
         // "icons": {
         //   "blueman": "bluetooth",
         //   "TelegramDesktop": "$HOME/.local/share/icons/hicolor/16x16/apps/telegram.png"
@@ -140,7 +140,8 @@
     },
     "backlight": {
         // "device": "acpi_video1",
-        "format": "{percent}% {icon}",
+        "format": "{icon}",
+        "tooltip-format": "Brightness: {percent}%",
         "format-icons": ["🌑", "🌘", "🌗", "🌖", "🌕"]
     },
     "battery": {

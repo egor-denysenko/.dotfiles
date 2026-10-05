@@ -1,0 +1,10 @@
+# Enable only on opted-in machines: [data] dji_dictation = true in chezmoi.toml.
+{{ if get . "dji_dictation" | default false -}}
+# Remap DJI pair-button volume-up to F20 only on this receiver.
+input "11427:16661:DJI_Technology_Co.,_Ltd._Wireless_Mic_Rx_Consumer_Control" {
+    xkb_file "{{ .chezmoi.homeDir }}/.config/sway/keybinds/dji-dictation.xkb"
+}
+# Single click immediately toggles recording; no Enter/submission gesture.
+# Deliberately unavailable while the screen is locked.
+bindsym --no-repeat --input-device=11427:16661:DJI_Technology_Co.,_Ltd._Wireless_Mic_Rx_Consumer_Control F20 exec "{{ .chezmoi.homeDir }}/.local/bin/dji-dictation"
+{{ end -}}

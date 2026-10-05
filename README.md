@@ -65,6 +65,17 @@ systemctl --user restart voxtype
 
 After editing the binding, validate with `sway --validate --config ~/.config/sway/config` before `swaymsg reload`. Reload Waybar with `pkill -USR2 -x waybar`. Check the selected model/backend with `voxtype status --format json --extended`.
 
+### DJI remote dictation (Sway)
+
+On this laptop, `[data] dji_dictation = true` in the local `~/.config/chezmoi/chezmoi.toml` enables `62-bindings-dji-dictation.conf`. The option defaults to disabled on other machines. A dependency-free Go helper implements the immediate recording toggle; install Go (`sudo dnf install golang` on Fedora) before applying. Chezmoi's `run_onchange_after_build-dji-dictation.sh.tmpl` tests and compiles the source in `scripts/dji-dictation/` to `~/.local/bin/dji-dictation` when it changes. No prebuilt binary is tracked. Apply with `chezmoi apply ~/.config/sway/config.d/62-bindings-dji-dictation.conf`, validate the Sway config, and reload Sway.
+
+A single tap of the DJI transmitter's pair button sends USB `KEY_VOLUMEUP`, remapped to `F20` by the receiver-specific `dji-dictation.xkb` keymap: tap once to start dictation, again to stop and transcribe into the focused application. Only the DJI receiver's Consumer Control device is remapped and bound; other volume keys keep their normal function. Voxtype must be running. Each click immediately toggles recording while Voxtype is idle or recording; clicks are ignored while transcribing or stopped. There is no Enter/submission action. Avoid double-clicking or holding the DJI link button: its firmware handles connection-mode/pairing gestures independently of Linux. The power button controls internal recording, so it is not used for dictation. The binding is disabled while the screen is locked and does not change the button's internal DJI behavior.
+
+### Dictation follow-ups
+
+- [ ] Add a separate keyboard/clicker button for explicit Enter/submission; do not reuse DJI firmware gestures.
+- [ ] Add text-to-speech playback through Bluetooth earbuds, keeping the DJI receiver selected as the microphone.
+
 ## Updating skills
 
 Layout: `dot_agents/skills/personal/<name>/` (hand-written) and `dot_agents/skills/vendored/<name>/` (pulled from upstream). Both opencode and pi recurse, so the split is just organization.

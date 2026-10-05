@@ -3,7 +3,7 @@
 
 pi_agent:
   machine_profiles:
-    personal: &default_profile
+    work:
       packages:
         # Pin npm package versions; update these explicitly when upgrading.
         - npm:@juicesharp/rpiv-voice@2.11.0
@@ -15,5 +15,13 @@ pi_agent:
         - git:github.com/nicobailon/pi-subagents@14dcf97511c509c9eefd3757f64f4bb3d75ab124
         - git:github.com/jillesme/pi-nvim-review@d61a694dcd38d68bb70b66b557c08aa581454784
 
-    work:
-      <<: *default_profile
+    personal:
+      packages:
+        - npm:@juicesharp/rpiv-i18n@2.11.0
+        - npm:@ff-labs/pi-fff@0.11.0
+        - npm:pi-lsp@0.1.7
+        - npm:@sting8k/pi-vcc@0.8.0
+        - git:github.com/nicobailon/pi-subagents@14dcf97511c509c9eefd3757f64f4bb3d75ab124
+        - git:github.com/jillesme/pi-nvim-review@d61a694dcd38d68bb70b66b557c08aa581454784
+        - ../../../projects/oss_forks/rpiv-mono-fork
+        - npm:pi-btw

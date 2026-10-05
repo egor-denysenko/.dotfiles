@@ -1,0 +1,10 @@
+// DJI receiver only: reinterpret its pair-button event as a dictation key.
+xkb_keymap {
+    xkb_keycodes { include "evdev+aliases(qwerty)" };
+    xkb_types { include "complete" };
+    xkb_compatibility { include "complete" };
+    xkb_symbols {
+        include "pc+us+inet(evdev)"
+        replace key <VOL+> { [ F20 ] };
+    };
+};

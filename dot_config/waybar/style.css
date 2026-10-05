@@ -115,6 +115,8 @@ button:hover {
 
 #clock {
     background-color: #64727D;
+    padding: 0 7px;
+    font-size: 12px;
 }
 
 #battery {
@@ -146,7 +148,7 @@ button:hover {
 }
 
 #power-profiles-daemon {
-    padding-right: 15px;
+    padding: 0 6px;
 }
 
 #power-profiles-daemon.performance {
@@ -171,10 +173,12 @@ label:focus {
 #cpu {
     background-color: #2ecc71;
     color: #000000;
+    padding: 0 5px;
 }
 
 #memory {
     background-color: #9b59b6;
+    padding: 0 5px;
 }
 
 #disk {
@@ -187,6 +191,7 @@ label:focus {
 
 #network {
     background-color: #2980b9;
+    padding: 0 7px;
 }
 
 #network.disconnected {
@@ -276,8 +281,8 @@ label:focus {
 #language {
     background: #00b093;
     color: #740864;
-    padding: 0 5px;
-    margin: 0 5px;
+    padding: 0 6px;
+    margin: 0;
     min-width: 16px;
 }
 
@@ -350,4 +355,22 @@ label:focus {
 
 #custom-voxtype.stopped {
     color: #64727d;
+}
+
+/* Equal horizontal spacing for all active status modules. */
+#custom-voxtype,
+#idle_inhibitor,
+#pulseaudio,
+#network,
+#cpu,
+#memory,
+#temperature,
+#backlight,
+#language,
+#power-profiles-daemon,
+#battery,
+#clock,
+#tray {
+    padding: 0 6px;
+    margin: 0;
 }
