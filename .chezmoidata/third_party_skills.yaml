@@ -16,21 +16,14 @@
 third_party_skills:
   mattpocock-skills:
     source: mattpocock/skills
-    ref: v1.2.3
+    ref: v1.3.1
     skills:
-      - wayfinder
-      - grilling
-      # --- Dependant one on the other ---
-      - improve-codebase-architecture
-      - codebase-design
-      - domain-modeling
       # ---
-      - tdd
-      - handoff
       - teach
+      - retro
   cursor-skills:
     source: cursor/plugins
-    ref: ecc249f1e306
+    ref: df581122cde1
     skills:
       - deslop
       - how

@@ -5,14 +5,9 @@ import { getKeybindings, Spacer, Text } from "@earendil-works/pi-tui";
 import { promises as fs } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import { filterModels, modelKey, nextProvider, providerKey, providers } from "./model-provider-filter/logic.ts";
 
-type ModelEntry = {
-  provider: string;
-  id: string;
-  model?: {
-    name?: string;
-  };
-};
+type ModelEntry = { provider: string; id: string };
 
 type SelectorInstance = Record<string, unknown> & {
   activeModels?: ModelEntry[];
@@ -47,6 +42,7 @@ interface PersistedState {
 }
 
 let origSortModels: ((models: ModelEntry[]) => ModelEntry[]) | null = null;
+let origLoadModelsFromSnapshot: (() => void) | null = null;
 let origFilterModels: ((query: string) => void) | null = null;
 let origUpdateList: (() => void) | null = null;
 let origHandleInput: ((keyData: string) => void) | null = null;
@@ -56,27 +52,24 @@ let origCycleScopedModel: ((direction: string) => Promise<unknown>) | null = nul
 
 let isPatched = false;
 let currentSessionProvider: string | null = null;
-
-function modelKey(item: { provider: string; id: string }): string {
-  return `${item.provider}/${item.id}`;
-}
+let providerInitialization: Promise<void> | null = null;
 
 function currentModelKey(instance: SelectorInstance): string | null {
   const provider = instance.currentModel?.provider;
   const id = instance.currentModel?.id;
   if (!provider || !id) return null;
-  return `${provider}/${id}`;
+  return modelKey({ provider, id });
 }
 
 function getProviders(instance: SelectorInstance): string[] {
-  const source = instance.activeModels ?? [];
-  const values = [...new Set(source.map((item) => item.provider))].sort((a, b) => a.localeCompare(b));
-  return [FILTER_ALL, ...values];
+  return providers(instance.activeModels ?? []);
 }
 
 function getSelectedProvider(instance: SelectorInstance): string {
   const selected = (instance as Record<string, unknown>)[PERSIST_KEY];
-  return typeof selected === "string" ? selected : FILTER_ALL;
+  return typeof selected === "string"
+    ? selected
+    : currentSessionProvider ?? instance.currentModel?.provider ?? FILTER_ALL;
 }
 
 function setSelectedProvider(instance: SelectorInstance, value: string): void {
@@ -110,28 +103,14 @@ function applyProviderFilter(instance: SelectorInstance): void {
   const filtered = instance.filteredModels;
   if (!filtered) return;
 
-  if (selected !== FILTER_ALL) {
-    instance.filteredModels = filtered.filter((item) => item.provider === selected);
-  }
+  instance.filteredModels = selected === FILTER_ALL
+    ? filtered
+    : filterModels(filtered, selected);
 
-  const list = instance.filteredModels ?? [];
-  if (list.length === 0) {
-    instance.selectedIndex = 0;
-  } else {
-    const current = currentModelKey(instance);
-    if (current) {
-      const at = list.findIndex((item) => modelKey(item) === current);
-      if (at >= 0) {
-        instance.selectedIndex = at;
-      } else {
-        const existing = instance.selectedIndex ?? 0;
-        instance.selectedIndex = Math.min(existing, list.length - 1);
-      }
-    } else {
-      const existing = instance.selectedIndex ?? 0;
-      instance.selectedIndex = Math.min(existing, list.length - 1);
-    }
-  }
+  const list = instance.filteredModels;
+  const current = currentModelKey(instance);
+  const at = current ? list.findIndex((item) => modelKey(item) === current) : -1;
+  instance.selectedIndex = at >= 0 ? at : Math.min(instance.selectedIndex ?? 0, Math.max(0, list.length - 1));
 
   instance.updateList?.();
 }
@@ -162,17 +141,14 @@ function toggleScope(instance: SelectorInstance): void {
   instance.setScope?.(nextScope);
 }
 
-function cycleProvider(instance: SelectorInstance, direction: 1 | -1): void {
+function cycleProvider(instance: SelectorInstance): void {
   const values = getProviders(instance);
-  const selected = getSelectedProvider(instance);
-  const at = Math.max(0, values.indexOf(selected));
-  const next = (at + direction + values.length) % values.length;
-  const nextProvider = values[next] ?? FILTER_ALL;
-  
-  setSelectedProvider(instance, nextProvider);
-  
-  // Persist the selection
-  savePersistedProvider(nextProvider).catch(() => {});
+  if (values.length <= 1) return;
+  const next = nextProvider(values, getSelectedProvider(instance));
+  if (!next) return;
+
+  setSelectedProvider(instance, next);
+  savePersistedProvider(next).catch(() => {});
 
   const query = instance.searchInput?.getValue?.() ?? "";
   instance.filterModels?.(query);
@@ -180,20 +156,23 @@ function cycleProvider(instance: SelectorInstance, direction: 1 | -1): void {
   refreshScopeHint(instance);
 }
 
-async function initializePersistedProvider(instance: SelectorInstance): Promise<void> {
-  if (currentSessionProvider !== null) return; // Already initialized this session
-  
-  const persisted = await loadPersistedProvider();
-  if (persisted) {
+function initializePersistedProvider(instance: SelectorInstance): Promise<void> {
+  if (currentSessionProvider !== null) return Promise.resolve();
+  if (providerInitialization) return providerInitialization;
+
+  providerInitialization = (async () => {
     const available = getProviders(instance);
-    if (available.includes(persisted)) {
-      setSelectedProvider(instance, persisted);
-      currentSessionProvider = persisted;
-      return;
-    }
-  }
-  // Default to all providers
-  currentSessionProvider = FILTER_ALL;
+    const persisted = await loadPersistedProvider();
+    if (currentSessionProvider !== null) return;
+    const selected = available.find((value) => providerKey(value) === providerKey(persisted ?? ""))
+      ?? available.find((value) => providerKey(value) === providerKey(instance.currentModel?.provider ?? ""))
+      ?? available[0] ?? FILTER_ALL;
+    setSelectedProvider(instance, selected);
+
+    const query = instance.searchInput?.getValue?.() ?? "";
+    instance.filterModels?.(query);
+  })();
+  return providerInitialization;
 }
 
 function patchModelSelector(): void {
@@ -203,11 +182,17 @@ function patchModelSelector(): void {
   
   // Store originals only once
   origSortModels = proto.sortModels as (models: ModelEntry[]) => ModelEntry[];
+  origLoadModelsFromSnapshot = proto.loadModelsFromSnapshot as () => void;
   origFilterModels = proto.filterModels as (query: string) => void;
   origUpdateList = proto.updateList as () => void;
   origHandleInput = proto.handleInput as (keyData: string) => void;
   origGetScopeText = proto.getScopeText as () => string;
   origGetScopeHintText = proto.getScopeHintText as () => string;
+
+  proto.loadModelsFromSnapshot = function (this: SelectorInstance) {
+    origLoadModelsFromSnapshot!.call(this);
+    this.filterModels?.(this.searchInput?.getValue?.() ?? "");
+  };
 
   proto.sortModels = function (this: SelectorInstance, models: ModelEntry[]) {
     const sorted = [...models];
@@ -238,8 +223,8 @@ function patchModelSelector(): void {
     
     const selected = getSelectedProvider(this);
     const allowed = getProviders(this);
-    if (!allowed.includes(selected)) {
-      setSelectedProvider(this, FILTER_ALL);
+    if (currentSessionProvider !== null && !allowed.some((value) => providerKey(value) === providerKey(selected))) {
+      setSelectedProvider(this, allowed[0] ?? FILTER_ALL);
     }
 
     applyProviderFilter(this);
@@ -274,7 +259,7 @@ function patchModelSelector(): void {
   proto.handleInput = function (this: SelectorInstance, keyData: string) {
     const kb = getKeybindings();
     if (kb.matches(keyData, "tui.input.tab")) {
-      cycleProvider(this, 1);
+      cycleProvider(this);
       return;
     }
 
@@ -296,6 +281,7 @@ function unpatchModelSelector(): void {
   const proto = ModelSelectorComponent.prototype as unknown as Record<string, unknown>;
 
   if (origSortModels) proto.sortModels = origSortModels;
+  if (origLoadModelsFromSnapshot) proto.loadModelsFromSnapshot = origLoadModelsFromSnapshot;
   if (origFilterModels) proto.filterModels = origFilterModels;
   if (origUpdateList) proto.updateList = origUpdateList;
   if (origHandleInput) proto.handleInput = origHandleInput;
@@ -303,6 +289,7 @@ function unpatchModelSelector(): void {
   if (origGetScopeHintText) proto.getScopeHintText = origGetScopeHintText;
 
   origSortModels = null;
+  origLoadModelsFromSnapshot = null;
   origFilterModels = null;
   origUpdateList = null;
   origHandleInput = null;
@@ -310,6 +297,7 @@ function unpatchModelSelector(): void {
   origGetScopeHintText = null;
   isPatched = false;
   currentSessionProvider = null;
+  providerInitialization = null;
 }
 
 type ScopedModelEntry = { model: { provider: string; id: string }; thinkingLevel?: string };

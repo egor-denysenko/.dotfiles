@@ -186,6 +186,19 @@ return {
           },
         },
 
+        yamlls = {
+          settings = {
+            yaml = {
+              schemas = {
+                ['https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/master-standalone-strict/deployment-apps-v1.json'] = {
+                  '**/deployment.yaml',
+                  '**/deployment.yml',
+                },
+              },
+            },
+          },
+        },
+
         tinymist = {
           root_dir = function(fname)
             return require('lspconfig.util').root_pattern('.git', 'Makefile', 'template.typ')(fname)
@@ -237,6 +250,10 @@ return {
         'markdownlint', -- Markdown linter
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
+
+      -- Mason-lspconfig 2.x auto-enables installed servers; register the YAML
+      -- schema through Neovim's native LSP config so it is present at startup.
+      vim.lsp.config('yamlls', servers.yamlls)
 
       require('mason-lspconfig').setup {
         handlers = {

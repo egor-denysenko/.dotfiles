@@ -162,6 +162,9 @@ export default async function (pi: ExtensionAPI) {
     name: "Aperture (Tailscale)",
     baseUrl: BASE_URL,
     apiKey: "-",
+    // Aperture uses Tailscale identity, not an API key. Prevent pi-ai from
+    // sending the placeholder key as `Authorization: Bearer -`.
+    authHeader: false,
     api: "aperture",
     models: state.models,
     async refreshModels() {
@@ -178,12 +181,18 @@ export default async function (pi: ExtensionAPI) {
       const provider = getApiProvider(api);
       if (!provider) throw new Error(`Unsupported Aperture route API: ${api}`);
 
-      // Aperture authenticates through Tailscale. Pi otherwise injects the
-      // placeholder apiKey as a Bearer token, which Aperture rejects.
-      const headers = { ...options?.headers };
-      delete headers.Authorization;
-      delete headers.authorization;
-      return provider.streamSimple({ ...model, api }, context, { ...options, headers });
+      // The OpenAI SDK injects `Authorization: Bearer -` from the placeholder
+      // apiKey regardless of `authHeader: false`. Strip it at the transport edge.
+      const fetchImpl = options?.fetch ?? globalThis.fetch;
+      const fetchWithoutAuth: typeof fetch = (input, init) => {
+        const headers = new Headers(init?.headers);
+        headers.delete("authorization");
+        return fetchImpl(input, { ...init, headers });
+      };
+      return provider.streamSimple({ ...model, api }, context, {
+        ...options,
+        fetch: fetchWithoutAuth,
+      });
     },
   });
 }

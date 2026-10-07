@@ -35,7 +35,8 @@ YAML parsing is done via `chezmoi execute-template` (no `yq` required).
 ```
 
 Reads pinned sources from `.chezmoidata/third_party_skills.yaml` (under
-the `third_party_skills:` key).
+the `third_party_skills:` key). Git checks out each pinned tag or commit before
+the skills CLI runs local, full-depth discovery (including nested plugin skills).
 
 ### Pinning
 
@@ -51,6 +52,12 @@ git add .chezmoidata/third_party_skills.yaml dot_agents/skills/
 git commit -m "Upgrade third-party skills"
 chezmoi apply
 ```
+
+## Pi provider-filter regression tests
+
+Run `node --experimental-vm-modules --test scripts/pi-model-provider-filter.test.mjs`
+with Node 22.18+ (native TypeScript support). Tests cover exact model identity,
+provider cycling, snapshot-load filtering, and hook cleanup using a mocked Pi runtime.
 
 ## DJI dictation helper
 

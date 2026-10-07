@@ -11,8 +11,7 @@ pi_agent:
         - npm:@ff-labs/pi-fff@0.11.0
         - npm:pi-lsp@0.1.7
         - npm:@sting8k/pi-vcc@0.8.0
-        # Pin Git packages to immutable commit SHAs; update explicitly.
-        - git:github.com/nicobailon/pi-subagents@14dcf97511c509c9eefd3757f64f4bb3d75ab124
+        - git:github.com/nicobailon/pi-subagents@5da808168c097ea0d56616644773efe0f6f87938
         - git:github.com/jillesme/pi-nvim-review@d61a694dcd38d68bb70b66b557c08aa581454784
 
     personal:
@@ -21,7 +20,7 @@ pi_agent:
         - npm:@ff-labs/pi-fff@0.11.0
         - npm:pi-lsp@0.1.7
         - npm:@sting8k/pi-vcc@0.8.0
-        - git:github.com/nicobailon/pi-subagents@14dcf97511c509c9eefd3757f64f4bb3d75ab124
+        - git:github.com/nicobailon/pi-subagents@5da808168c097ea0d56616644773efe0f6f87938
         - git:github.com/jillesme/pi-nvim-review@d61a694dcd38d68bb70b66b557c08aa581454784
         - ../../../projects/oss_forks/rpiv-mono-fork
         - npm:pi-btw
