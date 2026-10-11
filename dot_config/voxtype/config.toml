@@ -14,12 +14,21 @@ max_duration_secs = 60
 
 [whisper]
 mode = "local"
-model = "small"
-# Keep the English-only models available for comparison.
-available_models = ["base.en", "small.en", "small"]
-# Auto-detect the spoken language; preserve it rather than translating.
-language = "auto"
+model = "large-v3-turbo"
+# Keep the smaller models on hand for a fast path:
+#   voxtype record start --model small
+available_models = ["small", "small.en", "base.en"]
+# Pinned to English: auto-detect cost time and misfired (e.g. "az" at p=0.01).
+# language = "en"
+# Constrained auto-detect between the two languages actually spoken; much
+# cheaper and more reliable on short clips than open "auto" over ~99 languages.
+# Pinning with Super+Shift+l (voxtype-lang) skips the detection pass entirely.
+language = "en"
 translate = false
+# Off: the docs warn large-v3-turbo can repeat phrases with the shortened
+# window, and it also dropped capitalisation in testing. It only helps clips
+# under 22.5 s anyway. Re-enable if latency ever matters more than polish.
+context_window_optimization = false
 threads = 8
 # Keep the primary model loaded for responsive dictation.
 on_demand_loading = false
