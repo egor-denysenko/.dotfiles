@@ -30,14 +30,19 @@
         "clock",
         "tray"
     ],
-    // Official Voxtype status feed; the filter animates only transcription.
+    // Official Voxtype status feed; scripts/voxtype-spinner (Go, built to
+    // ~/.local/bin by chezmoi) animates transcription and reports the pinned
+    // language as an emoji: pistol=en, pizza=it, globe=auto.
     "custom/voxtype": {
-        "exec": "/usr/bin/voxtype status --follow --format json --extended | /usr/bin/python3 \"$HOME/.config/waybar/scripts/voxtype-spinner.py\"",
+        "exec": "/usr/bin/voxtype status --follow --format json --extended | \"$HOME/.local/bin/voxtype-spinner\"",
         "return-type": "json",
         "format": "{}",
         "tooltip": true,
         "escape": true,
-        "on-click": "/usr/bin/python3 \"$HOME/.config/waybar/scripts/voxtype-spinner.py\" --toggle-pink",
+        // Click cycles the pinned language (en > it > auto) by running
+        // voxtype-lang; it restarts the daemon, and this status stream
+        // reconnects within the restart-interval below.
+        "on-click": "/home/bronco/.local/bin/voxtype-lang",
         "exec-on-event": false,
         "restart-interval": 2
     },

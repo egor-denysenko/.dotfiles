@@ -33,6 +33,9 @@ README.md
 # DJI Go helper source is build input, not home-directory configuration.
 scripts/dji-dictation/
 
+# Waybar Voxtype spinner source is build input, not home-directory configuration.
+scripts/voxtype-spinner/
+
 # Build artifacts
 **/*.o
 **/*.so

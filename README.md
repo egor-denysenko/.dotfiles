@@ -30,30 +30,30 @@ Uses `.chezmoi.toml.tmpl` for machine-type (personal/work) and theme (dark/light
 
 ## Local dictation (Fedora + Sway)
 
-Hold **Super+Shift+V** to record, then release all three keys to transcribe locally and type into the focused field. The configuration uses multilingual Whisper `small` on CPU, automatic language detection (`language = "auto"`) for English/Italian dictation, and `wtype` with clipboard fallback. Speech is transcribed in its original language, not translated. `base.en` and `small.en` remain available for comparison. Evdev hotkeys, cloud transcription, and automatic submission are disabled; no `input` group membership or `ydotool` is needed.
+Hold **Super+Shift+V** to record, then release all three keys to transcribe locally and type into the focused field. The configuration uses Whisper `large-v3-turbo` on the AMD iGPU through Vulkan — enabled rootlessly with the `Environment=VOXTYPE_GPU=1` drop-in in `~/.config/systemd/user/voxtype.service.d/` — and `wtype` with clipboard fallback. Speech is transcribed in its original language, not translated. The language is pinned with **Super+Shift+l** or a click on the Waybar module (`~/.local/bin/voxtype-lang` cycles English → Italiano → auto); a pinned language skips Whisper's detection pass, which costs time and can misfire on short clips. `small`, `small.en`, and `base.en` remain available for comparison (`voxtype record start --model small`). Evdev hotkeys, cloud transcription, and automatic submission are disabled; no `input` group membership or `ydotool` is needed.
 
 Install the latest stable [official Voxtype RPM](https://github.com/peteonrails/voxtype/releases/latest) with DNF after verifying its release signature. Fedora integration packages are `wtype`, `wl-clipboard`, `libnotify`, and `pipewire-alsa`. Chezmoi manages configuration only: it does not install packages, download models, or enable the service.
 
-After applying the configuration on a new machine, download the three models (about **1.1 GB total**) and start the packaged user service:
+After applying the configuration on a new machine, download the models (the primary `large-v3-turbo` is about **1.6 GB**) and start the packaged user service:
 
 ```sh
-voxtype setup --download --model base.en --no-post-install
-voxtype setup --download --model small.en --no-post-install
-voxtype setup --download --model small --no-post-install
+voxtype setup --download --model large-v3-turbo --no-post-install
+voxtype setup --download --model small --no-post-install  # optional fast path
 voxtype setup check
 systemctl --user start voxtype
 ```
 
 **Automatic startup is deliberately disabled.** Start manually after login. Stop with `systemctl --user stop voxtype`; inspect logs with `journalctl --user -u voxtype -f`. The model stays loaded while the service runs; the microphone is captured only while recording. Models live in `~/.local/share/voxtype/models/`, outside this repository.
 
-Waybar uses the official `voxtype status --follow --format json --extended` feed, with `scripts/voxtype-spinner.py` adding animation only during transcription. The indicator is a grey microphone when ready, yellow when recording, an animated spinner while transcribing, and a slashed microphone when the daemon is stopped. Clicking the microphone toggles a pink background for fun; it does not record or change language. This cosmetic state is stored in `$XDG_RUNTIME_DIR/waybar-voxtype-pink` and resets after logout.
+Waybar uses the official `voxtype status --follow --format json --extended` feed, filtered by the dependency-free Go helper in `scripts/voxtype-spinner/` (compiled to `~/.local/bin/voxtype-spinner` by `run_onchange_after_build-voxtype-spinner.sh.tmpl`; Go is required, binaries are not committed, and the `voxtype_spinner` data flag defaults to enabled). The module shows the pinned language as an emoji — 🔫 for English, 🍕 for Italiano, 🌍 for auto-detect — tinted green/peach/mauve by the language, and animates braille frames only while transcription runs. Clicking it cycles the pinned language through `voxtype-lang`, which refuses to switch mid-dictation instead of restarting the daemon and dropping the recording.
 
 Managed files:
 
 - `~/.config/voxtype/config.toml`
 - `~/.config/sway/config.d/61-bindings-voxtype.conf`
 - `~/.config/waybar/config.jsonc` and `style.css`
-- `~/.config/waybar/scripts/voxtype-spinner.py`
+- `~/.local/bin/voxtype-lang` (language switcher, bash)
+- `~/.local/bin/voxtype-spinner` (Waybar filter, Go — built, not tracked)
 
 Edit the configuration through `chezmoi edit --apply ~/.config/voxtype/config.toml`, then restart Voxtype. To switch models through its CLI while keeping chezmoi in sync:
 

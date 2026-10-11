@@ -1,0 +1,19 @@
+#!/bin/sh
+set -eu
+{{ if get . "voxtype_spinner" | default true -}}
+# Rebuild when the source, tests, or module definition changes.
+# {{ include "scripts/voxtype-spinner/main.go" | sha256sum }}
+# {{ include "scripts/voxtype-spinner/main_test.go" | sha256sum }}
+# {{ include "scripts/voxtype-spinner/go.mod" | sha256sum }}
+command -v go >/dev/null 2>&1 || { echo 'Waybar Voxtype spinner requires Go (Fedora: sudo dnf install golang)' >&2; exit 1; }
+export GOTOOLCHAIN=local
+export CGO_ENABLED=0
+cd {{ printf "%s/scripts/voxtype-spinner" .chezmoi.sourceDir | quote }}
+go test -mod=readonly ./...
+mkdir -p "$HOME/.local/bin"
+binary=$(mktemp "$HOME/.local/bin/.voxtype-spinner.XXXXXX")
+trap 'rm -f "$binary"' EXIT HUP INT TERM
+go build -mod=readonly -trimpath -o "$binary" .
+chmod 755 "$binary"
+mv -f "$binary" "$HOME/.local/bin/voxtype-spinner"
+{{ end -}}
