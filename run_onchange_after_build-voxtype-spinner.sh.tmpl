@@ -6,7 +6,6 @@ set -eu
 # {{ include "scripts/voxtype-spinner/main_test.go" | sha256sum }}
 # {{ include "scripts/voxtype-spinner/go.mod" | sha256sum }}
 command -v go >/dev/null 2>&1 || { echo 'Waybar Voxtype spinner requires Go (Fedora: sudo dnf install golang)' >&2; exit 1; }
-export GOTOOLCHAIN=local
 export CGO_ENABLED=0
 cd {{ printf "%s/scripts/voxtype-spinner" .chezmoi.sourceDir | quote }}
 go test -mod=readonly ./...

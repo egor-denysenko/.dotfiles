@@ -63,13 +63,13 @@ provider cycling, snapshot-load filtering, and hook cleanup using a mocked Pi ru
 
 `scripts/dji-dictation/` contains the dependency-free Linux Go recording-toggle helper and tests (no Enter action or click delay). `run_onchange_after_build-dji-dictation.sh.tmpl` tests and builds it to `~/.local/bin/dji-dictation` on machines with `[data] dji_dictation = true`. Go is required; binaries are not committed. The Sway binding calls the binary directly.
 
-Validation: `cd scripts/dji-dictation && GOTOOLCHAIN=local go test -race ./... && go vet ./...`.
+Validation: `cd scripts/dji-dictation && go test -race ./... && go vet ./...`.
 
 ## Waybar Voxtype spinner
 
 `scripts/voxtype-spinner/` contains the dependency-free Go filter for Waybar's `custom/voxtype` module and tests (language emoji, animation only during transcription, tooltip augmentation). `run_onchange_after_build-voxtype-spinner.sh.tmpl` tests and builds it to `~/.local/bin/voxtype-spinner`; gated by the `voxtype_spinner` data flag, which defaults to enabled. Go is required; binaries are not committed. The Waybar `exec` pipes `voxtype status --follow` into the binary.
 
-Validation: `cd scripts/voxtype-spinner && GOTOOLCHAIN=local go test -race ./... && go vet ./...`.
+Validation: `cd scripts/voxtype-spinner && go test -race ./... && go vet ./...`.
 
 ## run_once scripts
 

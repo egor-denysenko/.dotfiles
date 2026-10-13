@@ -27,8 +27,7 @@ third_party_skills:
     skills:
       - deslop
       - how
-      # --- Dependant one on the other ---
+      # Review prompts used by the personal, harness-aware thermos skill.
       - thermo-nuclear-code-quality-review
       - thermo-nuclear-review
-      - thermos
       # ---
