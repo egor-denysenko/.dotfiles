@@ -1,7 +1,7 @@
 ---
 name: peon
 description: General-purpose delegated coding agent running on Ornith via Unsloth Studio
-model: unsloth-studio/ornith-ai/Ornith-1.5-35B-A3B-GGUF
+model: unsloth-studio/ornith-ai/Ornith-1.5-35B-A3B-GGUF:Q4_K_M
 thinking: off
 extensions:
   - ../extensions/providers/unsloth.ts

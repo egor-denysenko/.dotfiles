@@ -1,0 +1,67 @@
+#!/usr/bin/env bash
+# Set or cycle Voxtype's pinned dictation language.
+#
+#   voxtype-lang        cycle: en -> it -> auto -> en
+#   voxtype-lang it     pin directly (en | it | auto)
+#
+# Bound in sway to Super+Shift+l and to a click on the waybar voxtype module.
+#
+# Why a restart: `voxtype record start` has a per-call --model override but no
+# per-call --language override (src/cli/record.rs) — language is read from the
+# daemon's loaded config, so switching means rewriting it and restarting. That
+# costs ~1.6 s here (the model reloads on restart), once per switch, not per
+# dictation.
+#
+# Why pin at all: Whisper needs a first pass over the audio to detect the
+# language. Measured on this machine: ~0.6 s on `small`, ~2.2 s on
+# `large-v3-turbo`. Pinned "en" or "it" skips it entirely.
+#
+# "auto" scans all ~99 languages. For the cheaper/more reliable constrained
+# form, set it once by hand (voxtype's `config set` only writes strings):
+#   language = ["en", "it"]
+set -euo pipefail
+
+notify() {
+    command -v notify-send >/dev/null 2>&1 && \
+        notify-send -e -h string:x-canonical-private-synchronous:voxtype-lang "$1" || true
+}
+
+# Never restart mid-dictation: the daemon owns the recording, so a restart
+# would drop whatever the user was saying.
+state=$(voxtype status 2>/dev/null | head -1 || true)
+case "$state" in
+    idle|"") ;;
+    *)  notify "Voxtype: busy ($state) — language unchanged"
+        exit 0 ;;
+esac
+
+cur=$(voxtype config get whisper.language 2>/dev/null | head -1 | tr -d '[:space:]')
+
+case "${1:-}" in
+    en|it|auto) next="$1" ;;
+    "")         case "$cur" in
+                    en) next=it ;;
+                    it) next=auto ;;
+                    *)  next=en ;;   # auto, "en,it", or anything else
+                esac ;;
+    *)          echo "usage: voxtype-lang [en|it|auto]" >&2; exit 2 ;;
+esac
+
+case "$next" in
+    en)   label="Voxtype: English" ;;
+    it)   label="Voxtype: Italiano" ;;
+    auto) label="Voxtype: Auto (rileva la lingua)" ;;
+esac
+
+voxtype config set whisper.language "$next" >/dev/null
+systemctl --user restart voxtype
+
+# The daemon reloads its model on restart; wait until it takes work again so a
+# dictation started immediately after the switch isn't dropped.
+for _ in $(seq 1 40); do
+    state=$(voxtype status 2>/dev/null | head -1 || true)
+    [ "$state" = "idle" ] || [ "$state" = "recording" ] && break
+    sleep 0.25
+done
+
+notify "$label"

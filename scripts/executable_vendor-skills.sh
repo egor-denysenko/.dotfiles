@@ -3,7 +3,7 @@ set -euo pipefail
 
 DRY_RUN=0
 CHECK_LATEST=0
-AGENT_HARNESSES=("opencode" "antigravity-cli" "pi")
+AGENT_HARNESSES=("opencode" "antigravity" "pi")
 
 while [ $# -gt 0 ]; do
   case "$1" in
@@ -135,9 +135,10 @@ vendor_group() {
   local install_dir="$TMP_DIR/$group"
   mkdir -p "$install_dir"
 
-  local cmd=("$SKILLS_BIN" "add" "${source}@${ref}" "-y" "--copy")
+  local checkout_dir="$TMP_DIR/$group-source"
+  local cmd=("$SKILLS_BIN" "add" "$checkout_dir" "-y" "--copy" "--full-depth")
   if [ ! -x "$SKILLS_BIN" ]; then
-    cmd=("pnpm" "dlx" "skills" "add" "${source}@${ref}" "-y" "--copy")
+    cmd=("pnpm" "dlx" "skills" "add" "$checkout_dir" "-y" "--copy" "--full-depth")
   fi
   local h
   for h in "${AGENT_HARNESSES[@]}"; do
@@ -149,6 +150,7 @@ vendor_group() {
   done
 
   if [ "$DRY_RUN" -eq 1 ]; then
+    echo "  [dry-run] Would check out: $source@$ref -> $checkout_dir"
     echo "  [dry-run] Would run: ${cmd[*]}"
     if [ "${#skills[@]}" -gt 0 ]; then
       for s in "${skills[@]}"; do
@@ -160,6 +162,12 @@ vendor_group() {
     echo ""
     return 0
   fi
+
+  # The skills CLI clones refs as branches, which fails for commit pins.
+  # Resolve the pin with Git first, then discover skills from that checkout.
+  GIT_TERMINAL_PROMPT=0 git clone --filter=blob:none --no-checkout \
+    "https://github.com/$source.git" "$checkout_dir" || return 1
+  GIT_TERMINAL_PROMPT=0 git -C "$checkout_dir" checkout --detach "$ref" || return 1
 
   (cd "$install_dir" && GIT_TERMINAL_PROMPT=0 "${cmd[@]}") || {
     echo "  Failed to install $group" >&2

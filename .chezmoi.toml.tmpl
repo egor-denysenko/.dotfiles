@@ -29,7 +29,14 @@
 {{-   $kbd = .kbd -}}
 {{- else -}}
 {{-   $detected := output "sh" "-c" "localectl status 2>/dev/null | sed -n 's/^ *X11 Layout: *//p' | tr -d '\\n'" -}}
-{{-   $kbd = promptStringOnce . "kbd" (printf "keyboard layout — XKB code(s), comma-separated (full list: localectl list-x11-keymap-layouts; detected: %s)" ($detected | default "unknown")) ($detected | default "it") -}}
+{{-   $kbd = promptStringOnce . "kbd" (printf "keyboard layout — XKB code(s), comma-separated (full list: localectl list-x11-keymap-layouts; detected: %s)" ($detected | default "unknown")) ($detected | default "us") -}}
+{{- end -}}
+
+{{- $kbdUsb := "" -}}
+{{- if hasKey . "kbd_usb" -}}
+{{-   $kbdUsb = .kbd_usb -}}
+{{- else -}}
+{{-   $kbdUsb = promptStringOnce . "kbd_usb" "override layout for ONE external keyboard, as IDENTIFIER=LAYOUT (swaymsg -t get_inputs to find the identifier; blank to skip)" "" -}}
 {{- end -}}
 
 [chezmoi]
@@ -44,3 +51,5 @@ machine = {{ $machine | quote }}
 theme = {{ $theme | quote }}
 gui = {{ $gui }}
 kbd = {{ $kbd | quote }}
+{{ if $kbdUsb }}kbd_usb = {{ $kbdUsb | quote }}
+{{ end -}}

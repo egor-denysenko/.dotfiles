@@ -50,7 +50,8 @@ YAML parsing is done via `chezmoi execute-template` (no `yq` required).
 ```
 
 Reads pinned sources from `.chezmoidata/third_party_skills.yaml` (under
-the `third_party_skills:` key).
+the `third_party_skills:` key). Git checks out each pinned tag or commit before
+the skills CLI runs local, full-depth discovery (including nested plugin skills).
 
 ### Pinning
 
@@ -66,6 +67,24 @@ git add .chezmoidata/third_party_skills.yaml dot_agents/skills/
 git commit -m "Upgrade third-party skills"
 chezmoi apply
 ```
+
+## Pi provider-filter regression tests
+
+Run `node --experimental-vm-modules --test scripts/pi-model-provider-filter.test.mjs`
+with Node 22.18+ (native TypeScript support). Tests cover exact model identity,
+provider cycling, snapshot-load filtering, and hook cleanup using a mocked Pi runtime.
+
+## DJI dictation helper
+
+`scripts/dji-dictation/` contains the dependency-free Linux Go recording-toggle helper and tests (no Enter action or click delay). `run_onchange_after_build-dji-dictation.sh.tmpl` tests and builds it to `~/.local/bin/dji-dictation` on machines with `[data] dji_dictation = true`. Go is required; binaries are not committed. The Sway binding calls the binary directly.
+
+Validation: `cd scripts/dji-dictation && go test -race ./... && go vet ./...`.
+
+## Waybar Voxtype spinner
+
+`scripts/voxtype-spinner/` contains the dependency-free Go filter for Waybar's `custom/voxtype` module and tests (language emoji, animation only during transcription, tooltip augmentation). `run_onchange_after_build-voxtype-spinner.sh.tmpl` tests and builds it to `~/.local/bin/voxtype-spinner`; gated by the `voxtype_spinner` data flag, which defaults to enabled. Go is required; binaries are not committed. The Waybar `exec` pipes `voxtype status --follow` into the binary.
+
+Validation: `cd scripts/voxtype-spinner && go test -race ./... && go vet ./...`.
 
 ## run_once scripts
 

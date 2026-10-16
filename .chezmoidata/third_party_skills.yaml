@@ -14,33 +14,20 @@
 # If omitted, all discoverable skills from the repo are installed.
 
 third_party_skills:
-  impeccable:
-    source: pbakaus/impeccable
-    ref: skill-v4.1.1
-    skills:
-      - impeccable
   mattpocock-skills:
     source: mattpocock/skills
-    ref: v1.2.3
+    ref: v1.3.1
     skills:
-      - wayfinder
-      - grilling
-      # --- Dependant one on the other ---
-      - improve-codebase-architecture
-      - codebase-design
-      - domain-modeling
       # ---
-      - tdd
-      - handoff
       - teach
+      - retro
   cursor-skills:
     source: cursor/plugins
-    ref: bdf7aa355337
+    ref: df581122cde1
     skills:
       - deslop
       - how
-      # --- Dependant one on the other ---
+      # Review prompts used by the personal, harness-aware thermos skill.
       - thermo-nuclear-code-quality-review
       - thermo-nuclear-review
-      - thermos
       # ---

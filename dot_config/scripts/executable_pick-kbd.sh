@@ -8,6 +8,10 @@
 # `chezmoi apply` (re-renders config.d/10-input.conf) and `swaymsg reload` so
 # the new layout takes effect immediately. Comma-separate multiple layouts
 # (e.g. it,us) — sway cycles them when more than one is set.
+#
+# SCOPE: this edits `kbd`, the machine-wide DEFAULT (the `type:keyboard`
+# block). If `kbd_usb` is set in the same config, that one external keyboard
+# keeps its own layout and is unaffected by this script.
 set -euo pipefail
 
 CFG="${XDG_CONFIG_HOME:-$HOME/.config}/chezmoi/chezmoi.toml"

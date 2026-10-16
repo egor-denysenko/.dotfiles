@@ -42,7 +42,7 @@ type AuthFile = Record<string, { type: string; key: string }>;
 
 const MODELS_PATH = join(homedir(), ".config", "pi", "agent", "models.json");
 const AUTH_PATH = join(homedir(), ".config", "pi", "agent", "auth.json");
-const DEFAULT_BASE_URL = "https://litellm.porchettos.space/v1";
+const DEFAULT_BASE_URL = "https://llm.porchettos.space/v1";
 
 function asNumber(value: unknown): number | undefined {
   return typeof value === "number" && Number.isFinite(value) ? value : undefined;

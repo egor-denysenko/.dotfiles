@@ -167,7 +167,8 @@ doas adduser "$USER" input
 |------|---------|
 | `dot_config/zsh` | Zsh + Zim, fzf, aliases |
 | `dot_config/nvim` | Neovim (LazyVim-based) |
-| `dot_config/sway` | Sway WM (config + keybindings; vendored session glue in `config.d/`, `volume-helper` in `scripts/`; wallpaper in `backgrounds/`) |
+| `dot_config/sway` | Sway WM (config + keybindings; vendored session glue in `config.d/`, `volume-helper` in `scripts/`; wallpaper in `backgrounds/`; push-to-talk dictation binding) |
+| `dot_config/voxtype` | Local Whisper dictation configuration |
 | `dot_config/wezterm` | WezTerm terminal |
 | `dot_config/ghostty` | Ghostty terminal (references the built-in `Warm Burnout Dark`/`Light` themes; no vendored copies — they would name-collide) |
 | `dot_config/rofi` | Rofi launcher (warm-burnout-dark + gruvbox themes, shared layout, all vendored in `themes/`) |
@@ -185,6 +186,54 @@ doas adduser "$USER" input
 ## Templates
 
 Uses `.chezmoi.toml.tmpl` for machine-type (personal/work), theme (dark/light), gui, and keyboard layout (`kbd`) data.
+
+## Local dictation (Fedora + Sway)
+
+Hold **Super+Shift+V** to record, then release all three keys to transcribe locally and type into the focused field. The configuration uses Whisper `large-v3-turbo` on the AMD iGPU through Vulkan — enabled rootlessly with the `Environment=VOXTYPE_GPU=1` drop-in in `~/.config/systemd/user/voxtype.service.d/` — and `wtype` with clipboard fallback. Speech is transcribed in its original language, not translated. The language is pinned with **Super+Shift+l** or a click on the Waybar module (`~/.local/bin/voxtype-lang` cycles English → Italiano → auto); a pinned language skips Whisper's detection pass, which costs time and can misfire on short clips. `small`, `small.en`, and `base.en` remain available for comparison (`voxtype record start --model small`). Evdev hotkeys, cloud transcription, and automatic submission are disabled; no `input` group membership or `ydotool` is needed.
+
+Install the latest stable [official Voxtype RPM](https://github.com/peteonrails/voxtype/releases/latest) with DNF after verifying its release signature. Fedora integration packages are `wtype`, `wl-clipboard`, `libnotify`, and `pipewire-alsa`. Chezmoi manages configuration only: it does not install packages, download models, or enable the service.
+
+After applying the configuration on a new machine, download the models (the primary `large-v3-turbo` is about **1.6 GB**) and start the packaged user service:
+
+```sh
+voxtype setup --download --model large-v3-turbo --no-post-install
+voxtype setup --download --model small --no-post-install  # optional fast path
+voxtype setup check
+systemctl --user start voxtype
+```
+
+**Automatic startup is deliberately disabled.** Start manually after login. Stop with `systemctl --user stop voxtype`; inspect logs with `journalctl --user -u voxtype -f`. The model stays loaded while the service runs; the microphone is captured only while recording. Models live in `~/.local/share/voxtype/models/`, outside this repository.
+
+Waybar uses the official `voxtype status --follow --format json --extended` feed, filtered by the dependency-free Go helper in `scripts/voxtype-spinner/` (compiled to `~/.local/bin/voxtype-spinner` by `run_onchange_after_build-voxtype-spinner.sh.tmpl`; Go is required, binaries are not committed, and the `voxtype_spinner` data flag defaults to enabled). The module shows the pinned language as an emoji — 🔫 for English, 🍕 for Italiano, 🌍 for auto-detect — tinted green/peach/mauve by the language, and animates braille frames only while transcription runs. Clicking it cycles the pinned language through `voxtype-lang`, which refuses to switch mid-dictation instead of restarting the daemon and dropping the recording.
+
+Managed files:
+
+- `~/.config/voxtype/config.toml`
+- `~/.config/sway/config.d/61-bindings-voxtype.conf`
+- `~/.config/waybar/config.jsonc` and `style.css`
+- `~/.local/bin/voxtype-lang` (language switcher, bash)
+- `~/.local/bin/voxtype-spinner` (Waybar filter, Go — built, not tracked)
+
+Edit the configuration through `chezmoi edit --apply ~/.config/voxtype/config.toml`, then restart Voxtype. To switch models through its CLI while keeping chezmoi in sync:
+
+```sh
+voxtype config set whisper.model small  # or base.en / small.en
+chezmoi add ~/.config/voxtype/config.toml
+systemctl --user restart voxtype
+```
+
+After editing the binding, validate with `sway --validate --config ~/.config/sway/config` before `swaymsg reload`. Reload Waybar with `pkill -USR2 -x waybar`. Check the selected model/backend with `voxtype status --format json --extended`.
+
+### DJI remote dictation (Sway)
+
+On this laptop, `[data] dji_dictation = true` in the local `~/.config/chezmoi/chezmoi.toml` enables `62-bindings-dji-dictation.conf`. The option defaults to disabled on other machines. A dependency-free Go helper implements the immediate recording toggle; install Go (`sudo dnf install golang` on Fedora) before applying. Chezmoi's `run_onchange_after_build-dji-dictation.sh.tmpl` tests and compiles the source in `scripts/dji-dictation/` to `~/.local/bin/dji-dictation` when it changes. No prebuilt binary is tracked. Apply with `chezmoi apply ~/.config/sway/config.d/62-bindings-dji-dictation.conf`, validate the Sway config, and reload Sway.
+
+A single tap of the DJI transmitter's pair button sends USB `KEY_VOLUMEUP`, remapped to `F20` by the receiver-specific `dji-dictation.xkb` keymap: tap once to start dictation, again to stop and transcribe into the focused application. Only the DJI receiver's Consumer Control device is remapped and bound; other volume keys keep their normal function. Voxtype must be running. Each click immediately toggles recording while Voxtype is idle or recording; clicks are ignored while transcribing or stopped. There is no Enter/submission action. Avoid double-clicking or holding the DJI link button: its firmware handles connection-mode/pairing gestures independently of Linux. The power button controls internal recording, so it is not used for dictation. The binding is disabled while the screen is locked and does not change the button's internal DJI behavior.
+
+### Dictation follow-ups
+
+- [ ] Add a separate keyboard/clicker button for explicit Enter/submission; do not reuse DJI firmware gestures.
+- [ ] Add text-to-speech playback through Bluetooth earbuds, keeping the DJI receiver selected as the microphone.
 
 ## Updating skills
 

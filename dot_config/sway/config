@@ -246,11 +246,28 @@ mode "resize" {
 }
 bindsym $mod+r mode "resize"
 
+# If multiple directories contain the files with the same name, the later
+# directory takes precedence; `$XDG_CONFIG_HOME/sway/config.d/20-swayidle.conf`
+# will always be loaded instead of `/usr/share/sway/config.d/20-swayidle.conf`
+# or `/etc/sway/config.d/20-swayidle.conf`
+#
+# This mechanism permits overriding our default configuration per-system
+# (/etc) or per-user ($XDG_CONFIG_HOME) basis. Just create the file you
+# want to modify/override in the higher-level directory.
+#
+# For example, to disable the default bar from Fedora configs, you'll need to
+#     $ echo -n > "$HOME/.config/sway/config.d/90-bar.conf"
+#
+# Note the quoting, the $() and the arguments quoting. All the parts are equally
+# important to make the magic work. And if you want to learn the secret behind
+# the trick, it's all in the `wordexp(3)`.
+#
+
 # Input configuration lives in config.d/10-input.conf (rendered from
 # 10-input.conf.tmpl; matches type:keyboard, so it works on any machine —
-# unlike the old hardcoded "1:1:AT_Translated_Set_2_keyboard" device id, which
+# unlike a hardcoded device id like "1:1:AT_Translated_Set_2_keyboard", which
 # only exists on one laptop). Its xkb_layout comes from the machine-local
-# `kbd` chezmoi value.
+# `kbd` chezmoi value in ~/.config/chezmoi/chezmoi.toml.
 #
 
 #

@@ -37,3 +37,9 @@ gh-work() {
   echo "Triggering workflow '$WORKFLOW' in repository '$REPO' with JIRA ticket '$JIRA_TICKET'..."
   gh workflow run "$WORKFLOW" --repo "$REPO" -f jira_ticket="$JIRA_TICKET"
 }
+
+# Voxtype: prefer the Vulkan binary (AMD iGPU) for transcription. The systemd
+# user drop-in voxtype.service.d/10-vulkan.conf sets this for the daemon; this
+# keeps the CLI (`voxtype transcribe`) on the same binary. Remove both to go
+# back to the AVX2 CPU binary.
+export VOXTYPE_GPU=1
