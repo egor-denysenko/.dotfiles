@@ -7,6 +7,12 @@ set -eu
 # {{ include "scripts/voxtype-spinner/go.mod" | sha256sum }}
 command -v go >/dev/null 2>&1 || { echo 'Waybar Voxtype spinner requires Go (Fedora: sudo dnf install golang)' >&2; exit 1; }
 export CGO_ENABLED=0
+# Go's work dir defaults to $TMPDIR (/tmp). On diskless/tmpfs-root boxes /tmp is
+# RAM and too small for a from-scratch stdlib build, so keep temp + cache on the
+# persistent home instead.
+export GOCACHE="${XDG_CACHE_HOME:-$HOME/.cache}/go-build"
+export TMPDIR="${XDG_CACHE_HOME:-$HOME/.cache}/tmp"
+mkdir -p "$GOCACHE" "$TMPDIR"
 cd {{ printf "%s/scripts/voxtype-spinner" .chezmoi.sourceDir | quote }}
 go test -mod=readonly ./...
 mkdir -p "$HOME/.local/bin"

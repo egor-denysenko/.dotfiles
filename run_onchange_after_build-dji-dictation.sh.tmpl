@@ -7,6 +7,10 @@ set -eu
 # {{ include "scripts/dji-dictation/go.mod" | sha256sum }}
 command -v go >/dev/null 2>&1 || { echo 'DJI dictation requires Go (Fedora: sudo dnf install golang)' >&2; exit 1; }
 export CGO_ENABLED=0
+# Keep Go's temp + cache off a RAM-backed /tmp (see build-voxtype-spinner.sh).
+export GOCACHE="${XDG_CACHE_HOME:-$HOME/.cache}/go-build"
+export TMPDIR="${XDG_CACHE_HOME:-$HOME/.cache}/tmp"
+mkdir -p "$GOCACHE" "$TMPDIR"
 cd {{ printf "%s/scripts/dji-dictation" .chezmoi.sourceDir | quote }}
 go test -mod=readonly ./...
 mkdir -p "$HOME/.local/bin"
