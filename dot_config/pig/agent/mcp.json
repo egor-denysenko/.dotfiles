@@ -1,0 +1,15 @@
+{
+  "mcpServers": {
+    "gograph": {
+      "command": "gograph",
+      "args": [
+        "mcp",
+        ".",
+        "--tags=integration"
+      ],
+      "cwd": ".",
+      "exposure": "deferred",
+      "description": "gograph: AST/type-aware Go repository graph (explore, query, source, context, callers/callees, impact, plan, review). Go repos only."
+    }
+  }
+}

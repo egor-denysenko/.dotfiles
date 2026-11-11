@@ -13,7 +13,6 @@ export PI_HOME=$HOME/.config/pi
 export PI_CODING_AGENT_DIR=$PI_HOME/agent
 export PI_TELEMETRY=0
 export PI_SKIP_VERSION_CHECK=1
-export PI_OFFLINE=1
 export PI_VCC_CONFIG_PATH=$PI_CODING_AGENT_DIR/pi-vcc-config.json
 
 export GOPATH=$HOME/go
@@ -39,3 +38,9 @@ export PATH
 if [[ -f "${XDG_CONFIG_HOME:-$HOME/.config}/vite-plus/env" ]]; then
   . "${XDG_CONFIG_HOME:-$HOME/.config}/vite-plus/env"
 fi
+
+# Voxtype: prefer the Vulkan binary (AMD iGPU) for transcription. The systemd
+# user drop-in voxtype.service.d/10-vulkan.conf sets this for the daemon; this
+# keeps the CLI (`voxtype transcribe`) on the same binary. Remove both to go
+# back to the AVX2 CPU binary.
+export VOXTYPE_GPU=1

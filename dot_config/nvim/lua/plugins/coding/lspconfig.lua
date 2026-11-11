@@ -199,6 +199,19 @@ return {
           },
         },
 
+        yamlls = {
+          settings = {
+            yaml = {
+              schemas = {
+                ['https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/master-standalone-strict/deployment-apps-v1.json'] = {
+                  '**/deployment.yaml',
+                  '**/deployment.yml',
+                },
+              },
+            },
+          },
+        },
+
         tinymist = {
           root_dir = function(fname)
             return require('lspconfig.util').root_pattern('.git', 'Makefile', 'template.typ')(fname)

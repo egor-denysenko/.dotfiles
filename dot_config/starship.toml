@@ -16,9 +16,11 @@ $nodejs\
 $python\
 $rust\
 $docker_context\
-$cmd_duration\
 $line_break\
 $character"""
+
+# Right-aligned on the same line as the prompt: duration of the last command.
+right_format = """$cmd_duration"""
 
 [username]
 style_user = "bright-black"
@@ -90,7 +92,8 @@ style = "blue dimmed"
 format = "[$symbol$context]($style) "
 
 [cmd_duration]
-format = "[$duration]($style) "
+min_time = 0
+format = "took [$duration]($style)"
 style = "bright-black"
 
 

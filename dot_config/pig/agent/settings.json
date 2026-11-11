@@ -1,0 +1,19 @@
+{
+  "defaultProvider": "aperture-bridge",
+  "defaultModel": "claude-haiku-5-5",
+  "defaultThinkingLevel": "low",
+  "theme": "warm-burnout-dark",
+  "quietStartup": false,
+  "hideThinkingBlock": true,
+  "enableInstallTelemetry": false,
+  "enableAnalytics": false,
+  "lastChangelogVersion": "1.3.0",
+  "retry": {
+    "enabled": true,
+    "maxRetries": 5,
+    "baseDelayMs": 3400,
+    "provider": {
+      "maxRetryDelayMs": 60000
+    }
+  }
+}

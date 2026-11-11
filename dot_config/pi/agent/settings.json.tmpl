@@ -7,7 +7,7 @@
 {{- $profile = index $profiles $machine -}}
 {{- end -}}
 {
-  "npmCommand": ["pnpm"],
+  "npmCommand": ["pnpm", "--config.shamefully-hoist=true"],
   "enableInstallTelemetry": false,
   "defaultThinkingLevel": "low",
   "quietStartup": true,
@@ -16,15 +16,18 @@
   "shellCommandPrefix": "shopt -s expand_aliases\n[ -f ~/.config/zsh/aliases.zsh ] && source ~/.config/zsh/aliases.zsh",
   "retry": {
     "enabled": true,
-    "maxRetries": 5,
-    "baseDelayMs": 3400,
-    "provider": {
-      "maxRetryDelayMs": 60000
-    }
+    "maxRetries": 3,
+    "baseDelayMs": 1500,
+    "maxAgentDelayMs": 30000
   },
   "packages": {{ index $profile "packages" | toPrettyJson | indent 2 | trim }},
   "subagents": {},
-  "defaultProvider": {{ get . "pi_private_default_provider" | default "llmgateway" | quote }},
-  "defaultModel": {{ get . "pi_private_default_model" | default "free-auto" | quote }},
-  "lastChangelogVersion": "1.1.0"
+  {{ if get $profile "device_id" }}"deviceId": {{ get $profile "device_id" | quote }},{{ end }}
+  "defaultProvider": {{ get . "pi_private_default_provider" | default "openai" | quote }},
+  "defaultModel": {{ get . "pi_private_default_model" | default "gpt-6.1-sol" | quote }},
+  "compaction": {
+    "enabled": true,
+    }
+  },
+  "lastChangelogVersion": "1.3.0"
 }

@@ -50,3 +50,5 @@ coverage/
 *.cover
 *.gcno
 *.gcda
+
+**/.claude/settings.local.json

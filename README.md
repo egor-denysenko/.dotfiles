@@ -22,7 +22,76 @@ chezmoi init https://github.com/egor-denysenko/dotfiles.git && chezmoi apply -v
 | `dot_config/starship` | Starship prompt |
 | `dot_config/scripts` | Utility scripts |
 | `dot_config/pi/agent` | Pi coding agent config (extensions, themes, models) |
+| `dot_config/pig/agent` | Separate PiG config, UI extensions, theme, and keybindings |
 | `dot_agents/skills` | Agent skills (synced to `~/.agents/skills/`; pi gets them via a symlink in `~/.pi/agent/skills/`) |
+
+## PiG UI configuration
+
+Zsh exports `PIG_HOME=$HOME/.config/pig`; settings live in
+`~/.config/pig/agent/settings.json`. Pi remains independent. Existing PiG
+credentials and sessions were copied from `~/.pig/agent`; the old directory is
+kept untouched as a backup (a session already running there continues using it).
+New machines need their own `pig login`; credentials and sessions are not tracked.
+
+The six local UI extensions run through PiG's supported Node/TypeScript
+compatibility runtime (Node must be on PATH):
+
+- **startup-banner**: sheriff “Pig Is Fine” artwork and startup resource inventory in a
+  widget, leaving PiG's native mascot header intact. `/startup` toggles the
+  widget; it hides automatically on the first prompt to reclaim editor space.
+  `quietStartup` is deliberately false so the mascot is visible. `/sprite`
+  selects the pig; `/sprite preview` shows its full artwork.
+- **vision-status**: usage/model footer with image-input capability indicator.
+- **context-size**: one approximate prompt/tool-schema overhead notice per session.
+- **stash-prompt**: Ctrl+S stashes a draft; on an empty editor it restores the
+  latest stash. `/stashes` opens the picker. Stashes are in-memory, not persisted.
+- **model-provider-filter**: Ctrl+L or `/provider-model` opens the provider-filtered
+  picker; Tab/Shift+Tab changes provider, typing filters models. Ctrl+P and
+  Ctrl+Shift+P cycle providers (models when only one provider is available).
+  Unlike Pi's prototype patch, this uses a public custom component; PiG's stock
+  `/model` selector stays available. The last chosen provider lives under
+  `$PIG_HOME/state/ui/`, separate from Pi's temporary state.
+- **notify**: completion notifications, `/notify-test`, `/notify-mute`, and
+  `/notify-sound`. Desktop delivery uses `osascript` on macOS or `notify-send`
+  on Linux, not OSC writes into a subprocess pipe. Sound is off by default;
+  enabling it uses macOS Glass or Linux's `canberra-gtk-play` completion sound.
+  Notification settings are in `extensions/ui-assets/notify.json`.
+
+PiG uses the sheriff-pig-in-flames artwork below; Pi keeps its original
+`thisisfine.sh` dog. Preview PiG's artwork independently:
+
+```sh
+~/.config/pig/agent/extensions/pig-is-fine.sh
+~/.config/pig/agent/extensions/pig-is-fine.sh --color    # Force color when capturing output
+~/.config/pig/agent/extensions/pig-is-fine.sh --no-color # Monochrome silhouette
+```
+
+Like `thisisfine.sh`, this is ANSI truecolor pixel art made from Unicode half
+blocks (45 columns by 25 terminal rows), not line-drawn ASCII. Color stays on
+when captured by a UI widget; `NO_COLOR` disables it. A UTF-8 terminal is needed.
+The source is `dot_config/pig/agent/extensions/executable_pig-is-fine.sh`.
+Regenerate its indexed pixel grid with `python3 scripts/pig-ui/generate-art.py`;
+add `--preview /tmp/pig-is-fine.png` to inspect a PNG without extra dependencies.
+
+The warm-burnout-dark theme is copied locally. Built-in selector save/sort keys
+move from Ctrl+S to Alt+S, provider/path toggles from Ctrl+P to Alt+P, and the
+labeled-tree filter from Ctrl+L to Alt+L to avoid extension shortcut conflicts.
+Non-UI Pi tools, providers, npm packages, and prototype patches are not imported.
+
+Apply and test:
+
+```sh
+chezmoi apply ~/.config/pig/agent ~/.config/zsh/.zshenv
+node --test scripts/pig-ui/*.test.mjs
+python3 scripts/pig-ui/smoke.py
+PIG_HOME="$HOME/.config/pig" pig install --validate-only --json \
+  ~/.config/pig/agent/extensions/*.ts
+```
+
+The smoke test opens a pseudo-terminal, tests provider tabs and stash/restore,
+and resizes through 20/40/80/120 columns. It sends no model prompts or desktop
+notifications. Launch a new shell, or run `export PIG_HOME=$HOME/.config/pig`,
+then start `pig`. Use `/notify-test` to check OS notification permissions manually.
 
 ## Templates
 

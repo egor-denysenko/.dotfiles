@@ -10,6 +10,14 @@ import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 import type { AssistantMessage } from "@earendil-works/pi-ai";
 import { truncateToWidth, visibleWidth } from "@earendil-works/pi-tui";
 
+interface Usage {
+  input?: number;
+  output?: number;
+  cacheRead?: number;
+  cacheWrite?: number;
+  cost?: { total?: number };
+}
+
 // ---------------------------------------------------------------------------
 // Helpers — mirrored from the default footer
 // ---------------------------------------------------------------------------
@@ -50,33 +58,49 @@ export default function (pi: ExtensionAPI) {
         dispose: unsub,
         invalidate() {},
         render(width: number): string[] {
-          // ------ token stats from all session entries ------
-          let totalInput = 0;
-          let totalOutput = 0;
-          let totalCacheRead = 0;
-          let totalCacheWrite = 0;
-          let totalCost = 0;
+          // ------ usage totals from ALL session entries (mirrors pi's footer / usage-totals) ------
+          const totals = { input: 0, output: 0, cacheRead: 0, cacheWrite: 0, cost: 0 };
+          let latestCacheHitRate: number | undefined;
+          const add = (u: Usage | undefined) => {
+            if (!u) return;
+            totals.input += u.input ?? 0;
+            totals.output += u.output ?? 0;
+            totals.cacheRead += u.cacheRead ?? 0;
+            totals.cacheWrite += u.cacheWrite ?? 0;
+            totals.cost += u.cost?.total ?? 0;
+          };
 
-          for (const entry of ctx.sessionManager.getEntries()) {
-            if (entry.type === "message" && entry.message.role === "assistant") {
-              const m = entry.message as AssistantMessage;
-              totalInput += m.usage.input;
-              totalOutput += m.usage.output;
-              totalCacheRead += m.usage.cacheRead;
-              totalCacheWrite += m.usage.cacheWrite;
-              totalCost += m.usage.cost.total;
+          for (const entry of ctx.sessionManager.getEntries() as Array<any>) {
+            if (entry.type === "usage") {
+              add(entry.usage);
+            } else if (entry.type === "message" && entry.message.role === "assistant") {
+              const u = (entry.message as AssistantMessage).usage;
+              add(u);
+              const promptTokens = u.input + u.cacheRead + u.cacheWrite;
+              latestCacheHitRate =
+                promptTokens > 0 ? (u.cacheRead / promptTokens) * 100 : undefined;
+            } else if (entry.type === "message" && entry.message.role === "toolResult") {
+              add(entry.message.usage);
+            } else if ((entry.type === "branch_summary" || entry.type === "compaction") && entry.usage) {
+              add(entry.usage);
             }
           }
+          const totalInput = totals.input;
+          const totalOutput = totals.output;
+          const totalCacheRead = totals.cacheRead;
+          const totalCacheWrite = totals.cacheWrite;
+          const totalCost = totals.cost;
 
           // ------ context usage ------
+          // percent is null/absent after compaction until the next response: show "?"
           const contextUsage = ctx.getContextUsage();
           const contextWindow =
             contextUsage?.contextWindow ?? ctx.model?.contextWindow ?? 0;
           const contextPercentValue = contextUsage?.percent ?? 0;
           const contextPercent =
-            contextUsage?.percent !== null
-              ? contextPercentValue.toFixed(1)
-              : "?";
+            contextUsage?.percent == null
+              ? "?"
+              : contextPercentValue.toFixed(1);
 
           // ------ pwd ------
           let pwd = ctx.sessionManager.getCwd();
@@ -97,6 +121,9 @@ export default function (pi: ExtensionAPI) {
           if (totalOutput) parts.push(`↓${fmt(totalOutput)}`);
           if (totalCacheRead) parts.push(`R${fmt(totalCacheRead)}`);
           if (totalCacheWrite) parts.push(`W${fmt(totalCacheWrite)}`);
+          if ((totalCacheRead > 0 || totalCacheWrite > 0) && latestCacheHitRate !== undefined) {
+            parts.push(`CH${latestCacheHitRate.toFixed(1)}%`);
+          }
 
           const usingSubscription = ctx.model
             ? ctx.modelRegistry.isUsingOAuth(ctx.model)

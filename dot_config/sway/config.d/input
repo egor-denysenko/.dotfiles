@@ -1,0 +1,5 @@
+input "type:Keyboard" {
+	xkb_layout it
+	repeat_delay 500
+	repeat_rate 75   
+}

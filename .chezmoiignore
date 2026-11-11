@@ -7,6 +7,7 @@ README.md
 # environment-specific settings. Never replace it from this repository.
 {{- if eq .machine "work" }}
 .gitconfig
+.gitconfig-oss
 {{- end }}
 
 # Neovim
@@ -66,3 +67,10 @@ AGENTS.md
 # Do not sync nested personal/vendored structures from dot_agents/skills/ to home
 .agents/skills/personal/
 .agents/skills/vendored/
+
+
+# Opencode config holds the internal Aperture gateway host; keep it out of the repo.
+.config/opencode/opencode.json
+
+# Keep opencode JSONC config out of the repo for now.
+.config/opencode/opencode.jsonc

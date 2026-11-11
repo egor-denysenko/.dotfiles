@@ -3,7 +3,7 @@ Test after changes.
 
 Optional private defaults belong in `~/.config/chezmoi/chezmoi.toml` as
 `pi_private_default_provider` and `pi_private_default_model`; the template
-falls back to `llmgateway` and `free-auto` when they are absent.
+falls back to `openai` and `gpt-6.1-sol` when they are absent.
 
 ## Pi self-documentation (local to this chezmoi directory)
 
@@ -16,10 +16,10 @@ Pi is installed globally with pnpm (`@earendil-works/pi-coding-agent`).
 Locate the installed package through the `pi` executable (follow its symlink or
 pnpm shim); do not hard-code a versioned package path.
 
-When updating Pi itself, unset `PI_OFFLINE` for the update process (e.g.
-`env -u PI_OFFLINE pi` before invoking self-update). It interferes with Pi's
-self-update feature in this installation. Do not permanently change the shell's
-offline default just to perform an update.
+The shell clears inherited `PI_OFFLINE` so Pi updates and model catalog refreshes
+can use the network. When updating from an older running session, still use
+`env -u PI_OFFLINE pi update --all`. Use `pi --offline` only for explicit offline
+sessions; do not restore a global offline default.
 
 Pi documentation (read only when the user asks about pi itself, its SDK, extensions, themes, skills, or TUI):
 - Main documentation: README.md in the installed package

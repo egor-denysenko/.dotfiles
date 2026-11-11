@@ -63,7 +63,9 @@ provider cycling, snapshot-load filtering, and hook cleanup using a mocked Pi ru
 
 `scripts/dji-dictation/` contains the dependency-free Linux Go recording-toggle helper and tests (no Enter action or click delay). `run_onchange_after_build-dji-dictation.sh.tmpl` tests and builds it to `~/.local/bin/dji-dictation` on machines with `[data] dji_dictation = true`. Go is required; binaries are not committed. The Sway binding calls the binary directly.
 
-Validation: `cd scripts/dji-dictation && go test -race ./... && go vet ./...`.
+Validation: `cd scripts/dji-dictation && go test -race ./... && go vet ./...` (rendered-binding tests require chezmoi).
+
+Run `dji-dictation doctor` in the Sway session to check receiver IDs, the live layout plus installed F20 remap, executables, and Voxtype status. Sway exposes layout names, not the full active keymap: doctor is a sanity check, not proof of physical-button delivery. Verify that by pressing the button. Supported Consumer Control product IDs are 16661 and 16405; update both the Sway template and helper allowlist for additional variants. Concurrent toggle invocations are discarded using a per-session nonblocking lock; transcribing is a deliberate no-op, and unexpected states/session failures are reported on stderr.
 
 ## Waybar Voxtype spinner
 

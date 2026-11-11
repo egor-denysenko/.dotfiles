@@ -6,21 +6,25 @@ pi_agent:
     work:
       packages:
         # Pin npm package versions; update these explicitly when upgrading.
-        - npm:@juicesharp/rpiv-voice@2.12.0
-        - npm:@juicesharp/rpiv-i18n@2.12.0
+        - npm:@juicesharp/rpiv-voice@2.13.9
+        - npm:@juicesharp/rpiv-i18n@2.13.9
         - npm:@ff-labs/pi-fff@0.11.0
         - npm:pi-lsp@0.1.7
-        - npm:@sting8k/pi-vcc@0.10.0
-        - git:github.com/nicobailon/pi-subagents@5da808168c097ea0d56616644773efe0f6f87938
+        - npm:@sting8k/pi-vcc@0.10.2
+        - git:github.com/nicobailon/pi-subagents@v0.79.0
         - git:github.com/jillesme/pi-nvim-review@d61a694dcd38d68bb70b66b557c08aa581454784
 
     personal:
+      # Pi's installation UUID; regenerated if absent. Kept here so a
+      # `chezmoi apply` does not drop it.
+      device_id: b8192653-004e-403e-96df-e16ab6e74a4b
       packages:
-        - npm:@juicesharp/rpiv-i18n@2.12.0
+        - npm:@juicesharp/rpiv-i18n@2.13.9
         - npm:@ff-labs/pi-fff@0.11.0
         - npm:pi-lsp@0.1.7
-        - npm:@sting8k/pi-vcc@0.10.0
-        - git:github.com/nicobailon/pi-subagents@5da808168c097ea0d56616644773efe0f6f87938
+        - npm:@sting8k/pi-vcc@0.10.2
+        - git:github.com/nicobailon/pi-subagents@v0.79.0
         - git:github.com/jillesme/pi-nvim-review@d61a694dcd38d68bb70b66b557c08aa581454784
         - ../../../projects/oss_forks/rpiv-mono-fork
-        - npm:pi-btw
+        - npm:pi-btw@0.8.0
+        - npm:pi-svgp@0.1.0

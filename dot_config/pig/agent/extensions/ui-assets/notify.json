@@ -1,0 +1,9 @@
+{
+  "sound": false,
+  "notification": true,
+  "volume_percentage": 18,
+  "events": {
+    "agent_end": { "sound": false, "notification": true },
+    "tool_error": { "sound": false, "notification": false }
+  }
+}
